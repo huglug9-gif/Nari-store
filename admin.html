@@ -2,10 +2,11 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NARI FASHION — Admin Dashboard</title>
+<title>NARI FASHION - Admin Panel</title>
 
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -20,13 +21,13 @@
 }
 
 body{
-  background:#f4f5f7;
-  color:#171717;
+  background:#f5f5f5;
+  color:#111;
 }
 
 button{
   cursor:pointer;
-  border:0;
+  border:none;
 }
 
 input,textarea,select{
@@ -41,16 +42,16 @@ input,textarea,select{
   align-items:center;
   justify-content:center;
   padding:20px;
-  background:linear-gradient(135deg,#111,#292929);
+  background:linear-gradient(135deg,#111,#333);
 }
 
 .loginBox{
   width:100%;
-  max-width:410px;
+  max-width:400px;
   background:#fff;
   padding:35px;
-  border-radius:22px;
-  box-shadow:0 25px 60px rgba(0,0,0,.3);
+  border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
 }
 
 .loginLogo{
@@ -70,7 +71,7 @@ input,textarea,select{
   width:100%;
   padding:13px 14px;
   border:1px solid #ddd;
-  border-radius:11px;
+  border-radius:10px;
   outline:none;
   margin-bottom:14px;
   background:#fff;
@@ -78,17 +79,21 @@ input,textarea,select{
 
 .input:focus{
   border-color:#111;
-  box-shadow:0 0 0 3px rgba(0,0,0,.06);
 }
 
 .loginBtn{
   width:100%;
   padding:14px;
-  border-radius:11px;
   background:#111;
   color:#fff;
+  border-radius:10px;
   font-size:16px;
-  font-weight:700;
+  font-weight:bold;
+}
+
+.loginBtn:disabled{
+  opacity:.6;
+  cursor:not-allowed;
 }
 
 #loginError{
@@ -96,6 +101,7 @@ input,textarea,select{
   text-align:center;
   font-size:13px;
   margin-top:14px;
+  line-height:1.5;
 }
 
 /* ================= ADMIN ================= */
@@ -117,9 +123,9 @@ input,textarea,select{
   background:#111;
   color:#fff;
   position:fixed;
-  left:0;
   top:0;
   bottom:0;
+  left:0;
   padding:22px 15px;
   z-index:1000;
 }
@@ -135,7 +141,7 @@ input,textarea,select{
 }
 
 .brand p{
-  color:#aaa;
+  color:#999;
   font-size:12px;
   margin-top:5px;
 }
@@ -243,10 +249,10 @@ input,textarea,select{
   width:42px;
   height:42px;
   border-radius:12px;
+  background:#f1f1f1;
   display:flex;
   align-items:center;
   justify-content:center;
-  background:#f1f1f1;
   font-size:20px;
 }
 
@@ -275,7 +281,6 @@ input,textarea,select{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:10px;
   margin-bottom:18px;
 }
 
@@ -294,7 +299,7 @@ input,textarea,select{
 }
 
 .lightBtn{
-  background:#f3f3f3;
+  background:#f0f0f0;
   color:#111;
   padding:9px 13px;
   border-radius:8px;
@@ -356,13 +361,6 @@ textarea.input{
   border-radius:12px;
   display:none;
   margin-top:8px;
-  border:1px solid #ddd;
-}
-
-.uploadStatus{
-  font-size:13px;
-  color:#777;
-  margin-top:7px;
 }
 
 /* ================= PRODUCTS ================= */
@@ -524,7 +522,7 @@ textarea.input{
   margin-top:15px;
 }
 
-/* ================= SIMPLE CARDS ================= */
+/* ================= SIMPLE ================= */
 
 .simpleCard{
   border:1px solid #eee;
@@ -549,8 +547,6 @@ textarea.input{
   margin-bottom:6px;
 }
 
-/* ================= EMPTY ================= */
-
 .empty{
   text-align:center;
   padding:35px 20px;
@@ -568,6 +564,10 @@ textarea.input{
 /* ================= MOBILE ================= */
 
 .mobileHeader{
+  display:none;
+}
+
+.mobileNav{
   display:none;
 }
 
@@ -653,16 +653,6 @@ textarea.input{
     padding:14px;
   }
 
-}
-
-/* ================= MOBILE NAV ================= */
-
-.mobileNav{
-  display:none;
-}
-
-@media(max-width:600px){
-
   .mobileNav{
     display:flex;
     position:fixed;
@@ -677,7 +667,7 @@ textarea.input{
 
   .mobileNav button{
     background:transparent;
-    color:#bbb;
+    color:#aaa;
     font-size:10px;
     padding:6px;
   }
@@ -697,7 +687,10 @@ textarea.input{
 
 <body>
 
-<!-- ================= LOGIN ================= -->
+
+<!-- =====================================================
+     LOGIN
+===================================================== -->
 
 <div id="loginScreen">
 
@@ -716,6 +709,7 @@ textarea.input{
       type="email"
       class="input"
       placeholder="Admin Email"
+      autocomplete="username"
     >
 
     <input
@@ -723,9 +717,12 @@ textarea.input{
       type="password"
       class="input"
       placeholder="Password"
+      autocomplete="current-password"
     >
 
     <button
+      type="button"
+      id="loginButton"
       class="loginBtn"
       onclick="login()"
     >
@@ -739,20 +736,29 @@ textarea.input{
 </div>
 
 
-<!-- ================= ADMIN ================= -->
+<!-- =====================================================
+     ADMIN PANEL
+===================================================== -->
 
 <div id="adminPanel">
 
 <div class="layout">
+
 
 <!-- SIDEBAR -->
 
 <aside class="sidebar">
 
   <div class="brand">
+
     <h1>NARI FASHION</h1>
-    <p>Admin Dashboard</p>
+
+    <p>
+      Admin Dashboard
+    </p>
+
   </div>
+
 
   <div class="nav">
 
@@ -789,6 +795,7 @@ textarea.input{
 
   </div>
 
+
   <button
     class="logout"
     onclick="logout()"
@@ -803,436 +810,533 @@ textarea.input{
 
 <main class="main">
 
-  <div class="mobileHeader">
 
-    <strong>NARI FASHION</strong>
+<div class="mobileHeader">
+
+  <strong>
+    NARI FASHION
+  </strong>
+
+  <button
+    onclick="logout()"
+    style="
+      background:#222;
+      color:#fff;
+      padding:7px 10px;
+      border-radius:7px;
+    "
+  >
+    Logout
+  </button>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<section
+  id="dashboard"
+  class="section active"
+>
+
+  <div class="topbar">
+
+    <div class="pageTitle">
+
+      <h2>
+        Dashboard
+      </h2>
+
+      <p>
+        NARI FASHION ka overview
+      </p>
+
+    </div>
 
     <button
-      onclick="logout()"
-      style="background:#222;color:#fff;padding:7px 10px;border-radius:7px"
+      class="refreshBtn"
+      onclick="loadAll()"
     >
-      Logout
+      ↻ Refresh
     </button>
 
   </div>
 
 
-  <!-- DASHBOARD -->
+  <div class="stats">
 
-  <section
-    id="dashboard"
-    class="section active"
-  >
+    <div class="statCard">
 
-    <div class="topbar">
+      <div class="statTop">
 
-      <div class="pageTitle">
+        <span>
+          Products
+        </span>
 
-        <h2>Dashboard</h2>
-
-        <p>
-          NARI FASHION ka overview
-        </p>
-
-      </div>
-
-      <button
-        class="refreshBtn"
-        onclick="loadAll()"
-      >
-        ↻ Refresh
-      </button>
-
-    </div>
-
-
-    <div class="stats">
-
-      <div class="statCard">
-
-        <div class="statTop">
-          <span>Products</span>
-          <div class="statIcon">🛍️</div>
+        <div class="statIcon">
+          🛍️
         </div>
 
-        <h3 id="statProducts">0</h3>
-        <p>Total Products</p>
-
       </div>
 
+      <h3 id="statProducts">
+        0
+      </h3>
 
-      <div class="statCard">
-
-        <div class="statTop">
-          <span>Orders</span>
-          <div class="statIcon">📦</div>
-        </div>
-
-        <h3 id="statOrders">0</h3>
-        <p>Total Orders</p>
-
-      </div>
-
-
-      <div class="statCard">
-
-        <div class="statTop">
-          <span>Pending</span>
-          <div class="statIcon">⏳</div>
-        </div>
-
-        <h3 id="statPending">0</h3>
-        <p>Pending Orders</p>
-
-      </div>
-
-
-      <div class="statCard">
-
-        <div class="statTop">
-          <span>Sales</span>
-          <div class="statIcon">₹</div>
-        </div>
-
-        <h3 id="statSales">₹0</h3>
-        <p>Delivered Sales</p>
-
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="cardHeader">
-
-        <h3>Welcome 👋</h3>
-
-      </div>
-
-      <p style="color:#777;font-size:14px">
-        Yahan se tum NARI FASHION ke products,
-        orders, complaints aur customer reviews
-        manage kar sakte ho.
+      <p>
+        Total Products
       </p>
 
     </div>
 
-  </section>
 
+    <div class="statCard">
 
-  <!-- PRODUCTS -->
+      <div class="statTop">
 
-  <section
-    id="products"
-    class="section"
-  >
+        <span>
+          Orders
+        </span>
 
-    <div class="topbar">
-
-      <div class="pageTitle">
-
-        <h2>Products</h2>
-
-        <p>
-          Products add aur manage karo
-        </p>
+        <div class="statIcon">
+          📦
+        </div>
 
       </div>
 
-      <button
-        class="refreshBtn"
-        onclick="loadProducts()"
-      >
-        ↻ Refresh
-      </button>
+      <h3 id="statOrders">
+        0
+      </h3>
+
+      <p>
+        Total Orders
+      </p>
 
     </div>
 
 
-    <div class="card">
+    <div class="statCard">
 
-      <div class="cardHeader">
+      <div class="statTop">
 
-        <h3 id="productFormTitle">
-          Add New Product
-        </h3>
+        <span>
+          Pending
+        </span>
 
-      </div>
-
-      <input
-        type="hidden"
-        id="editProductId"
-      >
-
-      <div class="formGrid">
-
-        <div class="formGroup">
-
-          <label>Product Name</label>
-
-          <input
-            id="productName"
-            class="input"
-            placeholder="Example: Designer Kurti"
-          >
-
-        </div>
-
-
-        <div class="formGroup">
-
-          <label>Category</label>
-
-          <input
-            id="productCategory"
-            class="input"
-            placeholder="Example: Kurti"
-          >
-
-        </div>
-
-
-        <div class="formGroup">
-
-          <label>Price</label>
-
-          <input
-            id="productPrice"
-            type="number"
-            class="input"
-            placeholder="999"
-          >
-
-        </div>
-
-
-        <div class="formGroup">
-
-          <label>Sizes</label>
-
-          <input
-            id="productSizes"
-            class="input"
-            placeholder="S,M,L,XL"
-          >
-
-        </div>
-
-
-        <div class="formGroup full">
-
-          <label>Description</label>
-
-          <textarea
-            id="productDescription"
-            class="input"
-            placeholder="Product description..."
-          ></textarea>
-
-        </div>
-
-
-        <div class="formGroup full">
-
-          <label>Product Image</label>
-
-          <input
-            id="productImage"
-            type="file"
-            accept="image/*"
-            class="input"
-            onchange="previewImage(event)"
-          >
-
-          <img
-            id="imagePreview"
-            class="imagePreview"
-          >
-
-          <div
-            id="uploadStatus"
-            class="uploadStatus"
-          ></div>
-
+        <div class="statIcon">
+          ⏳
         </div>
 
       </div>
 
+      <h3 id="statPending">
+        0
+      </h3>
 
-      <div style="display:flex;gap:9px;flex-wrap:wrap">
+      <p>
+        Pending Orders
+      </p>
 
-        <button
-          class="primaryBtn"
-          onclick="saveProduct()"
+    </div>
+
+
+    <div class="statCard">
+
+      <div class="statTop">
+
+        <span>
+          Sales
+        </span>
+
+        <div class="statIcon">
+          ₹
+        </div>
+
+      </div>
+
+      <h3 id="statSales">
+        ₹0
+      </h3>
+
+      <p>
+        Delivered Sales
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="cardHeader">
+
+      <h3>
+        Welcome 👋
+      </h3>
+
+    </div>
+
+    <p style="color:#777;font-size:14px">
+
+      Yahan se tum NARI FASHION ke
+      products, orders, complaints aur
+      customer reviews manage kar sakte ho.
+
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- PRODUCTS -->
+
+<section
+  id="products"
+  class="section"
+>
+
+  <div class="topbar">
+
+    <div class="pageTitle">
+
+      <h2>
+        Products
+      </h2>
+
+      <p>
+        Products add aur manage karo
+      </p>
+
+    </div>
+
+    <button
+      class="refreshBtn"
+      onclick="loadProducts()"
+    >
+      ↻ Refresh
+    </button>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="cardHeader">
+
+      <h3 id="productFormTitle">
+        Add New Product
+      </h3>
+
+    </div>
+
+
+    <input
+      type="hidden"
+      id="editProductId"
+    >
+
+
+    <div class="formGrid">
+
+
+      <div class="formGroup">
+
+        <label>
+          Product Name
+        </label>
+
+        <input
+          id="productName"
+          class="input"
+          placeholder="Example: Designer Kurti"
         >
-          Save Product
-        </button>
 
-        <button
-          class="lightBtn"
-          onclick="resetProductForm()"
+      </div>
+
+
+      <div class="formGroup">
+
+        <label>
+          Category
+        </label>
+
+        <input
+          id="productCategory"
+          class="input"
+          placeholder="Example: Kurti"
         >
-          Clear
-        </button>
+
+      </div>
+
+
+      <div class="formGroup">
+
+        <label>
+          Price
+        </label>
+
+        <input
+          id="productPrice"
+          type="number"
+          class="input"
+          placeholder="999"
+        >
+
+      </div>
+
+
+      <div class="formGroup">
+
+        <label>
+          Sizes
+        </label>
+
+        <input
+          id="productSizes"
+          class="input"
+          placeholder="S,M,L,XL"
+        >
+
+      </div>
+
+
+      <div class="formGroup full">
+
+        <label>
+          Description
+        </label>
+
+        <textarea
+          id="productDescription"
+          class="input"
+          placeholder="Product description..."
+        ></textarea>
+
+      </div>
+
+
+      <div class="formGroup full">
+
+        <label>
+          Product Image
+        </label>
+
+        <input
+          id="productImage"
+          type="file"
+          accept="image/*"
+          class="input"
+          onchange="previewImage(event)"
+        >
+
+        <img
+          id="imagePreview"
+          class="imagePreview"
+        >
+
+        <div
+          id="uploadStatus"
+          style="
+            color:#777;
+            font-size:13px;
+          "
+        ></div>
 
       </div>
 
     </div>
 
 
-    <div class="card">
-
-      <div class="cardHeader">
-
-        <h3>All Products</h3>
-
-      </div>
-
-      <div
-        id="productList"
-        class="productGrid"
-      >
-        <div class="loading">
-          Loading...
-        </div>
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- ORDERS -->
-
-  <section
-    id="orders"
-    class="section"
-  >
-
-    <div class="topbar">
-
-      <div class="pageTitle">
-
-        <h2>Orders</h2>
-
-        <p>
-          Customer orders manage karo
-        </p>
-
-      </div>
+    <div
+      style="
+        display:flex;
+        gap:9px;
+        flex-wrap:wrap;
+      "
+    >
 
       <button
-        class="refreshBtn"
-        onclick="loadOrders()"
+        class="primaryBtn"
+        onclick="saveProduct()"
       >
-        ↻ Refresh
+        Save Product
+      </button>
+
+      <button
+        class="lightBtn"
+        onclick="resetProductForm()"
+      >
+        Clear
       </button>
 
     </div>
 
+  </div>
 
-    <div class="card">
 
-      <div id="orderList">
+  <div class="card">
 
-        <div class="loading">
-          Loading orders...
-        </div>
+    <div class="cardHeader">
 
+      <h3>
+        All Products
+      </h3>
+
+    </div>
+
+    <div
+      id="productList"
+      class="productGrid"
+    >
+      <div class="loading">
+        Loading...
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ORDERS -->
+
+<section
+  id="orders"
+  class="section"
+>
+
+  <div class="topbar">
+
+    <div class="pageTitle">
+
+      <h2>
+        Orders
+      </h2>
+
+      <p>
+        Customer orders manage karo
+      </p>
+
+    </div>
+
+    <button
+      class="refreshBtn"
+      onclick="loadOrders()"
+    >
+      ↻ Refresh
+    </button>
+
+  </div>
+
+
+  <div class="card">
+
+    <div id="orderList">
+
+      <div class="loading">
+        Loading orders...
       </div>
 
     </div>
 
-  </section>
+  </div>
+
+</section>
 
 
-  <!-- COMPLAINTS -->
+<!-- COMPLAINTS -->
 
-  <section
-    id="complaints"
-    class="section"
-  >
+<section
+  id="complaints"
+  class="section"
+>
 
-    <div class="topbar">
+  <div class="topbar">
 
-      <div class="pageTitle">
+    <div class="pageTitle">
 
-        <h2>Complaints</h2>
+      <h2>
+        Complaints
+      </h2>
 
-        <p>
-          Customer support requests
-        </p>
-
-      </div>
-
-      <button
-        class="refreshBtn"
-        onclick="loadComplaints()"
-      >
-        ↻ Refresh
-      </button>
+      <p>
+        Customer support requests
+      </p>
 
     </div>
 
+    <button
+      class="refreshBtn"
+      onclick="loadComplaints()"
+    >
+      ↻ Refresh
+    </button>
 
-    <div class="card">
-
-      <div id="complaintList">
-
-        <div class="loading">
-          Loading...
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
+  </div>
 
 
-  <!-- REVIEWS -->
+  <div class="card">
 
-  <section
-    id="reviews"
-    class="section"
-  >
+    <div id="complaintList">
 
-    <div class="topbar">
-
-      <div class="pageTitle">
-
-        <h2>Reviews</h2>
-
-        <p>
-          Customer product reviews
-        </p>
-
-      </div>
-
-      <button
-        class="refreshBtn"
-        onclick="loadReviews()"
-      >
-        ↻ Refresh
-      </button>
-
-    </div>
-
-
-    <div class="card">
-
-      <div id="reviewList">
-
-        <div class="loading">
-          Loading...
-        </div>
-
+      <div class="loading">
+        Loading...
       </div>
 
     </div>
 
-  </section>
+  </div>
+
+</section>
+
+
+<!-- REVIEWS -->
+
+<section
+  id="reviews"
+  class="section"
+>
+
+  <div class="topbar">
+
+    <div class="pageTitle">
+
+      <h2>
+        Reviews
+      </h2>
+
+      <p>
+        Customer product reviews
+      </p>
+
+    </div>
+
+    <button
+      class="refreshBtn"
+      onclick="loadReviews()"
+    >
+      ↻ Refresh
+    </button>
+
+  </div>
+
+
+  <div class="card">
+
+    <div id="reviewList">
+
+      <div class="loading">
+        Loading...
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
 
 </main>
 
@@ -1247,31 +1351,36 @@ textarea.input{
     class="active"
     onclick="openMobile('dashboard',this)"
   >
-    📊<br>Home
+    📊<br>
+    Home
   </button>
 
   <button
     onclick="openMobile('products',this)"
   >
-    🛍️<br>Products
+    🛍️<br>
+    Products
   </button>
 
   <button
     onclick="openMobile('orders',this)"
   >
-    📦<br>Orders
+    📦<br>
+    Orders
   </button>
 
   <button
     onclick="openMobile('complaints',this)"
   >
-    💬<br>Support
+    💬<br>
+    Support
   </button>
 
   <button
     onclick="openMobile('reviews',this)"
   >
-    ⭐<br>Reviews
+    ⭐<br>
+    Reviews
   </button>
 
 </div>
@@ -1281,168 +1390,343 @@ textarea.input{
 
 <script>
 
-/* ================= FIREBASE ================= */
+/* =====================================================
+   FIREBASE
+===================================================== */
 
 const firebaseConfig = {
-  apiKey:"AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
-  authDomain:"nari-fashion-947a7.firebaseapp.com",
-  projectId:"nari-fashion-947a7",
-  storageBucket:"nari-fashion-947a7.firebasestorage.app",
-  messagingSenderId:"529668256601",
-  appId:"1:529668256601:web:b3cc39c8ea7c783133d248",
-  measurementId:"G-6QLMB312CM"
+
+  apiKey:
+  "AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
+
+  authDomain:
+  "nari-fashion-947a7.firebaseapp.com",
+
+  projectId:
+  "nari-fashion-947a7",
+
+  storageBucket:
+  "nari-fashion-947a7.firebasestorage.app",
+
+  messagingSenderId:
+  "529668256601",
+
+  appId:
+  "1:529668256601:web:b3cc39c8ea7c783133d248",
+
+  measurementId:
+  "G-6QLMB312CM"
+
 };
 
-firebase.initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
-const db = firebase.firestore();
+/* Initialize Firebase */
+
+if(!firebase.apps.length){
+
+  firebase.initializeApp(firebaseConfig);
+
+}
+
+
+const auth =
+  firebase.auth();
+
+const db =
+  firebase.firestore();
+
 
 const ADMIN_UID =
-"GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
+  "GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
 
 
-/* ================= CLOUDINARY ================= */
+/* =====================================================
+   CLOUDINARY
+===================================================== */
 
 const CLOUDINARY_CLOUD_NAME =
-"ctw8rkyn";
+  "ctw8rkyn";
 
 const CLOUDINARY_UPLOAD_PRESET =
-"nari_fashion";
+  "nari_fashion";
 
 const CLOUDINARY_UPLOAD_URL =
-"https://api.cloudinary.com/v1_1/" +
-CLOUDINARY_CLOUD_NAME +
-"/image/upload";
+  "https://api.cloudinary.com/v1_1/" +
+  CLOUDINARY_CLOUD_NAME +
+  "/image/upload";
 
 
-let products=[];
-let selectedImageFile=null;
-let existingImageUrl="";
+let products = [];
+
+let selectedImageFile = null;
+
+let existingImageUrl = "";
 
 
-/* ================= AUTH ================= */
+/* =====================================================
+   AUTH STATE
+===================================================== */
 
 auth.onAuthStateChanged(function(user){
 
-  if(user && user.uid===ADMIN_UID){
+  console.log(
+    "Auth state:",
+    user ? user.uid : "No user"
+  );
 
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("adminPanel").style.display="block";
+
+  if(user && user.uid === ADMIN_UID){
+
+    document.getElementById(
+      "loginScreen"
+    ).style.display = "none";
+
+
+    document.getElementById(
+      "adminPanel"
+    ).style.display = "block";
+
 
     loadAll();
 
-  }else{
+  }
 
-    document.getElementById("loginScreen").style.display="flex";
-    document.getElementById("adminPanel").style.display="none";
+  else{
+
+    document.getElementById(
+      "loginScreen"
+    ).style.display = "flex";
+
+
+    document.getElementById(
+      "adminPanel"
+    ).style.display = "none";
 
   }
 
 });
 
 
-/* ================= LOGIN ================= */
+/* =====================================================
+   LOGIN
+===================================================== */
 
 async function login(){
 
+  const emailElement =
+    document.getElementById("email");
+
+  const passwordElement =
+    document.getElementById("password");
+
+  const errorElement =
+    document.getElementById("loginError");
+
+  const buttonElement =
+    document.getElementById("loginButton");
+
+
   const email =
-  document.getElementById("email").value.trim();
+    emailElement.value.trim();
 
   const password =
-  document.getElementById("password").value;
+    passwordElement.value;
 
-  const error =
-  document.getElementById("loginError");
 
-  error.textContent="";
+  errorElement.textContent = "";
 
-  if(!email || !password){
 
-    error.textContent=
-    "Email aur password bharna hai.";
+  if(!email){
+
+    errorElement.textContent =
+      "Email enter karo.";
+
+    emailElement.focus();
 
     return;
+
   }
+
+
+  if(!password){
+
+    errorElement.textContent =
+      "Password enter karo.";
+
+    passwordElement.focus();
+
+    return;
+
+  }
+
 
   try{
 
+    buttonElement.disabled = true;
+
+    buttonElement.textContent =
+      "Logging in...";
+
+
     const result =
-    await auth.signInWithEmailAndPassword(
-      email,
-      password
+      await auth.signInWithEmailAndPassword(
+        email,
+        password
+      );
+
+
+    console.log(
+      "Login UID:",
+      result.user.uid
     );
 
-    if(result.user.uid!==ADMIN_UID){
+
+    if(result.user.uid !== ADMIN_UID){
 
       await auth.signOut();
 
-      error.textContent=
-      "Ye account admin nahi hai.";
+      errorElement.textContent =
+        "Ye account admin nahi hai.";
+
+      return;
 
     }
 
-  }catch(err){
 
-    console.error(err);
+    errorElement.textContent = "";
 
-    error.textContent=
-    err.message || "Login failed.";
+
+  }
+
+  catch(error){
+
+    console.error(
+      "Firebase Login Error:",
+      error
+    );
+
+
+    if(error.code ===
+       "auth/invalid-credential"){
+
+      errorElement.textContent =
+        "Email ya password galat hai.";
+
+    }
+
+    else if(error.code ===
+            "auth/user-not-found"){
+
+      errorElement.textContent =
+        "Ye email Firebase Auth mein nahi hai.";
+
+    }
+
+    else if(error.code ===
+            "auth/wrong-password"){
+
+      errorElement.textContent =
+        "Password galat hai.";
+
+    }
+
+    else{
+
+      errorElement.textContent =
+        error.message ||
+        "Login failed.";
+
+    }
+
+  }
+
+  finally{
+
+    buttonElement.disabled = false;
+
+    buttonElement.textContent =
+      "Login";
 
   }
 
 }
 
 
-/* ================= LOGOUT ================= */
+/* =====================================================
+   LOGOUT
+===================================================== */
 
 async function logout(){
 
-  await auth.signOut();
+  try{
+
+    await auth.signOut();
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+  }
 
 }
 
 
-/* ================= NAVIGATION ================= */
+/* =====================================================
+   NAVIGATION
+===================================================== */
 
 function openSection(id,button){
 
-  document.querySelectorAll(".section")
-  .forEach(function(section){
+  document.querySelectorAll(
+    ".section"
+  ).forEach(function(section){
 
-    section.classList.remove("active");
+    section.classList.remove(
+      "active"
+    );
 
   });
+
 
   document.getElementById(id)
-  .classList.add("active");
+    .classList.add("active");
 
 
-  document.querySelectorAll(".nav button")
-  .forEach(function(btn){
+  document.querySelectorAll(
+    ".nav button"
+  ).forEach(function(btn){
 
-    btn.classList.remove("active");
+    btn.classList.remove(
+      "active"
+    );
 
   });
 
+
   if(button){
-    button.classList.add("active");
+
+    button.classList.add(
+      "active"
+    );
+
   }
 
 
-  if(id==="products"){
+  if(id === "products"){
     loadProducts();
   }
 
-  if(id==="orders"){
+  if(id === "orders"){
     loadOrders();
   }
 
-  if(id==="complaints"){
+  if(id === "complaints"){
     loadComplaints();
   }
 
-  if(id==="reviews"){
+  if(id === "reviews"){
     loadReviews();
   }
 
@@ -1453,160 +1737,248 @@ function openMobile(id,button){
 
   openSection(id,null);
 
-  document.querySelectorAll(".mobileNav button")
-  .forEach(function(btn){
 
-    btn.classList.remove("active");
+  document.querySelectorAll(
+    ".mobileNav button"
+  ).forEach(function(btn){
+
+    btn.classList.remove(
+      "active"
+    );
 
   });
 
-  button.classList.add("active");
+
+  button.classList.add(
+    "active"
+  );
 
 }
 
 
-/* ================= LOAD ALL ================= */
+/* =====================================================
+   LOAD ALL
+===================================================== */
 
 function loadAll(){
 
   loadProducts();
+
   loadOrders();
+
   loadComplaints();
+
   loadReviews();
 
 }
 
 
-/* ================= IMAGE PREVIEW ================= */
+/* =====================================================
+   IMAGE PREVIEW
+===================================================== */
 
 function previewImage(event){
 
-  const file=event.target.files[0];
+  const file =
+    event.target.files[0];
 
-  if(!file)return;
+  if(!file){
+    return;
+  }
 
-  selectedImageFile=file;
 
-  const preview=
-  document.getElementById("imagePreview");
+  selectedImageFile =
+    file;
 
-  preview.src=
-  URL.createObjectURL(file);
 
-  preview.style.display="block";
+  const preview =
+    document.getElementById(
+      "imagePreview"
+    );
+
+
+  preview.src =
+    URL.createObjectURL(file);
+
+
+  preview.style.display =
+    "block";
 
 }
 
 
-/* ================= COMPRESS IMAGE ================= */
+/* =====================================================
+   IMAGE COMPRESS
+===================================================== */
 
 function compressImage(file){
 
-  return new Promise(function(resolve,reject){
+  return new Promise(
+    function(resolve,reject){
 
-    const reader=new FileReader();
+      const reader =
+        new FileReader();
 
-    const img=new Image();
+      const img =
+        new Image();
 
-    const canvas=document.createElement("canvas");
-
-    reader.onload=function(e){
-
-      img.onload=function(){
-
-        let width=img.width;
-        let height=img.height;
-
-        const max=1200;
-
-        if(width>max || height>max){
-
-          if(width>height){
-
-            height=height*max/width;
-            width=max;
-
-          }else{
-
-            width=width*max/height;
-            height=max;
-
-          }
-
-        }
-
-        canvas.width=width;
-        canvas.height=height;
-
-        const ctx=canvas.getContext("2d");
-
-        ctx.drawImage(
-          img,
-          0,
-          0,
-          width,
-          height
+      const canvas =
+        document.createElement(
+          "canvas"
         );
 
-        canvas.toBlob(function(blob){
 
-          resolve(blob);
+      reader.onload =
+        function(e){
 
-        },"image/jpeg",.82);
+          img.onload =
+            function(){
 
-      };
+              let width =
+                img.width;
 
-      img.onerror=reject;
+              let height =
+                img.height;
 
-      img.src=e.target.result;
 
-    };
+              const max =
+                1200;
 
-    reader.onerror=reject;
 
-    reader.readAsDataURL(file);
+              if(
+                width > max ||
+                height > max
+              ){
 
-  });
+                if(width > height){
+
+                  height =
+                    height * max / width;
+
+                  width = max;
+
+                }
+
+                else{
+
+                  width =
+                    width * max / height;
+
+                  height = max;
+
+                }
+
+              }
+
+
+              canvas.width =
+                width;
+
+              canvas.height =
+                height;
+
+
+              const ctx =
+                canvas.getContext(
+                  "2d"
+                );
+
+
+              ctx.drawImage(
+                img,
+                0,
+                0,
+                width,
+                height
+              );
+
+
+              canvas.toBlob(
+                function(blob){
+
+                  resolve(blob);
+
+                },
+                "image/jpeg",
+                .82
+              );
+
+            };
+
+
+          img.onerror =
+            reject;
+
+
+          img.src =
+            e.target.result;
+
+        };
+
+
+      reader.onerror =
+        reject;
+
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
 
 }
 
 
-/* ================= UPLOAD ================= */
+/* =====================================================
+   CLOUDINARY UPLOAD
+===================================================== */
 
 async function uploadImage(file){
 
-  const status=
-  document.getElementById("uploadStatus");
+  const status =
+    document.getElementById(
+      "uploadStatus"
+    );
 
-  status.textContent=
-  "Image upload ho rahi hai...";
 
-  const compressed=
-  await compressImage(file);
+  status.textContent =
+    "Image upload ho rahi hai...";
 
-  const formData=new FormData();
+
+  const compressed =
+    await compressImage(file);
+
+
+  const formData =
+    new FormData();
+
 
   formData.append(
     "file",
     compressed
   );
 
+
   formData.append(
     "upload_preset",
     CLOUDINARY_UPLOAD_PRESET
   );
 
-  const response=
-  await fetch(
-    CLOUDINARY_UPLOAD_URL,
-    {
-      method:"POST",
-      body:formData
-    }
-  );
 
-  const data=
-  await response.json();
+  const response =
+    await fetch(
+      CLOUDINARY_UPLOAD_URL,
+      {
+        method:"POST",
+        body:formData
+      }
+    );
+
+
+  const data =
+    await response.json();
+
 
   if(!response.ok){
 
@@ -1617,62 +1989,88 @@ async function uploadImage(file){
 
   }
 
-  status.textContent=
-  "Image uploaded ✓";
+
+  status.textContent =
+    "Image uploaded ✓";
+
 
   return data.secure_url;
 
 }
 
 
-/* ================= SAVE PRODUCT ================= */
+/* =====================================================
+   SAVE PRODUCT
+===================================================== */
 
 async function saveProduct(){
 
-  const name=
-  document.getElementById("productName")
-  .value.trim();
+  const name =
+    document.getElementById(
+      "productName"
+    ).value.trim();
 
-  const category=
-  document.getElementById("productCategory")
-  .value.trim();
 
-  const price=
-  Number(
-    document.getElementById("productPrice")
-    .value
-  );
+  const category =
+    document.getElementById(
+      "productCategory"
+    ).value.trim();
 
-  const sizesText=
-  document.getElementById("productSizes")
-  .value.trim();
 
-  const description=
-  document.getElementById("productDescription")
-  .value.trim();
+  const price =
+    Number(
+      document.getElementById(
+        "productPrice"
+      ).value
+    );
 
-  const editId=
-  document.getElementById("editProductId")
-  .value.trim();
+
+  const sizesText =
+    document.getElementById(
+      "productSizes"
+    ).value.trim();
+
+
+  const description =
+    document.getElementById(
+      "productDescription"
+    ).value.trim();
+
+
+  const editId =
+    document.getElementById(
+      "editProductId"
+    ).value.trim();
 
 
   if(!name){
 
-    alert("Product name bharna hai.");
+    alert(
+      "Product name bharna hai."
+    );
+
     return;
 
   }
+
 
   if(!category){
 
-    alert("Category bharna hai.");
+    alert(
+      "Category bharna hai."
+    );
+
     return;
 
   }
 
-  if(!price || price<=0){
 
-    alert("Valid price bharna hai.");
+  if(!price || price <= 0){
+
+    alert(
+      "Valid price bharna hai."
+    );
+
     return;
 
   }
@@ -1680,6 +2078,1415 @@ async function saveProduct(){
 
   try{
 
-    let imageUrl=existingImageUrl;
+    let imageUrl =
+      existingImageUrl;
 
-   
+
+    if(selectedImageFile){
+
+      imageUrl =
+        await uploadImage(
+          selectedImageFile
+        );
+
+    }
+
+
+    if(!imageUrl){
+
+      alert(
+        "Product image select karo."
+      );
+
+      return;
+
+    }
+
+
+    const sizes =
+      sizesText
+      ? sizesText
+        .split(",")
+        .map(function(x){
+          return x.trim();
+        })
+        .filter(Boolean)
+      : [];
+
+
+    const data = {
+
+      name:name,
+
+      category:category,
+
+      price:price,
+
+      sizes:sizes,
+
+      description:description,
+
+      image:imageUrl,
+
+      imageUrl:imageUrl,
+
+      updatedAt:
+        firebase.firestore
+        .FieldValue
+        .serverTimestamp()
+
+    };
+
+
+    if(editId){
+
+      await db
+        .collection("products")
+        .doc(editId)
+        .update(data);
+
+
+      alert(
+        "Product update ho gaya ✓"
+      );
+
+    }
+
+    else{
+
+      data.createdAt =
+        firebase.firestore
+        .FieldValue
+        .serverTimestamp();
+
+
+      await db
+        .collection("products")
+        .add(data);
+
+
+      alert(
+        "Product add ho gaya ✓"
+      );
+
+    }
+
+
+    resetProductForm();
+
+    loadProducts();
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    alert(
+      "Product save nahi hua:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   PRODUCTS
+===================================================== */
+
+async function loadProducts(){
+
+  const list =
+    document.getElementById(
+      "productList"
+    );
+
+
+  list.innerHTML =
+    '<div class="loading">Loading...</div>';
+
+
+  try{
+
+    const snapshot =
+      await db
+      .collection("products")
+      .get();
+
+
+    products = [];
+
+
+    snapshot.forEach(
+      function(doc){
+
+        products.push({
+
+          id:doc.id,
+
+          ...doc.data()
+
+        });
+
+      }
+    );
+
+
+    renderProducts();
+
+
+    document.getElementById(
+      "statProducts"
+    ).textContent =
+      products.length;
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    list.innerHTML =
+      '<div class="empty">Products load nahi ho paaye.</div>';
+
+  }
+
+}
+
+
+function renderProducts(){
+
+  const list =
+    document.getElementById(
+      "productList"
+    );
+
+
+  if(products.length === 0){
+
+    list.innerHTML =
+      '<div class="empty">Abhi koi product nahi hai.</div>';
+
+    return;
+
+  }
+
+
+  list.innerHTML =
+    products.map(
+      function(product){
+
+        const image =
+          product.image ||
+          product.imageUrl ||
+          "https://via.placeholder.com/500";
+
+
+        const sizes =
+          Array.isArray(
+            product.sizes
+          )
+          ? product.sizes.join(", ")
+          : product.sizes || "-";
+
+
+        return `
+
+          <div class="productCard">
+
+            <img
+              class="productImage"
+              src="${escapeHtml(image)}"
+              onerror="this.src='https://via.placeholder.com/500'"
+            >
+
+            <div class="productBody">
+
+              <h3>
+                ${escapeHtml(
+                  product.name ||
+                  "Product"
+                )}
+              </h3>
+
+              <div class="productPrice">
+                ₹${Number(
+                  product.price || 0
+                )}
+              </div>
+
+              <div class="productCategory">
+                ${escapeHtml(
+                  product.category || ""
+                )}
+              </div>
+
+              <div class="productSizes">
+                <b>Sizes:</b>
+                ${escapeHtml(sizes)}
+              </div>
+
+              <div class="productActions">
+
+                <button
+                  class="lightBtn"
+                  onclick="editProduct('${product.id}')"
+                >
+                  Edit
+                </button>
+
+                <button
+                  class="redBtn"
+                  onclick="deleteProduct('${product.id}')"
+                >
+                  Delete
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    ).join("");
+
+}
+
+
+function editProduct(id){
+
+  const product =
+    products.find(
+      function(item){
+        return item.id === id;
+      }
+    );
+
+
+  if(!product){
+    return;
+  }
+
+
+  document.getElementById(
+    "editProductId"
+  ).value =
+    product.id;
+
+
+  document.getElementById(
+    "productName"
+  ).value =
+    product.name || "";
+
+
+  document.getElementById(
+    "productCategory"
+  ).value =
+    product.category || "";
+
+
+  document.getElementById(
+    "productPrice"
+  ).value =
+    product.price || "";
+
+
+  document.getElementById(
+    "productDescription"
+  ).value =
+    product.description || "";
+
+
+  document.getElementById(
+    "productSizes"
+  ).value =
+    Array.isArray(product.sizes)
+    ? product.sizes.join(",")
+    : product.sizes || "";
+
+
+  existingImageUrl =
+    product.image ||
+    product.imageUrl ||
+    "";
+
+
+  selectedImageFile =
+    null;
+
+
+  const preview =
+    document.getElementById(
+      "imagePreview"
+    );
+
+
+  if(existingImageUrl){
+
+    preview.src =
+      existingImageUrl;
+
+    preview.style.display =
+      "block";
+
+  }
+
+
+  document.getElementById(
+    "productFormTitle"
+  ).textContent =
+    "Edit Product";
+
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+}
+
+
+async function deleteProduct(id){
+
+  if(!confirm(
+    "Kya tum ye product delete karna chahte ho?"
+  )){
+    return;
+  }
+
+
+  try{
+
+    await db
+      .collection("products")
+      .doc(id)
+      .delete();
+
+
+    alert(
+      "Product delete ho gaya."
+    );
+
+
+    loadProducts();
+
+  }
+
+  catch(error){
+
+    alert(
+      "Delete nahi hua:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+function resetProductForm(){
+
+  document.getElementById(
+    "editProductId"
+  ).value = "";
+
+
+  document.getElementById(
+    "productName"
+  ).value = "";
+
+
+  document.getElementById(
+    "productCategory"
+  ).value = "";
+
+
+  document.getElementById(
+    "productPrice"
+  ).value = "";
+
+
+  document.getElementById(
+    "productSizes"
+  ).value = "";
+
+
+  document.getElementById(
+    "productDescription"
+  ).value = "";
+
+
+  document.getElementById(
+    "productImage"
+  ).value = "";
+
+
+  document.getElementById(
+    "uploadStatus"
+  ).textContent = "";
+
+
+  document.getElementById(
+    "imagePreview"
+  ).style.display = "none";
+
+
+  document.getElementById(
+    "imagePreview"
+  ).src = "";
+
+
+  selectedImageFile =
+    null;
+
+
+  existingImageUrl =
+    "";
+
+
+  document.getElementById(
+    "productFormTitle"
+  ).textContent =
+    "Add New Product";
+
+}
+
+
+/* =====================================================
+   ORDERS
+===================================================== */
+
+async function loadOrders(){
+
+  const list =
+    document.getElementById(
+      "orderList"
+    );
+
+
+  list.innerHTML =
+    '<div class="loading">Loading orders...</div>';
+
+
+  try{
+
+    const snapshot =
+      await db
+      .collection("orders")
+      .get();
+
+
+    const orders = [];
+
+
+    snapshot.forEach(
+      function(doc){
+
+        orders.push({
+
+          id:doc.id,
+
+          ...doc.data()
+
+        });
+
+      }
+    );
+
+
+    orders.sort(
+      function(a,b){
+
+        const aTime =
+          a.createdAt?.toMillis
+          ? a.createdAt.toMillis()
+          : 0;
+
+
+        const bTime =
+          b.createdAt?.toMillis
+          ? b.createdAt.toMillis()
+          : 0;
+
+
+        return bTime - aTime;
+
+      }
+    );
+
+
+    renderOrders(orders);
+
+    updateOrderStats(orders);
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    list.innerHTML =
+      '<div class="empty">Orders load nahi ho paaye.</div>';
+
+  }
+
+}
+
+
+function renderOrders(orders){
+
+  const list =
+    document.getElementById(
+      "orderList"
+    );
+
+
+  if(orders.length === 0){
+
+    list.innerHTML =
+      '<div class="empty">Abhi koi order nahi hai.</div>';
+
+    return;
+
+  }
+
+
+  list.innerHTML =
+    orders.map(
+      function(order){
+
+        const status =
+          order.status ||
+          "pending";
+
+
+        const items =
+          Array.isArray(order.items)
+          ? order.items
+          : [];
+
+
+        const itemsHtml =
+          items.length
+
+          ? items.map(
+              function(item){
+
+                const name =
+                  item.name ||
+                  item.productName ||
+                  "Product";
+
+
+                const qty =
+                  Number(
+                    item.quantity ||
+                    item.qty ||
+                    1
+                  );
+
+
+                const price =
+                  Number(
+                    item.price || 0
+                  );
+
+
+                return `
+
+                  <div class="itemRow">
+
+                    <span>
+                      ${escapeHtml(name)}
+                      × ${qty}
+                    </span>
+
+                    <b>
+                      ₹${price * qty}
+                    </b>
+
+                  </div>
+
+                `;
+
+              }
+            ).join("")
+
+          : "<p>No item details</p>";
+
+
+        let actions = "";
+
+
+        if(status === "pending"){
+
+          actions += `
+
+            <button
+              class="orangeBtn"
+              onclick="acceptOrder('${order.id}')"
+            >
+              ✓ Accept Order
+            </button>
+
+          `;
+
+        }
+
+
+        if(status === "processing"){
+
+          actions += `
+
+            <button
+              class="greenBtn"
+              onclick="deliverOrder('${order.id}')"
+            >
+              ✓ Mark Delivered
+            </button>
+
+          `;
+
+        }
+
+
+        if(
+          status !== "delivered" &&
+          status !== "cancelled"
+        ){
+
+          actions += `
+
+            <button
+              class="redBtn"
+              onclick="cancelOrderAdmin('${order.id}')"
+            >
+              Cancel
+            </button>
+
+          `;
+
+        }
+
+
+        actions += `
+
+          <button
+            class="lightBtn"
+            onclick="deleteOrder('${order.id}')"
+          >
+            Delete
+          </button>
+
+        `;
+
+
+        return `
+
+          <div class="orderCard">
+
+            <div class="orderHeader">
+
+              <div>
+
+                <div class="orderNumber">
+                  Order #${escapeHtml(
+                    order.id.slice(-8)
+                  )}
+                </div>
+
+                <div class="orderId">
+                  ${escapeHtml(order.id)}
+                </div>
+
+              </div>
+
+              <span
+                class="status ${status}"
+              >
+                ${escapeHtml(
+                  status.toUpperCase()
+                )}
+              </span>
+
+            </div>
+
+
+            <div class="orderInfo">
+
+              <div class="infoBox">
+
+                <h4>
+                  👤 Customer
+                </h4>
+
+                <p>
+
+                  <b>Name:</b>
+                  ${escapeHtml(
+                    order.customerName || "-"
+                  )}
+
+                  <br>
+
+                  <b>Phone:</b>
+                  ${escapeHtml(
+                    order.customerPhone || "-"
+                  )}
+
+                  <br>
+
+                  <b>Address:</b>
+                  ${escapeHtml(
+                    order.customerAddress || "-"
+                  )}
+
+                </p>
+
+              </div>
+
+
+              <div class="infoBox">
+
+                <h4>
+                  💳 Order Info
+                </h4>
+
+                <p>
+
+                  <b>Payment:</b>
+                  ${escapeHtml(
+                    order.paymentMethod || "-"
+                  )}
+
+                  <br>
+
+                  <b>Date:</b>
+                  ${escapeHtml(
+                    formatDate(
+                      order.createdAt
+                    )
+                  )}
+
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="items">
+
+              <b>
+                🛍️ Items
+              </b>
+
+              ${itemsHtml}
+
+              <div class="total">
+                Total:
+                ₹${Number(
+                  order.total || 0
+                )}
+              </div>
+
+            </div>
+
+
+            <div class="orderActions">
+
+              ${actions}
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    ).join("");
+
+}
+
+
+/* =====================================================
+   ACCEPT ORDER
+   IMPORTANT:
+   update() preserves customerUid
+===================================================== */
+
+async function acceptOrder(orderId){
+
+  if(!confirm(
+    "Kya tum is order ko accept karna chahte ho?"
+  )){
+    return;
+  }
+
+
+  try{
+
+    await db
+      .collection("orders")
+      .doc(orderId)
+      .update({
+
+        status:"processing",
+
+        updatedAt:
+          firebase.firestore
+          .FieldValue
+          .serverTimestamp()
+
+      });
+
+
+    alert(
+      "Order Processing mein chala gaya ✓"
+    );
+
+
+    loadOrders();
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    alert(
+      "Order update nahi hua:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   DELIVER ORDER
+===================================================== */
+
+async function deliverOrder(orderId){
+
+  if(!confirm(
+    "Kya ye order delivered ho gaya hai?"
+  )){
+    return;
+  }
+
+
+  try{
+
+    await db
+      .collection("orders")
+      .doc(orderId)
+      .update({
+
+        status:"delivered",
+
+        updatedAt:
+          firebase.firestore
+          .FieldValue
+          .serverTimestamp()
+
+      });
+
+
+    alert(
+      "Order Delivered mark ho gaya ✓"
+    );
+
+
+    loadOrders();
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    alert(
+      "Order update nahi hua:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   CANCEL ORDER
+===================================================== */
+
+async function cancelOrderAdmin(orderId){
+
+  if(!confirm(
+    "Kya tum ye order cancel karna chahte ho?"
+  )){
+    return;
+  }
+
+
+  try{
+
+    await db
+      .collection("orders")
+      .doc(orderId)
+      .update({
+
+        status:"cancelled",
+
+        cancelledBy:"admin",
+
+        cancelledAt:
+          firebase.firestore
+          .FieldValue
+          .serverTimestamp(),
+
+        updatedAt:
+          firebase.firestore
+          .FieldValue
+          .serverTimestamp()
+
+      });
+
+
+    alert(
+      "Order cancelled ✓"
+    );
+
+
+    loadOrders();
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    alert(
+      "Order cancel nahi hua:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   DELETE ORDER
+===================================================== */
+
+async function deleteOrder(orderId){
+
+  if(!confirm(
+    "Ye order permanently delete karna hai?"
+  )){
+    return;
+  }
+
+
+  try{
+
+    await db
+      .collection("orders")
+      .doc(orderId)
+      .delete();
+
+
+    alert(
+      "Order delete ho gaya."
+    );
+
+
+    loadOrders();
+
+  }
+
+  catch(error){
+
+    alert(
+      "Order delete nahi hua:\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =====================================================
+   ORDER STATS
+===================================================== */
+
+function updateOrderStats(orders){
+
+  document.getElementById(
+    "statOrders"
+  ).textContent =
+    orders.length;
+
+
+  const pending =
+    orders.filter(
+      function(order){
+
+        return order.status ===
+          "pending";
+
+      }
+    ).length;
+
+
+  document.getElementById(
+    "statPending"
+  ).textContent =
+    pending;
+
+
+  const sales =
+    orders
+    .filter(
+      function(order){
+
+        return order.status ===
+          "delivered";
+
+      }
+    )
+    .reduce(
+      function(total,order){
+
+        return total +
+          Number(
+            order.total || 0
+          );
+
+      },
+      0
+    );
+
+
+  document.getElementById(
+    "statSales"
+  ).textContent =
+    "₹" + sales;
+
+}
+
+
+/* =====================================================
+   COMPLAINTS
+===================================================== */
+
+async function loadComplaints(){
+
+  const list =
+    document.getElementById(
+      "complaintList"
+    );
+
+
+  list.innerHTML =
+    '<div class="loading">Loading...</div>';
+
+
+  try{
+
+    const snapshot =
+      await db
+      .collection("supportTickets")
+      .get();
+
+
+    if(snapshot.empty){
+
+      list.innerHTML =
+        '<div class="empty">Abhi koi complaint nahi hai.</div>';
+
+      return;
+
+    }
+
+
+    let html = "";
+
+
+    snapshot.forEach(
+      function(doc){
+
+        const data =
+          doc.data();
+
+
+        html += `
+
+          <div class="simpleCard">
+
+            <h3>
+              ${escapeHtml(
+                data.subject ||
+                data.title ||
+                "Customer Complaint"
+              )}
+            </h3>
+
+            <p>
+
+              <b>Name:</b>
+              ${escapeHtml(
+                data.customerName || "-"
+              )}
+
+              <br>
+
+              <b>Phone:</b>
+              ${escapeHtml(
+                data.customerPhone || "-"
+              )}
+
+              <br><br>
+
+              ${escapeHtml(
+                data.message ||
+                data.description ||
+                "No message"
+              )}
+
+            </p>
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+    list.innerHTML =
+      html;
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    list.innerHTML =
+      '<div class="empty">Complaints load nahi ho paaye.</div>';
+
+  }
+
+}
+
+
+/* =====================================================
+   REVIEWS
+===================================================== */
+
+async function loadReviews(){
+
+  const list =
+    document.getElementById(
+      "reviewList"
+    );
+
+
+  list.innerHTML =
+    '<div class="loading">Loading...</div>';
+
+
+  try{
+
+    const snapshot =
+      await db
+      .collection("reviews")
+      .get();
+
+
+    if(snapshot.empty){
+
+      list.innerHTML =
+        '<div class="empty">Abhi koi review nahi hai.</div>';
+
+      return;
+
+    }
+
+
+    let html = "";
+
+
+    snapshot.forEach(
+      function(doc){
+
+        const data =
+          doc.data();
+
+
+        const rating =
+          Number(
+            data.rating || 0
+          );
+
+
+        const stars =
+          "★".repeat(
+            Math.min(
+              5,
+              Math.max(
+                0,
+                rating
+              )
+            )
+          );
+
+
+        html += `
+
+          <div class="simpleCard">
+
+            <h3>
+              ${escapeHtml(
+                data.productName ||
+                "Product Review"
+              )}
+            </h3>
+
+            <div class="stars">
+              ${stars}
+            </div>
+
+            <p>
+
+              <b>
+                ${escapeHtml(
+                  data.customerName ||
+                  "Customer"
+                )}
+              </b>
+
+              <br><br>
+
+              ${escapeHtml(
+                data.comment ||
+                data.review ||
+                "No comment"
+              )}
+
+            </p>
+
+          </div>
+
+        `;
+
+      }
+    );
+
+
+    list.innerHTML =
+      html;
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+    list.innerHTML =
+      '<div class="empty">Reviews load nahi ho paaye.</div>';
+
+  }
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function formatDate(timestamp){
+
+  if(!timestamp){
+    return "-";
+  }
+
+
+  try{
+
+    const date =
+      timestamp.toDate
+      ? timestamp.toDate()
+      : new Date(timestamp);
+
+
+    return date.toLocaleString(
+      "en-IN",
+      {
+        dateStyle:"medium",
+        timeStyle:"short"
+      }
+    );
+
+  }
+
+  catch(error){
+
+    return "-";
+
+  }
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value){
+
+  return String(
+    value ?? ""
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
+}
+
+</script>
+
+</body>
+</html>
