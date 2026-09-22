@@ -11,10 +11,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
 
 <style>
-
 .hidden{
 display:none!important;
 }
@@ -71,7 +69,9 @@ margin-top:-5px;
 margin-bottom:8px;
 }
 
-.order{
+.order,
+.complaint,
+.review{
 border:1px solid #ddd;
 border-radius:12px;
 padding:15px;
@@ -79,14 +79,16 @@ margin-bottom:12px;
 background:#fff;
 }
 
-.orderButtons{
+.orderButtons,
+.complaintActions{
 display:flex;
 flex-wrap:wrap;
 gap:8px;
 margin-top:12px;
 }
 
-.orderButtons button{
+.orderButtons button,
+.complaintActions button{
 padding:8px 12px;
 border:0;
 border-radius:7px;
@@ -98,7 +100,8 @@ background:#198754;
 color:#fff;
 }
 
-.deleteOrderBtn{
+.deleteOrderBtn,
+.deleteComplaintBtn{
 background:#dc3545;
 color:#fff;
 }
@@ -117,28 +120,6 @@ margin-top:5px;
 background:#eee;
 }
 
-.complaint{
-border:1px solid #ddd;
-border-radius:12px;
-padding:15px;
-margin-bottom:12px;
-background:#fff;
-}
-
-.complaintActions{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-margin-top:12px;
-}
-
-.complaintActions button{
-border:0;
-padding:8px 12px;
-border-radius:7px;
-cursor:pointer;
-}
-
 .pendingBtn{
 background:#ffc107;
 }
@@ -153,18 +134,6 @@ background:#198754;
 color:#fff;
 }
 
-.deleteComplaintBtn{
-background:#dc3545;
-color:#fff;
-}
-
-.review{
-border:1px solid #ddd;
-border-radius:12px;
-padding:15px;
-margin-bottom:12px;
-}
-
 .starRating{
 font-size:20px;
 }
@@ -173,6 +142,11 @@ font-size:20px;
 font-size:13px;
 color:#666;
 margin-top:5px;
+}
+
+.reviewStars{
+font-size:22px;
+color:#f5a623;
 }
 
 @media(max-width:600px){
@@ -188,13 +162,12 @@ width:100%;
 }
 
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<!-- ================= LOGIN ================= -->
 
 <div id="login" class="box">
 
@@ -216,10 +189,7 @@ placeholder="Password"
 autocomplete="current-password"
 >
 
-<button
-id="loginBtn"
-type="button"
->
+<button id="loginBtn" type="button">
 Login
 </button>
 
@@ -228,7 +198,7 @@ Login
 </div>
 
 
-<!-- ADMIN PANEL -->
+<!-- ================= ADMIN PANEL ================= -->
 
 <div id="panel" class="hidden">
 
@@ -236,10 +206,7 @@ Login
 
 <b>Admin Dashboard</b>
 
-<button
-id="logout"
-type="button"
->
+<button id="logout" type="button">
 Logout
 </button>
 
@@ -248,7 +215,7 @@ Logout
 
 <main>
 
-<!-- STATS -->
+<!-- ================= STATS ================= -->
 
 <section class="stats">
 
@@ -275,16 +242,13 @@ Reviews
 </section>
 
 
-<!-- PRODUCT FORM -->
+<!-- ================= PRODUCT FORM ================= -->
 
 <section class="form">
 
 <h2>Add / Edit Product</h2>
 
-<input
-id="pid"
-type="hidden"
->
+<input id="pid" type="hidden">
 
 <input
 id="name"
@@ -305,7 +269,7 @@ min="0"
 >
 
 
-<!-- IMAGE UPLOAD -->
+<!-- CLOUDINARY IMAGE UPLOAD -->
 
 <div class="uploadBox">
 
@@ -326,22 +290,11 @@ id="imagePreview"
 class="imagePreview"
 >
 
-<div
-id="progressBox"
-class="progressBox"
->
-
-<div
-id="progressBar"
-class="progressBar"
-></div>
-
+<div id="progressBox" class="progressBox">
+<div id="progressBar" class="progressBar"></div>
 </div>
 
-<div
-id="uploadStatus"
-class="uploadStatus"
-></div>
+<div id="uploadStatus" class="uploadStatus"></div>
 
 </div>
 
@@ -386,13 +339,9 @@ Example: 28,30,32,34,36,38,40,42
 </div>
 
 
-<button
-id="save"
-type="button"
->
+<button id="save" type="button">
 Save Product
 </button>
-
 
 <button
 id="clear"
@@ -402,13 +351,12 @@ type="button"
 Clear
 </button>
 
-
 <p id="msg"></p>
 
 </section>
 
 
-<!-- PRODUCTS -->
+<!-- ================= PRODUCTS ================= -->
 
 <section>
 
@@ -419,7 +367,7 @@ Clear
 </section>
 
 
-<!-- ORDERS -->
+<!-- ================= ORDERS ================= -->
 
 <section>
 
@@ -430,7 +378,7 @@ Clear
 </section>
 
 
-<!-- COMPLAINTS -->
+<!-- ================= COMPLAINTS ================= -->
 
 <section>
 
@@ -441,7 +389,7 @@ Clear
 </section>
 
 
-<!-- REVIEWS -->
+<!-- ================= REVIEWS ================= -->
 
 <section>
 
@@ -458,11 +406,11 @@ Clear
 
 <script>
 
-/* =========================
+/* =====================================================
    FIREBASE CONFIG
-========================= */
+===================================================== */
 
-const firebaseConfig={
+const firebaseConfig = {
 
 apiKey:
 "AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
@@ -480,66 +428,101 @@ messagingSenderId:
 "529668256601",
 
 appId:
-"1:529668256601:web:b3cc39c8ea7c783133d248"
+"1:529668256601:web:b3cc39c8ea7c783133d248",
+
+measurementId:
+"G-6QLMB312CM"
 
 };
 
 
-/* =========================
+/* =====================================================
    ADMIN UID
-========================= */
+===================================================== */
 
-const ADMIN_UID=
+const ADMIN_UID =
 "GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
 
 
-/* =========================
-   FIREBASE
-========================= */
+/* =====================================================
+   CLOUDINARY
+===================================================== */
+
+const CLOUDINARY_CLOUD_NAME =
+"ctw8rkyn";
+
+const CLOUDINARY_UPLOAD_PRESET =
+"nari_fashion";
+
+const CLOUDINARY_UPLOAD_URL =
+"https://api.cloudinary.com/v1_1/"
++ CLOUDINARY_CLOUD_NAME
++ "/image/upload";
+
+
+/* =====================================================
+   FIREBASE INIT
+===================================================== */
 
 firebase.initializeApp(firebaseConfig);
 
-const auth=
+const auth =
 firebase.auth();
 
-const db=
+const db =
 firebase.firestore();
 
-const storage=
-firebase.storage();
 
-
-/* =========================
+/* =====================================================
    HELPERS
-========================= */
+===================================================== */
 
-const $=id=>
+const $ = id =>
 document.getElementById(id);
 
+let products = [];
 
-let products=[];
-
-let selectedImageFile=null;
+let selectedImageFile = null;
 
 
-/* =========================
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function esc(value){
+
+if(value === null || value === undefined){
+return "";
+}
+
+return String(value)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
    LOGIN
-========================= */
+===================================================== */
 
 $("loginBtn").addEventListener(
 "click",
 async()=>{
 
-const email=
+const email =
 $("email").value.trim();
 
-const password=
+const password =
 $("password").value;
 
 
-if(!email||!password){
+if(!email || !password){
 
-$("loginMsg").textContent=
+$("loginMsg").textContent =
 "Email aur password bharo.";
 
 return;
@@ -547,18 +530,17 @@ return;
 }
 
 
-$("loginBtn").disabled=true;
+$("loginBtn").disabled = true;
 
-$("loginBtn").textContent=
+$("loginBtn").textContent =
 "Logging in...";
 
-$("loginMsg").textContent="";
+$("loginMsg").textContent = "";
 
 
 try{
 
-await auth
-.signInWithEmailAndPassword(
+await auth.signInWithEmailAndPassword(
 email,
 password
 );
@@ -567,15 +549,15 @@ password
 
 console.error(e);
 
-$("loginMsg").textContent=
+$("loginMsg").textContent =
 "Login failed: "
-+(e.code||e.message);
++ (e.code || e.message);
 
 }finally{
 
-$("loginBtn").disabled=false;
+$("loginBtn").disabled = false;
 
-$("loginBtn").textContent=
+$("loginBtn").textContent =
 "Login";
 
 }
@@ -583,27 +565,27 @@ $("loginBtn").textContent=
 });
 
 
-/* =========================
+/* =====================================================
    LOGOUT
-========================= */
+===================================================== */
 
-$("logout").onclick=()=>{
+$("logout").onclick = ()=>{
 
 auth.signOut();
 
 };
 
 
-/* =========================
+/* =====================================================
    AUTH CHECK
-========================= */
+===================================================== */
 
 auth.onAuthStateChanged(
 async user=>{
 
 if(
 user &&
-user.uid===ADMIN_UID
+user.uid === ADMIN_UID
 ){
 
 $("login")
@@ -618,7 +600,7 @@ await load();
 
 else if(user){
 
-$("loginMsg").textContent=
+$("loginMsg").textContent =
 "This account is not the admin account.";
 
 await auth.signOut();
@@ -638,79 +620,79 @@ $("panel")
 });
 
 
-/* =========================
+/* =====================================================
    LOAD EVERYTHING
-========================= */
+===================================================== */
 
 async function load(){
 
-await loadProducts();
-
-await loadOrders();
-
-await loadComplaints();
-
-await loadReviews();
+await Promise.all([
+loadProducts(),
+loadOrders(),
+loadComplaints(),
+loadReviews()
+]);
 
 }
 
 
-/* =========================
+/* =====================================================
    IMAGE SELECT
-========================= */
+===================================================== */
 
 $("imageFile").addEventListener(
 "change",
 event=>{
 
-const file=
+const file =
 event.target.files[0];
 
-selectedImageFile=
-file||null;
+selectedImageFile =
+file || null;
 
 
-$("progressBox").style.display=
+$("progressBox").style.display =
 "none";
 
-$("progressBar").style.width=
+$("progressBar").style.width =
 "0%";
 
 
 if(!file){
 
-$("imagePreview").style.display=
+$("imagePreview").style.display =
 "none";
 
-$("uploadStatus").textContent="";
+$("uploadStatus").textContent =
+"";
 
 return;
 
 }
 
 
-/* CHECK IMAGE TYPE */
+/* IMAGE TYPE */
 
 if(!file.type.startsWith("image/")){
 
-$("uploadStatus").textContent=
+$("uploadStatus").textContent =
 "❌ Please image file select karein.";
 
-selectedImageFile=null;
+selectedImageFile = null;
 
 return;
 
 }
 
 
-/* CHECK 5MB */
+/* 5MB LIMIT */
 
-if(file.size>5*1024*1024){
+if(file.size > 5 * 1024 * 1024){
 
-$("uploadStatus").textContent=
+$("uploadStatus").textContent =
 "❌ Image 5MB se chhoti honi chahiye.";
 
-selectedImageFile=null;
+selectedImageFile = null;
 
 return;
 
@@ -719,15 +701,15 @@ return;
 
 /* PREVIEW */
 
-const reader=
+const reader =
 new FileReader();
 
-reader.onload=e=>{
+reader.onload = e=>{
 
-$("imagePreview").src=
+$("imagePreview").src =
 e.target.result;
 
-$("imagePreview").style.display=
+$("imagePreview").style.display =
 "block";
 
 };
@@ -735,67 +717,67 @@ $("imagePreview").style.display=
 reader.readAsDataURL(file);
 
 
-$("uploadStatus").textContent=
+$("uploadStatus").textContent =
 "✅ Image selected: "
-+file.name
-+" ("+
-(file.size/1024/1024).toFixed(2)
-+" MB)";
++ file.name
++ " ("
++ (file.size/1024/1024).toFixed(2)
++ " MB)";
 
 });
 
 
-/* =========================
-   COMPRESS IMAGE
-========================= */
+/* =====================================================
+   IMAGE COMPRESSION
+===================================================== */
 
 function compressImage(file){
 
 return new Promise(
 (resolve,reject)=>{
 
-const reader=
+const reader =
 new FileReader();
 
-reader.onload=
+reader.onload =
 event=>{
 
-const img=
+const img =
 new Image();
 
-img.onload=()=>{
+img.onload = ()=>{
 
-const MAX_SIZE=1600;
+const MAX_SIZE = 1600;
 
-let width=
+let width =
 img.width;
 
-let height=
+let height =
 img.height;
 
 
 /* RESIZE */
 
-if(width>MAX_SIZE){
+if(width > MAX_SIZE){
 
-height=
+height =
 Math.round(
-height*MAX_SIZE/width
+height * MAX_SIZE / width
 );
 
-width=
+width =
 MAX_SIZE;
 
 }
 
-if(height>MAX_SIZE){
+if(height > MAX_SIZE){
 
-width=
+width =
 Math.round(
-width*MAX_SIZE/height
+width * MAX_SIZE / height
 );
 
-height=
+height =
 MAX_SIZE;
 
 }
@@ -803,16 +785,16 @@ MAX_SIZE;
 
 /* CANVAS */
 
-const canvas=
+const canvas =
 document.createElement("canvas");
 
-canvas.width=
+canvas.width =
 width;
 
-canvas.height=
+canvas.height =
 height;
 
-const ctx=
+const ctx =
 canvas.getContext("2d");
 
 ctx.drawImage(
@@ -842,7 +824,7 @@ return;
 }
 
 
-const newFile=
+const newFile =
 new File(
 [blob],
 "product_"+Date.now()+".jpg",
@@ -863,7 +845,7 @@ resolve(newFile);
 };
 
 
-img.onerror=()=>{
+img.onerror = ()=>{
 
 reject(
 new Error(
@@ -873,14 +855,13 @@ new Error(
 
 };
 
-
-img.src=
+img.src =
 event.target.result;
 
 };
 
 
-reader.onerror=()=>{
+reader.onerror = ()=>{
 
 reject(
 new Error(
@@ -890,7 +871,6 @@ new Error(
 
 };
 
-
 reader.readAsDataURL(file);
 
 });
@@ -898,211 +878,116 @@ reader.readAsDataURL(file);
 }
 
 
-/* =========================
-   UPLOAD IMAGE - FIXED
-========================= */
+/* =====================================================
+   CLOUDINARY UPLOAD
+===================================================== */
 
 async function uploadImage(file){
 
 if(!file){
-
 return null;
-
 }
 
 
 try{
 
-$("uploadStatus").textContent=
+$("uploadStatus").textContent =
 "⏳ Image compress ho rahi hai...";
 
 
-const compressedFile=
+const compressedFile =
 await compressImage(file);
 
 
-$("uploadStatus").textContent=
-"⏳ Image upload ho rahi hai...";
+$("uploadStatus").textContent =
+"⏳ Cloudinary par image upload ho rahi hai...";
 
 
-const safeName=
-file.name
-.replace(
-/[^a-zA-Z0-9._-]/g,
-"_"
-);
-
-
-const path=
-"products/"
-+Date.now()
-+"_"+safeName;
-
-
-const ref=
-storage
-.ref()
-.child(path);
-
-
-/* SHOW PROGRESS */
-
-$("progressBox").style.display=
+$("progressBox").style.display =
 "block";
 
-$("progressBar").style.width=
-"0%";
+$("progressBar").style.width =
+"20%";
 
 
-const uploadTask=
-ref.put(compressedFile);
+const formData =
+new FormData();
 
+formData.append(
+"file",
+compressedFile
+);
 
-/* TIMEOUT */
-
-const timeout=
-setTimeout(()=>{
-
-try{
-
-uploadTask.cancel();
-
-}catch(e){
-
-console.error(e);
-
-}
-
-},60000);
-
-
-/* WAIT FOR UPLOAD */
-
-const url=
-await new Promise(
-(resolve,reject)=>{
-
-uploadTask.on(
-
-firebase.storage.TaskEvent.STATE_CHANGED,
-
-snapshot=>{
-
-const percent=
-Math.round(
-(
-snapshot.bytesTransferred /
-snapshot.totalBytes
-)*100
+formData.append(
+"upload_preset",
+CLOUDINARY_UPLOAD_PRESET
 );
 
 
-$("progressBar").style.width=
-percent+"%";
+$("progressBar").style.width =
+"40%";
 
 
-$("uploadStatus").textContent=
-"⏳ Image upload ho rahi hai... "
-+percent+"%";
-
-},
-
-
-error=>{
-
-clearTimeout(timeout);
-
-reject(error);
-
-},
-
-
-async()=>{
-
-clearTimeout(timeout);
-
-try{
-
-const downloadURL=
-await uploadTask
-.snapshot
-.ref
-.getDownloadURL();
-
-
-resolve(downloadURL);
-
-}catch(error){
-
-reject(error);
-
+const response =
+await fetch(
+CLOUDINARY_UPLOAD_URL,
+{
+method:"POST",
+body:formData
 }
-
-}
-
 );
 
-});
+
+$("progressBar").style.width =
+"80%";
 
 
-$("progressBar").style.width=
+if(!response.ok){
+
+const errorText =
+await response.text();
+
+throw new Error(
+"Cloudinary upload failed: "
++ errorText
+);
+
+}
+
+
+const result =
+await response.json();
+
+
+if(!result.secure_url){
+
+throw new Error(
+"Cloudinary URL nahi mila."
+);
+
+}
+
+
+$("progressBar").style.width =
 "100%";
 
-
-$("uploadStatus").textContent=
+$("uploadStatus").textContent =
 "✅ Image uploaded successfully";
 
 
-return url;
+return result.secure_url;
 
 
 }catch(error){
 
 console.error(
-"IMAGE UPLOAD ERROR:",
+"CLOUDINARY ERROR:",
 error
 );
 
-
-let message=
-error.message||
-"Image upload failed.";
-
-
-if(
-error.code===
-"storage/unauthorized"
-){
-
-message=
-"❌ Firebase Storage permission denied.";
-
-}
-
-else if(
-error.code===
-"storage/canceled"
-){
-
-message=
-"❌ Image upload timeout/cancelled.";
-
-}
-
-else if(
-error.code===
-"storage/unknown"
-){
-
-message=
-"❌ Firebase Storage error.";
-
-}
-
-
-$("uploadStatus").textContent=
-message;
-
+$("uploadStatus").textContent =
+"❌ Image upload failed: "
++ (error.message || "Unknown error");
 
 throw error;
 
@@ -1111,21 +996,21 @@ throw error;
 }
 
 
-/* =========================
+/* =====================================================
    LOAD PRODUCTS
-========================= */
+===================================================== */
 
 async function loadProducts(){
 
 try{
 
-const snapshot=
+const snapshot =
 await db
 .collection("products")
 .get();
 
 
-products=
+products =
 snapshot.docs.map(doc=>({
 
 id:doc.id,
@@ -1134,24 +1019,24 @@ id:doc.id,
 }));
 
 
-$("pCount").textContent=
+$("pCount").textContent =
 products.length;
 
 
-$("productList").innerHTML=
+$("productList").innerHTML =
 
 products.map(p=>{
 
-const sizes=
+const sizes =
 Array.isArray(p.sizes)
-?p.sizes.join(", ")
-:(p.sizes||"");
+? p.sizes.join(", ")
+: (p.sizes || "");
 
 
-const inchSizes=
+const inchSizes =
 Array.isArray(p.inchSizes)
-?p.inchSizes.join(", ")
-:(p.inchSizes||"");
+? p.inchSizes.join(", ")
+: (p.inchSizes || "");
 
 
 return `
@@ -1161,16 +1046,17 @@ return `
 <div>
 
 <img
-src="${
-p.image||
+src="${esc(
+p.image ||
 "https://placehold.co/100"
-}"
+)}"
 style="
 width:80px;
 height:80px;
 object-fit:cover;
 border-radius:8px;
 "
+onerror="this.src='https://placehold.co/100'"
 >
 
 <b>
@@ -1178,30 +1064,21 @@ ${esc(p.name)}
 </b>
 
 <div>
-
 ₹${Number(p.price||0)
 .toLocaleString("en-IN")}
-
 •
-
-Stock
-${Number(p.stock||0)}
-
+Stock ${Number(p.stock||0)}
 </div>
 
 <div class="productSizes">
 
-${
-sizes
-?"Sizes: "+esc(sizes)
-:""
-}
+${sizes
+? "Sizes: "+esc(sizes)
+: ""}
 
-${
-inchSizes
-?" | Inch: "+esc(inchSizes)
-:""
-}
+${inchSizes
+? " | Inch: "+esc(inchSizes)
+: ""}
 
 </div>
 
@@ -1215,7 +1092,6 @@ onclick="editProduct('${p.id}')"
 >
 Edit
 </button>
-
 
 <button
 class="danger"
@@ -1232,43 +1108,43 @@ Delete
 
 }).join("")
 
-||"<p>No products.</p>";
+|| "<p>No products.</p>";
 
 
 }catch(e){
 
 console.error(e);
 
-$("productList").innerHTML=
+$("productList").innerHTML =
 "<p>Products load nahi hue: "
-+esc(e.message)
-+"</p>";
++ esc(e.message)
++ "</p>";
 
 }
 
 }
 
 
-/* =========================
+/* =====================================================
    SAVE PRODUCT
-========================= */
+===================================================== */
 
-$("save").onclick=
+$("save").onclick =
 async()=>{
 
-const name=
+const name =
 $("name").value.trim();
 
-const price=
+const price =
 Number($("price").value);
 
-const stock=
+const stock =
 Number($("stock").value);
 
 
 if(!name){
 
-$("msg").textContent=
+$("msg").textContent =
 "Product name required.";
 
 return;
@@ -1276,9 +1152,9 @@ return;
 }
 
 
-if(stock<0){
+if(stock < 0){
 
-$("msg").textContent=
+$("msg").textContent =
 "Stock 0 se kam nahi ho sakta.";
 
 return;
@@ -1286,30 +1162,29 @@ return;
 }
 
 
-let imageUrl=
+let imageUrl =
 $("image").value.trim();
 
 
-$("save").disabled=true;
+$("save").disabled = true;
 
-$("save").textContent=
+$("save").textContent =
 "Saving...";
 
-$("msg").textContent=
-"";
+$("msg").textContent = "";
 
 
 try{
 
-/* IMAGE UPLOAD */
+/* IMAGE */
 
 if(selectedImageFile){
 
-$("msg").textContent=
-"⏳ Image upload ho rahi hai...";
+$("msg").textContent =
+"⏳ Image Cloudinary par upload ho rahi hai...";
 
 
-const uploaded=
+const uploaded =
 await uploadImage(
 selectedImageFile
 );
@@ -1324,7 +1199,7 @@ throw new Error(
 }
 
 
-imageUrl=
+imageUrl =
 uploaded;
 
 }
@@ -1332,7 +1207,7 @@ uploaded;
 
 /* SIZES */
 
-const sizes=
+const sizes =
 $("sizes").value
 .split(",")
 .map(x=>x.trim())
@@ -1341,7 +1216,7 @@ $("sizes").value
 
 /* INCH SIZES */
 
-const inchSizes=
+const inchSizes =
 $("inchSizes").value
 .split(",")
 .map(x=>x.trim())
@@ -1350,7 +1225,7 @@ $("inchSizes").value
 
 /* DATA */
 
-const data={
+const data = {
 
 name:name,
 
@@ -1365,8 +1240,7 @@ sizes:sizes,
 inchSizes:inchSizes,
 
 updatedAt:
-firebase.firestore
-.FieldValue
+firebase.firestore.FieldValue
 .serverTimestamp()
 
 };
@@ -1376,7 +1250,7 @@ firebase.firestore
 
 if($("pid").value){
 
-$("msg").textContent=
+$("msg").textContent =
 "⏳ Product update ho raha hai...";
 
 
@@ -1392,7 +1266,7 @@ await db
 
 else{
 
-$("msg").textContent=
+$("msg").textContent =
 "⏳ Product save ho raha hai...";
 
 
@@ -1403,8 +1277,7 @@ await db
 ...data,
 
 createdAt:
-firebase.firestore
-.FieldValue
+firebase.firestore.FieldValue
 .serverTimestamp()
 
 });
@@ -1412,7 +1285,7 @@ firebase.firestore
 }
 
 
-$("msg").textContent=
+$("msg").textContent =
 "✅ Product saved successfully!";
 
 
@@ -1428,17 +1301,16 @@ console.error(
 e
 );
 
-
-$("msg").textContent=
+$("msg").textContent =
 "❌ Save failed: "
-+(e.message||e.code||"Unknown error");
++ (e.message || e.code || "Unknown error");
 
 
 }finally{
 
-$("save").disabled=false;
+$("save").disabled = false;
 
-$("save").textContent=
+$("save").textContent =
 "Save Product";
 
 }
@@ -1446,115 +1318,119 @@ $("save").textContent=
 };
 
 
-/* =========================
+/* =====================================================
    CLEAR FORM
-========================= */
+===================================================== */
 
-$("clear").onclick=
+$("clear").onclick =
 clearForm;
 
 
 function clearForm(){
 
-$("pid").value="";
+$("pid").value = "";
 
-$("name").value="";
+$("name").value = "";
 
-$("price").value="";
+$("price").value = "";
 
-$("stock").value="";
+$("stock").value = "";
 
-$("image").value="";
+$("image").value = "";
 
-$("sizes").value="";
+$("sizes").value = "";
 
-$("inchSizes").value="";
+$("inchSizes").value = "";
 
-$("imageFile").value="";
+$("imageFile").value = "";
 
-$("imagePreview").src="";
+$("imagePreview").src = "";
 
-$("imagePreview").style.display=
+$("imagePreview").style.display =
 "none";
 
-$("uploadStatus").textContent="";
+$("uploadStatus").textContent = "";
 
-$("progressBox").style.display=
+$("progressBox").style.display =
 "none";
 
-$("progressBar").style.width=
+$("progressBar").style.width =
 "0%";
 
-$("msg").textContent="";
+$("msg").textContent = "";
 
-selectedImageFile=null;
+selectedImageFile = null;
 
 }
 
 
-/* =========================
+/* =====================================================
    EDIT PRODUCT
-========================= */
+===================================================== */
 
-window.editProduct=
+window.editProduct =
 id=>{
 
-const p=
+const p =
 products.find(x=>x.id===id);
 
 if(!p)return;
 
 
-$("pid").value=id;
+$("pid").value =
+id;
 
-$("name").value=
-p.name||"";
+$("name").value =
+p.name || "";
 
-$("price").value=
-p.price||0;
+$("price").value =
+p.price || 0;
 
-$("stock").value=
-p.stock||0;
+$("stock").value =
+p.stock || 0;
 
-$("image").value=
-p.image||"";
+$("image").value =
+p.image || "";
 
 
-$("sizes").value=
+$("sizes").value =
 Array.isArray(p.sizes)
-?p.sizes.join(",")
-:(p.sizes||"");
+? p.sizes.join(",")
+: (p.sizes || "");
 
 
-$("inchSizes").value=
+$("inchSizes").value =
 Array.isArray(p.inchSizes)
-?p.inchSizes.join(",")
-:(p.inchSizes||"");
+? p.inchSizes.join(",")
+: (p.inchSizes || "");
 
 
 if(p.image){
 
-$("imagePreview").src=
+$("imagePreview").src =
 p.image;
 
-$("imagePreview").style.display=
+$("imagePreview").style.display =
 "block";
 
 }
 
 
-selectedImageFile=null;
+selectedImageFile = null;
 
-scrollTo(0,0);
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
 
 };
 
 
-/* =========================
+/* =====================================================
    DELETE PRODUCT
-========================= */
+===================================================== */
 
-window.deleteProduct=
+window.deleteProduct =
 async id=>{
 
 if(!confirm(
@@ -1576,7 +1452,7 @@ await loadProducts();
 
 alert(
 "Delete failed: "
-+e.message
++ e.message
 );
 
 }
@@ -1584,15 +1460,15 @@ alert(
 };
 
 
-/* =========================
+/* =====================================================
    LOAD ORDERS
-========================= */
+===================================================== */
 
 async function loadOrders(){
 
 try{
 
-const snapshot=
+const snapshot =
 await db
 .collection("orders")
 .orderBy(
@@ -1602,36 +1478,36 @@ await db
 .get();
 
 
-$("oCount").textContent=
+$("oCount").textContent =
 snapshot.size;
 
 
-$("orders").innerHTML=
+$("orders").innerHTML =
 
 snapshot.docs.map(doc=>{
 
-const o=
+const o =
 doc.data();
 
-const status=
-(o.status||"pending")
+const status =
+(o.status || "pending")
 .toLowerCase();
 
 
-const items=
-(o.items||[])
+const items =
+(o.items || [])
 .map(i=>
 esc(i.name)
-+" × "
-+i.qty
-+(i.size
-?" ("+esc(i.size)+")"
-:"")
++ " × "
++ i.qty
++ (i.size
+? " ("+esc(i.size)+")"
+: "")
 )
 .join(", ");
 
 
-let locationButton="";
+let locationButton = "";
 
 
 if(
@@ -1639,7 +1515,7 @@ o.location &&
 o.location.mapsUrl
 ){
 
-locationButton=`
+locationButton = `
 
 <a
 href="${esc(o.location.mapsUrl)}"
@@ -1668,10 +1544,10 @@ return `
 <div class="order">
 
 <b>
-${esc(o.customerName||"")}
+${esc(o.customerName || "")}
 </b>
 
-• ${esc(o.customerPhone||"")}
+• ${esc(o.customerPhone || "")}
 
 <br><br>
 
@@ -1679,16 +1555,32 @@ ${esc(o.customerName||"")}
 Order ID:
 </strong>
 
-${esc(o.orderId||doc.id)}
+${esc(o.orderId || doc.id)}
+
+<br><br>
+
+<strong>
+Address:
+</strong>
 
 <br>
 
-${esc(o.address||"")}
+${esc(
+o.address ||
+[
+o.house,
+o.street,
+o.landmark,
+o.city,
+o.state,
+o.pincode
+].filter(Boolean).join(", ")
+)}
 
 <br><br>
 
 <b>
-₹${Number(o.total||0)
+₹${Number(o.total || 0)
 .toLocaleString("en-IN")}
 </b>
 
@@ -1712,7 +1604,7 @@ ${locationButton}
 <div class="orderButtons">
 
 ${
-status!=="delivered"
+status !== "delivered"
 
 ?
 
@@ -1742,28 +1634,28 @@ onclick="deleteOrder('${doc.id}')"
 
 }).join("")
 
-||"<p>No orders.</p>";
+|| "<p>No orders.</p>";
 
 
 }catch(e){
 
 console.error(e);
 
-$("orders").innerHTML=
+$("orders").innerHTML =
 "<p>Orders load nahi hue: "
-+esc(e.message)
-+"</p>";
++ esc(e.message)
++ "</p>";
 
 }
 
 }
 
 
-/* =========================
+/* =====================================================
    MARK DELIVERED
-========================= */
+===================================================== */
 
-window.markDelivered=
+window.markDelivered =
 async id=>{
 
 if(!confirm(
@@ -1781,8 +1673,7 @@ await db
 status:"delivered",
 
 deliveredAt:
-firebase.firestore
-.FieldValue
+firebase.firestore.FieldValue
 .serverTimestamp()
 
 });
@@ -1794,7 +1685,7 @@ await loadOrders();
 
 alert(
 "Status update failed: "
-+e.message
++ e.message
 );
 
 }
@@ -1802,11 +1693,11 @@ alert(
 };
 
 
-/* =========================
-   DELETE DELIVERED ORDER
-========================= */
+/* =====================================================
+   DELETE ORDER
+===================================================== */
 
-window.deleteOrder=
+window.deleteOrder =
 async id=>{
 
 if(!confirm(
@@ -1828,7 +1719,7 @@ await loadOrders();
 
 alert(
 "Order delete failed: "
-+e.message
++ e.message
 );
 
 }
@@ -1836,15 +1727,15 @@ alert(
 };
 
 
-/* =========================
+/* =====================================================
    LOAD COMPLAINTS
-========================= */
+===================================================== */
 
 async function loadComplaints(){
 
 try{
 
-const snapshot=
+const snapshot =
 await db
 .collection("supportTickets")
 .orderBy(
@@ -1854,15 +1745,15 @@ await db
 .get();
 
 
-$("cCount").textContent=
+$("cCount").textContent =
 snapshot.size;
 
 
-$("complaints").innerHTML=
+$("complaints").innerHTML =
 
 snapshot.docs.map(doc=>{
 
-const c=
+const c =
 doc.data();
 
 
@@ -1871,7 +1762,9 @@ return `
 <div class="complaint">
 
 <b>
-🆘 ${esc(c.problemType||"Problem")}
+🆘 ${esc(
+c.problemType || "Problem"
+)}
 </b>
 
 <br><br>
@@ -1880,7 +1773,7 @@ return `
 Order ID:
 </strong>
 
-${esc(c.orderId||"")}
+${esc(c.orderId || "")}
 
 <br>
 
@@ -1888,7 +1781,7 @@ ${esc(c.orderId||"")}
 Mobile:
 </strong>
 
-${esc(c.customerPhone||"")}
+${esc(c.customerPhone || "")}
 
 <br><br>
 
@@ -1898,13 +1791,13 @@ Problem:
 
 <br>
 
-${esc(c.details||"")}
+${esc(c.details || "")}
 
 <br><br>
 
 <span class="statusBadge">
 Status:
-${esc(c.status||"pending")}
+${esc(c.status || "pending")}
 </span>
 
 
@@ -1949,28 +1842,28 @@ Delete
 
 }).join("")
 
-||"<p>No complaints.</p>";
+|| "<p>No complaints.</p>";
 
 
 }catch(e){
 
 console.error(e);
 
-$("complaints").innerHTML=
+$("complaints").innerHTML =
 "<p>Complaints load nahi hue: "
-+esc(e.message)
-+"</p>";
++ esc(e.message)
++ "</p>";
 
 }
 
 }
 
 
-/* =========================
+/* =====================================================
    UPDATE COMPLAINT
-========================= */
+===================================================== */
 
-window.updateComplaint=
+window.updateComplaint =
 async(id,status)=>{
 
 try{
@@ -1983,8 +1876,7 @@ await db
 status:status,
 
 updatedAt:
-firebase.firestore
-.FieldValue
+firebase.firestore.FieldValue
 .serverTimestamp()
 
 });
@@ -1994,22 +1886,25 @@ await loadComplaints();
 
 }catch(e){
 
-alert(e.message);
+alert(
+"Complaint update failed: "
++ e.message
+);
 
 }
 
 };
 
 
-/* =========================
+/* =====================================================
    DELETE COMPLAINT
-========================= */
+===================================================== */
 
-window.deleteComplaint=
+window.deleteComplaint =
 async id=>{
 
 if(!confirm(
-"Complaint delete karein?"
+"Is complaint ko delete karein?"
 ))return;
 
 
@@ -2025,22 +1920,25 @@ await loadComplaints();
 
 }catch(e){
 
-alert(e.message);
+alert(
+"Complaint delete failed: "
++ e.message
+);
 
 }
 
 };
 
 
-/* =========================
+/* =====================================================
    LOAD REVIEWS
-========================= */
+===================================================== */
 
 async function loadReviews(){
 
 try{
 
-const snapshot=
+const snapshot =
 await db
 .collection("reviews")
 .orderBy(
@@ -2050,32 +1948,36 @@ await db
 .get();
 
 
-$("rCount").textContent=
+$("rCount").textContent =
 snapshot.size;
 
 
-$("reviews").innerHTML=
+$("reviews").innerHTML =
 
 snapshot.docs.map(doc=>{
 
-const r=
+const r =
 doc.data();
 
 
-const rating=
-Math.max(
-0,
-Math.min(
-5,
-Number(r.rating||0)
-)
-);
+const rating =
+Number(r.rating || 0);
 
 
-const stars=
-"★".repeat(rating)
-+
-"☆".repeat(5-rating);
+let stars = "";
+
+for(
+let i=1;
+i<=5;
+i++
+){
+
+stars +=
+i <= rating
+? "★"
+: "☆";
+
+}
 
 
 return `
@@ -2083,19 +1985,50 @@ return `
 <div class="review">
 
 <b>
-${esc(r.productName||"Product")}
+${esc(
+r.customerName ||
+r.name ||
+"Customer"
+)}
 </b>
 
-<div class="starRating">
+<br>
+
+<div class="reviewStars">
 ${stars}
 </div>
 
-<p>
-${esc(r.review||r.comment||"")}
-</p>
+<strong>
+${rating}/5
+</strong>
+
+<br><br>
+
+${
+r.productName
+? "<b>Product:</b> "
++ esc(r.productName)
++ "<br><br>"
+: ""
+}
+
+${
+r.comment ||
+r.review ||
+r.text
+? esc(
+r.comment ||
+r.review ||
+r.text
+)
+: "<i>No review text</i>"
+}
+
+<br><br>
 
 <small>
-Order: ${esc(r.orderId||"")}
+Order ID:
+${esc(r.orderId || "")}
 </small>
 
 <br>
@@ -2105,7 +2038,7 @@ class="deleteComplaintBtn"
 style="margin-top:10px"
 onclick="deleteReview('${doc.id}')"
 >
-Delete Review
+🗑️ Delete Review
 </button>
 
 </div>
@@ -2114,30 +2047,32 @@ Delete Review
 
 }).join("")
 
-||"<p>No reviews yet.</p>";
+|| "<p>No reviews.</p>";
 
 
 }catch(e){
 
 console.error(e);
 
-$("reviews").innerHTML=
-"<p>No reviews yet.</p>";
+$("reviews").innerHTML =
+"<p>Reviews load nahi hue: "
++ esc(e.message)
++ "</p>";
 
 }
 
 }
 
 
-/* =========================
+/* =====================================================
    DELETE REVIEW
-========================= */
+===================================================== */
 
-window.deleteReview=
+window.deleteReview =
 async id=>{
 
 if(!confirm(
-"Review delete karein?"
+"Is review ko delete karein?"
 ))return;
 
 
@@ -2153,36 +2088,14 @@ await loadReviews();
 
 }catch(e){
 
-alert(e.message);
+alert(
+"Review delete failed: "
++ e.message
+);
 
 }
 
 };
-
-
-/* =========================
-   SECURITY ESCAPE
-========================= */
-
-function esc(s){
-
-return String(s??"")
-.replace(
-/[&<>"']/g,
-
-c=>({
-
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-'"':"&quot;",
-"'":"&#39;"
-
-}[c])
-
-);
-
-}
 
 </script>
 
