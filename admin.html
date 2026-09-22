@@ -3,16 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>NARI FASHION - Admin Panel</title>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 <style>
-
 *{
   box-sizing:border-box;
   margin:0;
@@ -27,14 +24,12 @@ body{
 
 button{
   cursor:pointer;
-  border:none;
+  border:0;
 }
 
 input,textarea,select{
   font-family:inherit;
 }
-
-/* ================= LOGIN ================= */
 
 #loginScreen{
   min-height:100vh;
@@ -58,7 +53,6 @@ input,textarea,select{
   text-align:center;
   font-size:28px;
   font-weight:800;
-  letter-spacing:1px;
 }
 
 .loginSub{
@@ -93,7 +87,6 @@ input,textarea,select{
 
 .loginBtn:disabled{
   opacity:.6;
-  cursor:not-allowed;
 }
 
 #loginError{
@@ -101,10 +94,7 @@ input,textarea,select{
   text-align:center;
   font-size:13px;
   margin-top:14px;
-  line-height:1.5;
 }
-
-/* ================= ADMIN ================= */
 
 #adminPanel{
   display:none;
@@ -115,8 +105,6 @@ input,textarea,select{
   display:flex;
   min-height:100vh;
 }
-
-/* ================= SIDEBAR ================= */
 
 .sidebar{
   width:250px;
@@ -180,8 +168,6 @@ input,textarea,select{
   border-radius:10px;
 }
 
-/* ================= MAIN ================= */
-
 .main{
   margin-left:250px;
   width:calc(100% - 250px);
@@ -213,8 +199,6 @@ input,textarea,select{
   font-weight:600;
 }
 
-/* ================= SECTIONS ================= */
-
 .section{
   display:none;
 }
@@ -222,8 +206,6 @@ input,textarea,select{
 .section.active{
   display:block;
 }
-
-/* ================= STATS ================= */
 
 .stats{
   display:grid;
@@ -267,8 +249,6 @@ input,textarea,select{
   margin-top:4px;
 }
 
-/* ================= CARD ================= */
-
 .card{
   background:#fff;
   border-radius:17px;
@@ -287,8 +267,6 @@ input,textarea,select{
 .cardHeader h3{
   font-size:18px;
 }
-
-/* ================= BUTTONS ================= */
 
 .primaryBtn{
   background:#111;
@@ -330,7 +308,31 @@ input,textarea,select{
   font-weight:700;
 }
 
-/* ================= FORM ================= */
+/* CUSTOMER LOCATION BUTTON */
+.locationAdminBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:10px;
+  padding:10px 14px;
+  background:#198754;
+  color:#fff;
+  border-radius:9px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:13px;
+}
+
+.locationAdminBtn:hover{
+  opacity:.9;
+}
+
+.locationCoords{
+  display:block;
+  margin-top:7px;
+  color:#777;
+  font-size:11px;
+}
 
 .formGrid{
   display:grid;
@@ -362,8 +364,6 @@ textarea.input{
   display:none;
   margin-top:8px;
 }
-
-/* ================= PRODUCTS ================= */
 
 .productGrid{
   display:grid;
@@ -413,9 +413,8 @@ textarea.input{
 .productActions{
   display:flex;
   gap:7px;
+  flex-wrap:wrap;
 }
-
-/* ================= ORDERS ================= */
 
 .orderCard{
   border:1px solid #eee;
@@ -492,6 +491,7 @@ textarea.input{
   font-size:13px;
   color:#555;
   line-height:1.6;
+  word-break:break-word;
 }
 
 .items{
@@ -521,8 +521,6 @@ textarea.input{
   gap:8px;
   margin-top:15px;
 }
-
-/* ================= SIMPLE ================= */
 
 .simpleCard{
   border:1px solid #eee;
@@ -561,18 +559,12 @@ textarea.input{
   color:#888;
 }
 
-/* ================= MOBILE ================= */
-
-.mobileHeader{
-  display:none;
-}
-
+.mobileHeader,
 .mobileNav{
   display:none;
 }
 
 @media(max-width:1100px){
-
   .productGrid{
     grid-template-columns:repeat(3,1fr);
   }
@@ -580,11 +572,9 @@ textarea.input{
   .stats{
     grid-template-columns:repeat(2,1fr);
   }
-
 }
 
 @media(max-width:800px){
-
   .sidebar{
     width:220px;
   }
@@ -597,7 +587,6 @@ textarea.input{
   .productGrid{
     grid-template-columns:repeat(2,1fr);
   }
-
 }
 
 @media(max-width:600px){
@@ -679,19 +668,13 @@ textarea.input{
   body{
     padding-bottom:65px;
   }
-
 }
-
 </style>
 </head>
 
 <body>
 
-
-<!-- =====================================================
-     LOGIN
-===================================================== -->
-
+<!-- LOGIN -->
 <div id="loginScreen">
 
   <div class="loginBox">
@@ -736,29 +719,18 @@ textarea.input{
 </div>
 
 
-<!-- =====================================================
-     ADMIN PANEL
-===================================================== -->
-
+<!-- ADMIN PANEL -->
 <div id="adminPanel">
 
 <div class="layout">
 
-
 <!-- SIDEBAR -->
-
 <aside class="sidebar">
 
   <div class="brand">
-
     <h1>NARI FASHION</h1>
-
-    <p>
-      Admin Dashboard
-    </p>
-
+    <p>Admin Dashboard</p>
   </div>
-
 
   <div class="nav">
 
@@ -795,7 +767,6 @@ textarea.input{
 
   </div>
 
-
   <button
     class="logout"
     onclick="logout()"
@@ -807,9 +778,7 @@ textarea.input{
 
 
 <!-- MAIN -->
-
 <main class="main">
-
 
 <div class="mobileHeader">
 
@@ -819,12 +788,7 @@ textarea.input{
 
   <button
     onclick="logout()"
-    style="
-      background:#222;
-      color:#fff;
-      padding:7px 10px;
-      border-radius:7px;
-    "
+    style="background:#222;color:#fff;padding:7px 10px;border-radius:7px"
   >
     Logout
   </button>
@@ -833,7 +797,6 @@ textarea.input{
 
 
 <!-- DASHBOARD -->
-
 <section
   id="dashboard"
   class="section active"
@@ -868,15 +831,11 @@ textarea.input{
     <div class="statCard">
 
       <div class="statTop">
-
-        <span>
-          Products
-        </span>
+        <span>Products</span>
 
         <div class="statIcon">
           🛍️
         </div>
-
       </div>
 
       <h3 id="statProducts">
@@ -893,15 +852,11 @@ textarea.input{
     <div class="statCard">
 
       <div class="statTop">
-
-        <span>
-          Orders
-        </span>
+        <span>Orders</span>
 
         <div class="statIcon">
           📦
         </div>
-
       </div>
 
       <h3 id="statOrders">
@@ -918,15 +873,11 @@ textarea.input{
     <div class="statCard">
 
       <div class="statTop">
-
-        <span>
-          Pending
-        </span>
+        <span>Pending</span>
 
         <div class="statIcon">
           ⏳
         </div>
-
       </div>
 
       <h3 id="statPending">
@@ -943,15 +894,11 @@ textarea.input{
     <div class="statCard">
 
       <div class="statTop">
-
-        <span>
-          Sales
-        </span>
+        <span>Sales</span>
 
         <div class="statIcon">
           ₹
         </div>
-
       </div>
 
       <h3 id="statSales">
@@ -977,12 +924,12 @@ textarea.input{
 
     </div>
 
-    <p style="color:#777;font-size:14px">
-
+    <p
+      style="color:#777;font-size:14px"
+    >
       Yahan se tum NARI FASHION ke
       products, orders, complaints aur
       customer reviews manage kar sakte ho.
-
     </p>
 
   </div>
@@ -991,7 +938,6 @@ textarea.input{
 
 
 <!-- PRODUCTS -->
-
 <section
   id="products"
   class="section"
@@ -1039,7 +985,6 @@ textarea.input{
 
 
     <div class="formGrid">
-
 
       <div class="formGroup">
 
@@ -1138,10 +1083,7 @@ textarea.input{
 
         <div
           id="uploadStatus"
-          style="
-            color:#777;
-            font-size:13px;
-          "
+          style="color:#777;font-size:13px"
         ></div>
 
       </div>
@@ -1150,11 +1092,7 @@ textarea.input{
 
 
     <div
-      style="
-        display:flex;
-        gap:9px;
-        flex-wrap:wrap;
-      "
+      style="display:flex;gap:9px;flex-wrap:wrap"
     >
 
       <button
@@ -1190,9 +1128,11 @@ textarea.input{
       id="productList"
       class="productGrid"
     >
+
       <div class="loading">
         Loading...
       </div>
+
     </div>
 
   </div>
@@ -1201,7 +1141,6 @@ textarea.input{
 
 
 <!-- ORDERS -->
-
 <section
   id="orders"
   class="section"
@@ -1247,7 +1186,6 @@ textarea.input{
 
 
 <!-- COMPLAINTS -->
-
 <section
   id="complaints"
   class="section"
@@ -1293,7 +1231,6 @@ textarea.input{
 
 
 <!-- REVIEWS -->
-
 <section
   id="reviews"
   class="section"
@@ -1337,50 +1274,43 @@ textarea.input{
 
 </section>
 
-
 </main>
 
 </div>
 
 
 <!-- MOBILE NAV -->
-
 <div class="mobileNav">
 
   <button
     class="active"
     onclick="openMobile('dashboard',this)"
   >
-    📊<br>
-    Home
+    📊<br>Home
   </button>
 
   <button
     onclick="openMobile('products',this)"
   >
-    🛍️<br>
-    Products
+    🛍️<br>Products
   </button>
 
   <button
     onclick="openMobile('orders',this)"
   >
-    📦<br>
-    Orders
+    📦<br>Orders
   </button>
 
   <button
     onclick="openMobile('complaints',this)"
   >
-    💬<br>
-    Support
+    💬<br>Support
   </button>
 
   <button
     onclick="openMobile('reviews',this)"
   >
-    ⭐<br>
-    Reviews
+    ⭐<br>Reviews
   </button>
 
 </div>
@@ -1390,9 +1320,9 @@ textarea.input{
 
 <script>
 
-/* =====================================================
+/* =========================
    FIREBASE
-===================================================== */
+========================= */
 
 const firebaseConfig = {
 
@@ -1420,11 +1350,11 @@ const firebaseConfig = {
 };
 
 
-/* Initialize Firebase */
-
 if(!firebase.apps.length){
 
-  firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(
+    firebaseConfig
+  );
 
 }
 
@@ -1440,9 +1370,9 @@ const ADMIN_UID =
   "GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
 
 
-/* =====================================================
+/* =========================
    CLOUDINARY
-===================================================== */
+========================= */
 
 const CLOUDINARY_CLOUD_NAME =
   "ctw8rkyn";
@@ -1451,8 +1381,10 @@ const CLOUDINARY_UPLOAD_PRESET =
   "nari_fashion";
 
 const CLOUDINARY_UPLOAD_URL =
-  "https://api.cloudinary.com/v1_1/" +
-  CLOUDINARY_CLOUD_NAME +
+  "https://api.cloudinary.com/v1_1/"
+  +
+  CLOUDINARY_CLOUD_NAME
+  +
   "/image/upload";
 
 
@@ -1463,53 +1395,49 @@ let selectedImageFile = null;
 let existingImageUrl = "";
 
 
-/* =====================================================
-   AUTH STATE
-===================================================== */
+/* =========================
+   AUTH
+========================= */
 
-auth.onAuthStateChanged(function(user){
+auth.onAuthStateChanged(
+  function(user){
 
-  console.log(
-    "Auth state:",
-    user ? user.uid : "No user"
-  );
+    if(
+      user &&
+      user.uid === ADMIN_UID
+    ){
 
+      document.getElementById(
+        "loginScreen"
+      ).style.display="none";
 
-  if(user && user.uid === ADMIN_UID){
+      document.getElementById(
+        "adminPanel"
+      ).style.display="block";
 
-    document.getElementById(
-      "loginScreen"
-    ).style.display = "none";
+      loadAll();
 
+    }
 
-    document.getElementById(
-      "adminPanel"
-    ).style.display = "block";
+    else{
 
+      document.getElementById(
+        "loginScreen"
+      ).style.display="flex";
 
-    loadAll();
+      document.getElementById(
+        "adminPanel"
+      ).style.display="none";
 
-  }
-
-  else{
-
-    document.getElementById(
-      "loginScreen"
-    ).style.display = "flex";
-
-
-    document.getElementById(
-      "adminPanel"
-    ).style.display = "none";
+    }
 
   }
+);
 
-});
 
-
-/* =====================================================
+/* =========================
    LOGIN
-===================================================== */
+========================= */
 
 async function login(){
 
@@ -1533,7 +1461,7 @@ async function login(){
     passwordElement.value;
 
 
-  errorElement.textContent = "";
+  errorElement.textContent="";
 
 
   if(!email){
@@ -1562,7 +1490,7 @@ async function login(){
 
   try{
 
-    buttonElement.disabled = true;
+    buttonElement.disabled=true;
 
     buttonElement.textContent =
       "Logging in...";
@@ -1581,7 +1509,9 @@ async function login(){
     );
 
 
-    if(result.user.uid !== ADMIN_UID){
+    if(
+      result.user.uid !== ADMIN_UID
+    ){
 
       await auth.signOut();
 
@@ -1591,10 +1521,6 @@ async function login(){
       return;
 
     }
-
-
-    errorElement.textContent = "";
-
 
   }
 
@@ -1606,24 +1532,30 @@ async function login(){
     );
 
 
-    if(error.code ===
-       "auth/invalid-credential"){
+    if(
+      error.code ===
+      "auth/invalid-credential"
+    ){
 
       errorElement.textContent =
         "Email ya password galat hai.";
 
     }
 
-    else if(error.code ===
-            "auth/user-not-found"){
+    else if(
+      error.code ===
+      "auth/user-not-found"
+    ){
 
       errorElement.textContent =
         "Ye email Firebase Auth mein nahi hai.";
 
     }
 
-    else if(error.code ===
-            "auth/wrong-password"){
+    else if(
+      error.code ===
+      "auth/wrong-password"
+    ){
 
       errorElement.textContent =
         "Password galat hai.";
@@ -1642,7 +1574,7 @@ async function login(){
 
   finally{
 
-    buttonElement.disabled = false;
+    buttonElement.disabled=false;
 
     buttonElement.textContent =
       "Login";
@@ -1652,9 +1584,9 @@ async function login(){
 }
 
 
-/* =====================================================
+/* =========================
    LOGOUT
-===================================================== */
+========================= */
 
 async function logout(){
 
@@ -1673,92 +1605,87 @@ async function logout(){
 }
 
 
-/* =====================================================
+/* =========================
    NAVIGATION
-===================================================== */
+========================= */
 
-function openSection(id,button){
+function openSection(
+  id,
+  button
+){
 
-  document.querySelectorAll(
-    ".section"
-  ).forEach(function(section){
-
-    section.classList.remove(
-      "active"
+  document
+    .querySelectorAll(".section")
+    .forEach(
+      s =>
+      s.classList.remove("active")
     );
 
-  });
 
-
-  document.getElementById(id)
+  document
+    .getElementById(id)
     .classList.add("active");
 
 
-  document.querySelectorAll(
-    ".nav button"
-  ).forEach(function(btn){
-
-    btn.classList.remove(
-      "active"
+  document
+    .querySelectorAll(".nav button")
+    .forEach(
+      b =>
+      b.classList.remove("active")
     );
-
-  });
 
 
   if(button){
 
-    button.classList.add(
-      "active"
-    );
+    button.classList.add("active");
 
   }
 
 
-  if(id === "products"){
+  if(id==="products")
     loadProducts();
-  }
 
-  if(id === "orders"){
+  if(id==="orders")
     loadOrders();
-  }
 
-  if(id === "complaints"){
+  if(id==="complaints")
     loadComplaints();
-  }
 
-  if(id === "reviews"){
+  if(id==="reviews")
     loadReviews();
-  }
 
 }
 
 
-function openMobile(id,button){
+function openMobile(
+  id,
+  button
+){
 
-  openSection(id,null);
-
-
-  document.querySelectorAll(
-    ".mobileNav button"
-  ).forEach(function(btn){
-
-    btn.classList.remove(
-      "active"
-    );
-
-  });
-
-
-  button.classList.add(
-    "active"
+  openSection(
+    id,
+    null
   );
 
+
+  document
+    .querySelectorAll(
+      ".mobileNav button"
+    )
+    .forEach(
+      b =>
+      b.classList.remove("active")
+    );
+
+
+  button.classList.add("active");
+
 }
 
 
-/* =====================================================
+/* =========================
    LOAD ALL
-===================================================== */
+========================= */
 
 function loadAll(){
 
@@ -1773,18 +1700,17 @@ function loadAll(){
 }
 
 
-/* =====================================================
+/* =========================
    IMAGE PREVIEW
-===================================================== */
+========================= */
 
 function previewImage(event){
 
   const file =
     event.target.files[0];
 
-  if(!file){
+  if(!file)
     return;
-  }
 
 
   selectedImageFile =
@@ -1800,16 +1726,15 @@ function previewImage(event){
   preview.src =
     URL.createObjectURL(file);
 
-
   preview.style.display =
     "block";
 
 }
 
 
-/* =====================================================
+/* =========================
    IMAGE COMPRESS
-===================================================== */
+========================= */
 
 function compressImage(file){
 
@@ -1840,7 +1765,6 @@ function compressImage(file){
               let height =
                 img.height;
 
-
               const max =
                 1200;
 
@@ -1855,7 +1779,8 @@ function compressImage(file){
                   height =
                     height * max / width;
 
-                  width = max;
+                  width =
+                    max;
 
                 }
 
@@ -1864,7 +1789,8 @@ function compressImage(file){
                   width =
                     width * max / height;
 
-                  height = max;
+                  height =
+                    max;
 
                 }
 
@@ -1894,11 +1820,8 @@ function compressImage(file){
 
 
               canvas.toBlob(
-                function(blob){
-
-                  resolve(blob);
-
-                },
+                blob =>
+                resolve(blob),
                 "image/jpeg",
                 .82
               );
@@ -1930,9 +1853,9 @@ function compressImage(file){
 }
 
 
-/* =====================================================
+/* =========================
    CLOUDINARY UPLOAD
-===================================================== */
+========================= */
 
 async function uploadImage(file){
 
@@ -1947,7 +1870,9 @@ async function uploadImage(file){
 
 
   const compressed =
-    await compressImage(file);
+    await compressImage(
+      file
+    );
 
 
   const formData =
@@ -1999,48 +1924,53 @@ async function uploadImage(file){
 }
 
 
-/* =====================================================
+/* =========================
    SAVE PRODUCT
-===================================================== */
+========================= */
 
 async function saveProduct(){
 
   const name =
-    document.getElementById(
-      "productName"
-    ).value.trim();
+    document
+      .getElementById("productName")
+      .value
+      .trim();
 
 
   const category =
-    document.getElementById(
-      "productCategory"
-    ).value.trim();
+    document
+      .getElementById("productCategory")
+      .value
+      .trim();
 
 
   const price =
     Number(
-      document.getElementById(
-        "productPrice"
-      ).value
+      document
+        .getElementById("productPrice")
+        .value
     );
 
 
   const sizesText =
-    document.getElementById(
-      "productSizes"
-    ).value.trim();
+    document
+      .getElementById("productSizes")
+      .value
+      .trim();
 
 
   const description =
-    document.getElementById(
-      "productDescription"
-    ).value.trim();
+    document
+      .getElementById("productDescription")
+      .value
+      .trim();
 
 
   const editId =
-    document.getElementById(
-      "editProductId"
-    ).value.trim();
+    document
+      .getElementById("editProductId")
+      .value
+      .trim();
 
 
   if(!name){
@@ -2065,7 +1995,7 @@ async function saveProduct(){
   }
 
 
-  if(!price || price <= 0){
+  if(!price || price<=0){
 
     alert(
       "Valid price bharna hai."
@@ -2105,26 +2035,28 @@ async function saveProduct(){
 
     const sizes =
       sizesText
-      ? sizesText
+      ?
+      sizesText
         .split(",")
-        .map(function(x){
-          return x.trim();
-        })
+        .map(
+          x => x.trim()
+        )
         .filter(Boolean)
-      : [];
+      :
+      [];
 
 
     const data = {
 
-      name:name,
+      name,
 
-      category:category,
+      category,
 
-      price:price,
+      price,
 
-      sizes:sizes,
+      sizes,
 
-      description:description,
+      description,
 
       image:imageUrl,
 
@@ -2132,8 +2064,8 @@ async function saveProduct(){
 
       updatedAt:
         firebase.firestore
-        .FieldValue
-        .serverTimestamp()
+          .FieldValue
+          .serverTimestamp()
 
     };
 
@@ -2156,8 +2088,8 @@ async function saveProduct(){
 
       data.createdAt =
         firebase.firestore
-        .FieldValue
-        .serverTimestamp();
+          .FieldValue
+          .serverTimestamp();
 
 
       await db
@@ -2183,7 +2115,8 @@ async function saveProduct(){
     console.error(error);
 
     alert(
-      "Product save nahi hua:\n" +
+      "Product save nahi hua:\n"
+      +
       error.message
     );
 
@@ -2192,9 +2125,9 @@ async function saveProduct(){
 }
 
 
-/* =====================================================
+/* =========================
    PRODUCTS
-===================================================== */
+========================= */
 
 async function loadProducts(){
 
@@ -2212,15 +2145,15 @@ async function loadProducts(){
 
     const snapshot =
       await db
-      .collection("products")
-      .get();
+        .collection("products")
+        .get();
 
 
-    products = [];
+    products=[];
 
 
     snapshot.forEach(
-      function(doc){
+      doc => {
 
         products.push({
 
@@ -2264,7 +2197,7 @@ function renderProducts(){
     );
 
 
-  if(products.length === 0){
+  if(!products.length){
 
     list.innerHTML =
       '<div class="empty">Abhi koi product nahi hai.</div>';
@@ -2275,85 +2208,85 @@ function renderProducts(){
 
 
   list.innerHTML =
-    products.map(
-      function(product){
+    products
+      .map(
+        function(product){
 
-        const image =
-          product.image ||
-          product.imageUrl ||
-          "https://via.placeholder.com/500";
-
-
-        const sizes =
-          Array.isArray(
-            product.sizes
-          )
-          ? product.sizes.join(", ")
-          : product.sizes || "-";
+          const image =
+            product.image ||
+            product.imageUrl ||
+            "https://via.placeholder.com/500";
 
 
-        return `
+          const sizes =
+            Array.isArray(
+              product.sizes
+            )
+            ?
+            product.sizes.join(", ")
+            :
+            (
+              product.sizes ||
+              "-"
+            );
 
-          <div class="productCard">
 
-            <img
-              class="productImage"
-              src="${escapeHtml(image)}"
-              onerror="this.src='https://via.placeholder.com/500'"
-            >
+          return `
 
-            <div class="productBody">
+<div class="productCard">
 
-              <h3>
-                ${escapeHtml(
-                  product.name ||
-                  "Product"
-                )}
-              </h3>
+<img
+  class="productImage"
+  src="${escapeHtml(image)}"
+  onerror="this.src='https://via.placeholder.com/500'"
+>
 
-              <div class="productPrice">
-                ₹${Number(
-                  product.price || 0
-                )}
-              </div>
+<div class="productBody">
 
-              <div class="productCategory">
-                ${escapeHtml(
-                  product.category || ""
-                )}
-              </div>
+<h3>
+${escapeHtml(product.name || "Product")}
+</h3>
 
-              <div class="productSizes">
-                <b>Sizes:</b>
-                ${escapeHtml(sizes)}
-              </div>
+<div class="productPrice">
+₹${Number(product.price || 0)}
+</div>
 
-              <div class="productActions">
+<div class="productCategory">
+${escapeHtml(product.category || "")}
+</div>
 
-                <button
-                  class="lightBtn"
-                  onclick="editProduct('${product.id}')"
-                >
-                  Edit
-                </button>
+<div class="productSizes">
+<b>Sizes:</b>
+${escapeHtml(sizes)}
+</div>
 
-                <button
-                  class="redBtn"
-                  onclick="deleteProduct('${product.id}')"
-                >
-                  Delete
-                </button>
+<div class="productActions">
 
-              </div>
+<button
+  class="lightBtn"
+  onclick="editProduct('${product.id}')"
+>
+Edit
+</button>
 
-            </div>
+<button
+  class="redBtn"
+  onclick="deleteProduct('${product.id}')"
+>
+Delete
+</button>
 
-          </div>
+</div>
 
-        `;
+</div>
 
-      }
-    ).join("");
+</div>
+
+`;
+
+        }
+      )
+      .join("");
 
 }
 
@@ -2362,15 +2295,13 @@ function editProduct(id){
 
   const product =
     products.find(
-      function(item){
-        return item.id === id;
-      }
+      item =>
+      item.id===id
     );
 
 
-  if(!product){
+  if(!product)
     return;
-  }
 
 
   document.getElementById(
@@ -2407,8 +2338,13 @@ function editProduct(id){
     "productSizes"
   ).value =
     Array.isArray(product.sizes)
-    ? product.sizes.join(",")
-    : product.sizes || "";
+    ?
+    product.sizes.join(",")
+    :
+    (
+      product.sizes ||
+      ""
+    );
 
 
   existingImageUrl =
@@ -2454,11 +2390,12 @@ function editProduct(id){
 
 async function deleteProduct(id){
 
-  if(!confirm(
-    "Kya tum ye product delete karna chahte ho?"
-  )){
+  if(
+    !confirm(
+      "Kya tum ye product delete karna chahte ho?"
+    )
+  )
     return;
-  }
 
 
   try{
@@ -2481,7 +2418,8 @@ async function deleteProduct(id){
   catch(error){
 
     alert(
-      "Delete nahi hua:\n" +
+      "Delete nahi hua:\n"
+      +
       error.message
     );
 
@@ -2494,52 +2432,52 @@ function resetProductForm(){
 
   document.getElementById(
     "editProductId"
-  ).value = "";
+  ).value="";
 
 
   document.getElementById(
     "productName"
-  ).value = "";
+  ).value="";
 
 
   document.getElementById(
     "productCategory"
-  ).value = "";
+  ).value="";
 
 
   document.getElementById(
     "productPrice"
-  ).value = "";
+  ).value="";
 
 
   document.getElementById(
     "productSizes"
-  ).value = "";
+  ).value="";
 
 
   document.getElementById(
     "productDescription"
-  ).value = "";
+  ).value="";
 
 
   document.getElementById(
     "productImage"
-  ).value = "";
+  ).value="";
 
 
   document.getElementById(
     "uploadStatus"
-  ).textContent = "";
+  ).textContent="";
 
 
   document.getElementById(
     "imagePreview"
-  ).style.display = "none";
+  ).style.display="none";
 
 
   document.getElementById(
     "imagePreview"
-  ).src = "";
+  ).src="";
 
 
   selectedImageFile =
@@ -2558,9 +2496,9 @@ function resetProductForm(){
 }
 
 
-/* =====================================================
+/* =========================
    ORDERS
-===================================================== */
+========================= */
 
 async function loadOrders(){
 
@@ -2578,15 +2516,15 @@ async function loadOrders(){
 
     const snapshot =
       await db
-      .collection("orders")
-      .get();
+        .collection("orders")
+        .get();
 
 
-    const orders = [];
+    const orders=[];
 
 
     snapshot.forEach(
-      function(doc){
+      doc => {
 
         orders.push({
 
@@ -2605,25 +2543,34 @@ async function loadOrders(){
 
         const aTime =
           a.createdAt?.toMillis
-          ? a.createdAt.toMillis()
-          : 0;
+          ?
+          a.createdAt.toMillis()
+          :
+          0;
 
 
         const bTime =
           b.createdAt?.toMillis
-          ? b.createdAt.toMillis()
-          : 0;
+          ?
+          b.createdAt.toMillis()
+          :
+          0;
 
 
-        return bTime - aTime;
+        return bTime-aTime;
 
       }
     );
 
 
-    renderOrders(orders);
+    renderOrders(
+      orders
+    );
 
-    updateOrderStats(orders);
+
+    updateOrderStats(
+      orders
+    );
 
   }
 
@@ -2639,7 +2586,208 @@ async function loadOrders(){
 }
 
 
-function renderOrders(orders){
+/* =========================
+   LOCATION
+========================= */
+
+function getCustomerLocation(order){
+
+  const loc =
+    order &&
+    order.location;
+
+
+  if(!loc)
+    return null;
+
+
+  let latitude =
+    null;
+
+  let longitude =
+    null;
+
+
+  /*
+    Format 1:
+    {
+      latitude: 25.5941,
+      longitude: 85.1376
+    }
+  */
+
+  if(
+    typeof loc.latitude === "number" &&
+    typeof loc.longitude === "number"
+  ){
+
+    latitude =
+      loc.latitude;
+
+    longitude =
+      loc.longitude;
+
+  }
+
+
+  /*
+    Format 2:
+    {
+      lat: 25.5941,
+      lng: 85.1376
+    }
+  */
+
+  else if(
+    typeof loc.lat === "number" &&
+    typeof loc.lng === "number"
+  ){
+
+    latitude =
+      loc.lat;
+
+    longitude =
+      loc.lng;
+
+  }
+
+
+  /*
+    Format 3:
+    Firestore GeoPoint
+  */
+
+  else if(
+    typeof loc._lat === "number" &&
+    typeof loc._long === "number"
+  ){
+
+    latitude =
+      loc._lat;
+
+    longitude =
+      loc._long;
+
+  }
+
+
+  if(
+    latitude === null ||
+    longitude === null
+  ){
+
+    return null;
+
+  }
+
+
+  if(
+    !Number.isFinite(latitude) ||
+    !Number.isFinite(longitude)
+  ){
+
+    return null;
+
+  }
+
+
+  if(
+    latitude < -90 ||
+    latitude > 90 ||
+    longitude < -180 ||
+    longitude > 180
+  ){
+
+    return null;
+
+  }
+
+
+  return {
+
+    latitude,
+    longitude
+
+  };
+
+}
+
+
+/* =========================
+   LOCATION HTML
+========================= */
+
+function locationHtml(order){
+
+  const loc =
+    getCustomerLocation(
+      order
+    );
+
+
+  if(!loc){
+
+    return `
+
+<br>
+
+<span
+  style="color:#999"
+>
+  📍 Location not shared
+</span>
+
+`;
+
+  }
+
+
+  const query =
+    encodeURIComponent(
+      loc.latitude +
+      "," +
+      loc.longitude
+    );
+
+
+  const mapUrl =
+    "https://www.google.com/maps/search/?api=1&query="
+    +
+    query;
+
+
+  return `
+
+<br>
+
+<a
+  class="locationAdminBtn"
+  href="${mapUrl}"
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  📍 View Customer Location
+</a>
+
+<span
+  class="locationCoords"
+>
+  ${loc.latitude.toFixed(6)},
+  ${loc.longitude.toFixed(6)}
+</span>
+
+`;
+
+}
+
+
+/* =========================
+   RENDER ORDERS
+========================= */
+
+function renderOrders(
+  orders
+){
 
   const list =
     document.getElementById(
@@ -2647,7 +2795,7 @@ function renderOrders(orders){
     );
 
 
-  if(orders.length === 0){
+  if(!orders.length){
 
     list.innerHTML =
       '<div class="empty">Abhi koi order nahi hai.</div>';
@@ -2658,291 +2806,352 @@ function renderOrders(orders){
 
 
   list.innerHTML =
-    orders.map(
-      function(order){
+    orders
+      .map(
+        function(order){
 
-        const status =
-          order.status ||
-          "pending";
-
-
-        const items =
-          Array.isArray(order.items)
-          ? order.items
-          : [];
+          const status =
+            order.status ||
+            "pending";
 
 
-        const itemsHtml =
-          items.length
-
-          ? items.map(
-              function(item){
-
-                const name =
-                  item.name ||
-                  item.productName ||
-                  "Product";
+          const items =
+            Array.isArray(
+              order.items
+            )
+            ?
+            order.items
+            :
+            [];
 
 
-                const qty =
-                  Number(
-                    item.quantity ||
-                    item.qty ||
-                    1
-                  );
+          const itemsHtml =
+            items.length
+            ?
+
+            items
+              .map(
+                function(item){
+
+                  const name =
+                    item.name ||
+                    item.productName ||
+                    "Product";
 
 
-                const price =
-                  Number(
-                    item.price || 0
-                  );
+                  const qty =
+                    Number(
+                      item.quantity ||
+                      item.qty ||
+                      1
+                    );
 
 
-                return `
-
-                  <div class="itemRow">
-
-                    <span>
-                      ${escapeHtml(name)}
-                      × ${qty}
-                    </span>
-
-                    <b>
-                      ₹${price * qty}
-                    </b>
-
-                  </div>
-
-                `;
-
-              }
-            ).join("")
-
-          : "<p>No item details</p>";
+                  const price =
+                    Number(
+                      item.price ||
+                      0
+                    );
 
 
-        let actions = "";
+                  return `
+
+<div class="itemRow">
+
+<span>
+${escapeHtml(name)}
+× ${qty}
+</span>
+
+<b>
+₹${price * qty}
+</b>
+
+</div>
+
+`;
+
+                }
+              )
+              .join("")
+
+            :
+
+            "<p>No item details</p>";
 
 
-        if(status === "pending"){
+          let actions="";
+
+
+          if(
+            status === "pending"
+          ){
+
+            actions += `
+
+<button
+  class="orangeBtn"
+  onclick="acceptOrder('${order.id}')"
+>
+✓ Accept Order
+</button>
+
+`;
+
+          }
+
+
+          if(
+            status === "processing"
+          ){
+
+            actions += `
+
+<button
+  class="greenBtn"
+  onclick="deliverOrder('${order.id}')"
+>
+✓ Mark Delivered
+</button>
+
+`;
+
+          }
+
+
+          if(
+            status !== "delivered" &&
+            status !== "cancelled"
+          ){
+
+            actions += `
+
+<button
+  class="redBtn"
+  onclick="cancelOrderAdmin('${order.id}')"
+>
+Cancel
+</button>
+
+`;
+
+          }
+
 
           actions += `
 
-            <button
-              class="orangeBtn"
-              onclick="acceptOrder('${order.id}')"
-            >
-              ✓ Accept Order
-            </button>
+<button
+  class="lightBtn"
+  onclick="deleteOrder('${order.id}')"
+>
+Delete
+</button>
 
-          `;
+`;
+
+
+          return `
+
+<div class="orderCard">
+
+
+<div class="orderHeader">
+
+<div>
+
+<div class="orderNumber">
+
+Order #
+${escapeHtml(
+  order.id.slice(-8)
+)}
+
+</div>
+
+<div class="orderId">
+
+${escapeHtml(
+  order.id
+)}
+
+</div>
+
+</div>
+
+
+<span
+  class="status ${escapeHtml(status)}"
+>
+
+${escapeHtml(
+  status.toUpperCase()
+)}
+
+</span>
+
+</div>
+
+
+<div class="orderInfo">
+
+
+<!-- CUSTOMER -->
+
+<div class="infoBox">
+
+<h4>
+👤 Customer
+</h4>
+
+<p>
+
+<b>Name:</b>
+
+${escapeHtml(
+  order.customerName ||
+  "-"
+)}
+
+<br>
+
+<b>Phone:</b>
+
+${escapeHtml(
+  order.customerPhone ||
+  "-"
+)}
+
+<br>
+
+<b>Address:</b>
+
+${escapeHtml(
+  order.customerAddress ||
+  "-"
+)}
+
+${locationHtml(
+  order
+)}
+
+</p>
+
+</div>
+
+
+<!-- ORDER INFO -->
+
+<div class="infoBox">
+
+<h4>
+💳 Order Info
+</h4>
+
+<p>
+
+<b>Payment:</b>
+
+${escapeHtml(
+  order.paymentMethod ||
+  "-"
+)}
+
+<br>
+
+<b>Date:</b>
+
+${escapeHtml(
+  formatDate(
+    order.createdAt
+  )
+)}
+
+</p>
+
+</div>
+
+
+</div>
+
+
+<div class="items">
+
+<b>
+🛍️ Items
+</b>
+
+${itemsHtml}
+
+
+<div class="total">
+
+Total:
+₹${Number(
+  order.total || 0
+)}
+
+</div>
+
+</div>
+
+
+<div class="orderActions">
+
+${actions}
+
+</div>
+
+
+</div>
+
+`;
 
         }
-
-
-        if(status === "processing"){
-
-          actions += `
-
-            <button
-              class="greenBtn"
-              onclick="deliverOrder('${order.id}')"
-            >
-              ✓ Mark Delivered
-            </button>
-
-          `;
-
-        }
-
-
-        if(
-          status !== "delivered" &&
-          status !== "cancelled"
-        ){
-
-          actions += `
-
-            <button
-              class="redBtn"
-              onclick="cancelOrderAdmin('${order.id}')"
-            >
-              Cancel
-            </button>
-
-          `;
-
-        }
-
-
-        actions += `
-
-          <button
-            class="lightBtn"
-            onclick="deleteOrder('${order.id}')"
-          >
-            Delete
-          </button>
-
-        `;
-
-
-        return `
-
-          <div class="orderCard">
-
-            <div class="orderHeader">
-
-              <div>
-
-                <div class="orderNumber">
-                  Order #${escapeHtml(
-                    order.id.slice(-8)
-                  )}
-                </div>
-
-                <div class="orderId">
-                  ${escapeHtml(order.id)}
-                </div>
-
-              </div>
-
-              <span
-                class="status ${status}"
-              >
-                ${escapeHtml(
-                  status.toUpperCase()
-                )}
-              </span>
-
-            </div>
-
-
-            <div class="orderInfo">
-
-              <div class="infoBox">
-
-                <h4>
-                  👤 Customer
-                </h4>
-
-                <p>
-
-                  <b>Name:</b>
-                  ${escapeHtml(
-                    order.customerName || "-"
-                  )}
-
-                  <br>
-
-                  <b>Phone:</b>
-                  ${escapeHtml(
-                    order.customerPhone || "-"
-                  )}
-
-                  <br>
-
-                  <b>Address:</b>
-                  ${escapeHtml(
-                    order.customerAddress || "-"
-                  )}
-
-                </p>
-
-              </div>
-
-
-              <div class="infoBox">
-
-                <h4>
-                  💳 Order Info
-                </h4>
-
-                <p>
-
-                  <b>Payment:</b>
-                  ${escapeHtml(
-                    order.paymentMethod || "-"
-                  )}
-
-                  <br>
-
-                  <b>Date:</b>
-                  ${escapeHtml(
-                    formatDate(
-                      order.createdAt
-                    )
-                  )}
-
-                </p>
-
-              </div>
-
-            </div>
-
-
-            <div class="items">
-
-              <b>
-                🛍️ Items
-              </b>
-
-              ${itemsHtml}
-
-              <div class="total">
-                Total:
-                ₹${Number(
-                  order.total || 0
-                )}
-              </div>
-
-            </div>
-
-
-            <div class="orderActions">
-
-              ${actions}
-
-            </div>
-
-          </div>
-
-        `;
-
-      }
-    ).join("");
+      )
+      .join("");
 
 }
 
 
-/* =====================================================
+/* =========================
    ACCEPT ORDER
-   IMPORTANT:
-   update() preserves customerUid
-===================================================== */
+========================= */
 
-async function acceptOrder(orderId){
+async function acceptOrder(
+  orderId
+){
 
-  if(!confirm(
-    "Kya tum is order ko accept karna chahte ho?"
-  )){
+  if(
+    !confirm(
+      "Kya tum is order ko accept karna chahte ho?"
+    )
+  )
     return;
-  }
 
 
   try{
+
+    /*
+      IMPORTANT:
+      update() use kar rahe hain.
+      Isse customerUid,
+      location,
+      address,
+      items sab preserve rahenge.
+    */
 
     await db
       .collection("orders")
       .doc(orderId)
       .update({
 
-        status:"processing",
+        status:
+          "processing",
 
         updatedAt:
           firebase.firestore
-          .FieldValue
-          .serverTimestamp()
+            .FieldValue
+            .serverTimestamp()
 
       });
 
@@ -2961,7 +3170,8 @@ async function acceptOrder(orderId){
     console.error(error);
 
     alert(
-      "Order update nahi hua:\n" +
+      "Order update nahi hua:\n"
+      +
       error.message
     );
 
@@ -2970,17 +3180,20 @@ async function acceptOrder(orderId){
 }
 
 
-/* =====================================================
+/* =========================
    DELIVER ORDER
-===================================================== */
+========================= */
 
-async function deliverOrder(orderId){
+async function deliverOrder(
+  orderId
+){
 
-  if(!confirm(
-    "Kya ye order delivered ho gaya hai?"
-  )){
+  if(
+    !confirm(
+      "Kya ye order delivered ho gaya hai?"
+    )
+  )
     return;
-  }
 
 
   try{
@@ -2990,12 +3203,13 @@ async function deliverOrder(orderId){
       .doc(orderId)
       .update({
 
-        status:"delivered",
+        status:
+          "delivered",
 
         updatedAt:
           firebase.firestore
-          .FieldValue
-          .serverTimestamp()
+            .FieldValue
+            .serverTimestamp()
 
       });
 
@@ -3014,7 +3228,8 @@ async function deliverOrder(orderId){
     console.error(error);
 
     alert(
-      "Order update nahi hua:\n" +
+      "Order update nahi hua:\n"
+      +
       error.message
     );
 
@@ -3023,17 +3238,20 @@ async function deliverOrder(orderId){
 }
 
 
-/* =====================================================
-   CANCEL ORDER
-===================================================== */
+/* =========================
+   ADMIN CANCEL
+========================= */
 
-async function cancelOrderAdmin(orderId){
+async function cancelOrderAdmin(
+  orderId
+){
 
-  if(!confirm(
-    "Kya tum ye order cancel karna chahte ho?"
-  )){
+  if(
+    !confirm(
+      "Kya tum ye order cancel karna chahte ho?"
+    )
+  )
     return;
-  }
 
 
   try{
@@ -3043,19 +3261,21 @@ async function cancelOrderAdmin(orderId){
       .doc(orderId)
       .update({
 
-        status:"cancelled",
+        status:
+          "cancelled",
 
-        cancelledBy:"admin",
+        cancelledBy:
+          "admin",
 
         cancelledAt:
           firebase.firestore
-          .FieldValue
-          .serverTimestamp(),
+            .FieldValue
+            .serverTimestamp(),
 
         updatedAt:
           firebase.firestore
-          .FieldValue
-          .serverTimestamp()
+            .FieldValue
+            .serverTimestamp()
 
       });
 
@@ -3074,7 +3294,8 @@ async function cancelOrderAdmin(orderId){
     console.error(error);
 
     alert(
-      "Order cancel nahi hua:\n" +
+      "Order cancel nahi hua:\n"
+      +
       error.message
     );
 
@@ -3083,17 +3304,20 @@ async function cancelOrderAdmin(orderId){
 }
 
 
-/* =====================================================
+/* =========================
    DELETE ORDER
-===================================================== */
+========================= */
 
-async function deleteOrder(orderId){
+async function deleteOrder(
+  orderId
+){
 
-  if(!confirm(
-    "Ye order permanently delete karna hai?"
-  )){
+  if(
+    !confirm(
+      "Ye order permanently delete karna hai?"
+    )
+  )
     return;
-  }
 
 
   try{
@@ -3116,7 +3340,8 @@ async function deleteOrder(orderId){
   catch(error){
 
     alert(
-      "Order delete nahi hua:\n" +
+      "Order delete nahi hua:\n"
+      +
       error.message
     );
 
@@ -3125,11 +3350,13 @@ async function deleteOrder(orderId){
 }
 
 
-/* =====================================================
+/* =========================
    ORDER STATS
-===================================================== */
+========================= */
 
-function updateOrderStats(orders){
+function updateOrderStats(
+  orders
+){
 
   document.getElementById(
     "statOrders"
@@ -3137,44 +3364,33 @@ function updateOrderStats(orders){
     orders.length;
 
 
-  const pending =
-    orders.filter(
-      function(order){
-
-        return order.status ===
-          "pending";
-
-      }
-    ).length;
-
-
   document.getElementById(
     "statPending"
   ).textContent =
-    pending;
+    orders.filter(
+      o =>
+      o.status === "pending"
+    ).length;
 
 
   const sales =
     orders
-    .filter(
-      function(order){
-
-        return order.status ===
-          "delivered";
-
-      }
-    )
-    .reduce(
-      function(total,order){
-
-        return total +
+      .filter(
+        o =>
+        o.status ===
+        "delivered"
+      )
+      .reduce(
+        (
+          total,
+          o
+        ) =>
+          total +
           Number(
-            order.total || 0
-          );
-
-      },
-      0
-    );
+            o.total || 0
+          ),
+        0
+      );
 
 
   document.getElementById(
@@ -3185,9 +3401,9 @@ function updateOrderStats(orders){
 }
 
 
-/* =====================================================
+/* =========================
    COMPLAINTS
-===================================================== */
+========================= */
 
 async function loadComplaints(){
 
@@ -3205,11 +3421,15 @@ async function loadComplaints(){
 
     const snapshot =
       await db
-      .collection("supportTickets")
-      .get();
+        .collection(
+          "supportTickets"
+        )
+        .get();
 
 
-    if(snapshot.empty){
+    if(
+      snapshot.empty
+    ){
 
       list.innerHTML =
         '<div class="empty">Abhi koi complaint nahi hai.</div>';
@@ -3219,7 +3439,7 @@ async function loadComplaints(){
     }
 
 
-    let html = "";
+    let html="";
 
 
     snapshot.forEach(
@@ -3231,43 +3451,50 @@ async function loadComplaints(){
 
         html += `
 
-          <div class="simpleCard">
+<div class="simpleCard">
 
-            <h3>
-              ${escapeHtml(
-                data.subject ||
-                data.title ||
-                "Customer Complaint"
-              )}
-            </h3>
+<h3>
 
-            <p>
+${escapeHtml(
+  data.subject ||
+  data.title ||
+  "Customer Complaint"
+)}
 
-              <b>Name:</b>
-              ${escapeHtml(
-                data.customerName || "-"
-              )}
+</h3>
 
-              <br>
 
-              <b>Phone:</b>
-              ${escapeHtml(
-                data.customerPhone || "-"
-              )}
+<p>
 
-              <br><br>
+<b>Name:</b>
 
-              ${escapeHtml(
-                data.message ||
-                data.description ||
-                "No message"
-              )}
+${escapeHtml(
+  data.customerName ||
+  "-"
+)}
 
-            </p>
+<br>
 
-          </div>
+<b>Phone:</b>
 
-        `;
+${escapeHtml(
+  data.customerPhone ||
+  "-"
+)}
+
+<br><br>
+
+${escapeHtml(
+  data.message ||
+  data.description ||
+  "No message"
+)}
+
+</p>
+
+</div>
+
+`;
 
       }
     );
@@ -3290,9 +3517,9 @@ async function loadComplaints(){
 }
 
 
-/* =====================================================
+/* =========================
    REVIEWS
-===================================================== */
+========================= */
 
 async function loadReviews(){
 
@@ -3310,11 +3537,15 @@ async function loadReviews(){
 
     const snapshot =
       await db
-      .collection("reviews")
-      .get();
+        .collection(
+          "reviews"
+        )
+        .get();
 
 
-    if(snapshot.empty){
+    if(
+      snapshot.empty
+    ){
 
       list.innerHTML =
         '<div class="empty">Abhi koi review nahi hai.</div>';
@@ -3324,7 +3555,7 @@ async function loadReviews(){
     }
 
 
-    let html = "";
+    let html="";
 
 
     snapshot.forEach(
@@ -3335,60 +3566,69 @@ async function loadReviews(){
 
 
         const rating =
-          Number(
-            data.rating || 0
-          );
-
-
-        const stars =
-          "★".repeat(
-            Math.min(
-              5,
-              Math.max(
-                0,
-                rating
+          Math.min(
+            5,
+            Math.max(
+              0,
+              Number(
+                data.rating ||
+                0
               )
             )
           );
 
 
+        const stars =
+          "★".repeat(
+            rating
+          );
+
+
         html += `
 
-          <div class="simpleCard">
+<div class="simpleCard">
 
-            <h3>
-              ${escapeHtml(
-                data.productName ||
-                "Product Review"
-              )}
-            </h3>
+<h3>
 
-            <div class="stars">
-              ${stars}
-            </div>
+${escapeHtml(
+  data.productName ||
+  "Product Review"
+)}
 
-            <p>
+</h3>
 
-              <b>
-                ${escapeHtml(
-                  data.customerName ||
-                  "Customer"
-                )}
-              </b>
 
-              <br><br>
+<div class="stars">
 
-              ${escapeHtml(
-                data.comment ||
-                data.review ||
-                "No comment"
-              )}
+${stars}
 
-            </p>
+</div>
 
-          </div>
 
-        `;
+<p>
+
+<b>
+
+${escapeHtml(
+  data.customerName ||
+  "Customer"
+)}
+
+</b>
+
+<br><br>
+
+${escapeHtml(
+  data.comment ||
+  data.review ||
+  "No comment"
+)}
+
+</p>
+
+</div>
+
+`;
 
       }
     );
@@ -3411,23 +3651,28 @@ async function loadReviews(){
 }
 
 
-/* =====================================================
+/* =========================
    DATE
-===================================================== */
+========================= */
 
-function formatDate(timestamp){
+function formatDate(
+  timestamp
+){
 
-  if(!timestamp){
+  if(!timestamp)
     return "-";
-  }
 
 
   try{
 
     const date =
       timestamp.toDate
-      ? timestamp.toDate()
-      : new Date(timestamp);
+      ?
+      timestamp.toDate()
+      :
+      new Date(
+        timestamp
+      );
 
 
     return date.toLocaleString(
@@ -3449,11 +3694,13 @@ function formatDate(timestamp){
 }
 
 
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
+/* =========================
+   SECURITY
+========================= */
 
-function escapeHtml(value){
+function escapeHtml(
+  value
+){
 
   return String(
     value ?? ""
