@@ -1,1027 +1,849 @@
-<!doctype html>
-<html lang="hi">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>NARI FASHION</title>
 
-<link rel="stylesheet" href="style.css">
-
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-
 <style>
-
-.hidden{
-display:none!important;
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-.productDetail,
-.supportModal,
-.ordersModal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.65);
-z-index:9999;
-overflow:auto;
-padding:20px;
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f7f7f7;
+  color:#222;
 }
 
-.detailBox,
-.supportBox,
-.ordersBox{
-background:#fff;
-max-width:900px;
-margin:20px auto;
-border-radius:18px;
-overflow:hidden;
-position:relative;
-padding:20px;
+button{
+  cursor:pointer;
+  border:none;
 }
 
-.supportBox{
-max-width:600px;
+.navbar{
+  background:#111;
+  color:white;
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:1000;
 }
 
-.ordersBox{
-max-width:800px;
+.logo{
+  font-size:24px;
+  font-weight:bold;
+  letter-spacing:1px;
 }
 
-.detailClose,
-.supportClose,
-.ordersClose{
-position:absolute;
-right:15px;
-top:10px;
-border:0;
-background:#111;
-color:#fff;
-width:40px;
-height:40px;
-border-radius:50%;
-font-size:25px;
-cursor:pointer;
-z-index:2;
+.nav-right{
+  display:flex;
+  gap:8px;
+  align-items:center;
 }
 
-.detailGrid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:25px;
+.nav-btn{
+  background:white;
+  color:#111;
+  padding:9px 13px;
+  border-radius:8px;
+  font-weight:bold;
 }
 
-.detailImage{
-width:100%;
-max-height:500px;
-object-fit:contain;
-border-radius:12px;
-background:#f5f5f5;
+.admin-btn{
+  background:#e91e63;
+  color:white;
 }
 
-.detailPrice{
-font-size:26px;
-font-weight:bold;
-margin:10px 0;
+.hero{
+  padding:45px 20px;
+  text-align:center;
+  background:linear-gradient(135deg,#111,#444);
+  color:white;
 }
 
-.sizeGroup{
-margin:18px 0;
+.hero h1{
+  font-size:38px;
+  margin-bottom:10px;
 }
 
-.sizeTitle{
-font-weight:bold;
-margin-bottom:8px;
+.hero p{
+  font-size:17px;
+  opacity:.9;
 }
 
-.sizeButtons{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
+.search-area{
+  max-width:850px;
+  margin:25px auto;
+  padding:0 15px;
 }
 
-.sizeBtn{
-padding:10px 15px;
-border:1px solid #ccc;
-background:#fff;
-border-radius:8px;
-cursor:pointer;
+.search-box{
+  width:100%;
+  padding:15px 18px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  font-size:16px;
+  outline:none;
+  background:white;
 }
 
-.sizeBtn.selected{
-background:#111;
-color:#fff;
-border-color:#111;
+.search-box:focus{
+  border-color:#e91e63;
 }
 
-.qtyBox{
-display:flex;
-align-items:center;
-gap:12px;
-margin:18px 0;
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:10px 15px 50px;
 }
 
-.qtyBox button{
-width:38px;
-height:38px;
-border:1px solid #ccc;
-background:#fff;
-border-radius:7px;
-font-size:20px;
-cursor:pointer;
+.section-title{
+  margin:15px 0;
+  font-size:25px;
 }
 
-.qtyBox span{
-font-size:18px;
-font-weight:bold;
-min-width:25px;
-text-align:center;
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+  gap:18px;
 }
 
-.detailAdd{
-width:100%;
-padding:14px;
-border:0;
-border-radius:10px;
-background:#111;
-color:#fff;
-font-size:17px;
-cursor:pointer;
+.product-card{
+  background:white;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 3px 12px rgba(0,0,0,.08);
+  transition:.2s;
 }
 
-.detailAdd:disabled{
-opacity:.5;
-cursor:not-allowed;
+.product-card:hover{
+  transform:translateY(-3px);
 }
 
-.cartItem{
-border-bottom:1px solid #ddd;
-padding:12px 0;
+.product-card img{
+  width:100%;
+  height:250px;
+  object-fit:cover;
+  background:#eee;
 }
 
-.cartInfo{
-font-weight:bold;
+.product-info{
+  padding:13px;
 }
 
-.cartSize{
-font-size:13px;
-color:#666;
-margin-top:4px;
+.product-name{
+  font-weight:bold;
+  font-size:17px;
+  margin-bottom:7px;
 }
 
-.cartControls{
-display:flex;
-align-items:center;
-gap:8px;
-margin-top:8px;
+.price{
+  font-size:19px;
+  font-weight:bold;
+  margin-bottom:9px;
 }
 
-.cartControls button{
-width:32px;
-height:32px;
-border:1px solid #ccc;
-background:#fff;
-border-radius:6px;
-cursor:pointer;
+.stock{
+  font-size:13px;
+  margin-bottom:10px;
 }
 
-.removeBtn{
-width:auto!important;
-padding:0 10px;
-color:#b00020;
+.card-btn{
+  width:100%;
+  background:#111;
+  color:white;
+  padding:11px;
+  border-radius:8px;
+  font-weight:bold;
 }
 
-.cartTotal{
-font-size:19px;
-font-weight:bold;
-padding:15px 0;
+.no-products{
+  text-align:center;
+  padding:50px 10px;
+  color:#777;
 }
 
-.addressBox,
-.supportForm{
-display:flex;
-flex-direction:column;
-gap:9px;
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  z-index:2000;
+  overflow:auto;
+  padding:20px;
 }
 
-.addressBox input,
-.addressBox textarea,
-.supportForm input,
-.supportForm select,
-.supportForm textarea,
-.orderSearchBox input{
-width:100%;
-box-sizing:border-box;
-padding:11px;
-border:1px solid #ccc;
-border-radius:7px;
-font:inherit;
+.modal-box{
+  background:white;
+  max-width:650px;
+  margin:40px auto;
+  border-radius:15px;
+  padding:20px;
+  position:relative;
 }
 
-.addressBox textarea,
-.supportForm textarea{
-min-height:80px;
-resize:vertical;
+.close{
+  position:absolute;
+  right:15px;
+  top:12px;
+  font-size:25px;
+  background:none;
 }
 
-.locationBtn{
-padding:11px;
-border:1px solid #111;
-background:#fff;
-border-radius:8px;
-cursor:pointer;
+.detail-img{
+  width:100%;
+  max-height:430px;
+  object-fit:contain;
+  border-radius:10px;
+  background:#f2f2f2;
 }
 
-.locationStatus{
-font-size:13px;
-color:#555;
+.detail-name{
+  font-size:25px;
+  font-weight:bold;
+  margin:15px 0 5px;
 }
 
-.placeBtn,
-.supportSubmit,
-.orderSearchBtn{
-width:100%;
-padding:13px;
-border:0;
-border-radius:9px;
-background:#111;
-color:#fff;
-font-size:16px;
-cursor:pointer;
+.detail-price{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:15px;
 }
 
-.supportButton{
-display:block;
-width:100%;
-margin-top:15px;
-padding:13px;
-border:1px solid #111;
-border-radius:9px;
-background:#fff;
-color:#111;
-font-size:16px;
-cursor:pointer;
+.size-title{
+  font-weight:bold;
+  margin:15px 0 8px;
 }
 
-.supportIntro{
-color:#666;
-font-size:14px;
-margin-bottom:15px;
-line-height:1.5;
+.sizes{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
 }
 
-.formLabel{
-font-weight:bold;
-margin-top:5px;
+.size-btn{
+  padding:9px 13px;
+  border:1px solid #bbb;
+  border-radius:7px;
+  background:white;
 }
 
-.supportMsg{
-margin-top:12px;
-font-size:14px;
+.size-btn.active{
+  background:#111;
+  color:white;
 }
 
-.orderSuccess{
-background:#f4f4f4;
-border-radius:10px;
-padding:14px;
-margin-top:12px;
-line-height:1.6;
+.qty-box{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  margin:18px 0;
 }
 
-.orderId{
-font-weight:bold;
-font-size:18px;
+.qty-btn{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  background:#111;
+  color:white;
+  font-size:20px;
 }
 
-.orderCard{
-border:1px solid #ddd;
-border-radius:12px;
-padding:15px;
-margin:12px 0;
-background:#fff;
+.add-cart{
+  width:100%;
+  padding:14px;
+  border-radius:9px;
+  background:#e91e63;
+  color:white;
+  font-weight:bold;
+  font-size:16px;
 }
 
-.orderCardHead{
-display:flex;
-justify-content:space-between;
-gap:10px;
-flex-wrap:wrap;
-align-items:center;
+.cart-drawer{
+  display:none;
+  position:fixed;
+  right:0;
+  top:0;
+  height:100%;
+  width:min(430px,100%);
+  background:white;
+  z-index:3000;
+  box-shadow:-5px 0 20px rgba(0,0,0,.25);
+  overflow:auto;
+  padding:20px;
 }
 
-.orderStatus{
-display:inline-block;
-padding:5px 10px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
+.cart-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.cart-item{
+  display:flex;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid #ddd;
+}
+
+.cart-item img{
+  width:70px;
+  height:80px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.cart-item-info{
+  flex:1;
+}
+
+.cart-total{
+  font-size:22px;
+  font-weight:bold;
+  margin:18px 0;
+}
+
+.form-group{
+  margin-bottom:12px;
+}
+
+.form-group label{
+  display:block;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select{
+  width:100%;
+  padding:11px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  font-size:15px;
+}
+
+.place-order{
+  width:100%;
+  background:#111;
+  color:white;
+  padding:14px;
+  border-radius:9px;
+  font-weight:bold;
+}
+
+.location-btn{
+  width:100%;
+  padding:11px;
+  background:#eee;
+  border-radius:8px;
+  margin-bottom:12px;
+}
+
+.order-card{
+  background:#fafafa;
+  border:1px solid #ddd;
+  border-radius:10px;
+  padding:14px;
+  margin-bottom:12px;
+}
+
+.order-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.status{
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
 }
 
 .statusPending{
-background:#fff3cd;
-color:#856404;
+  background:#fff3cd;
+  color:#856404;
 }
 
 .statusProcessing{
-background:#cfe2ff;
-color:#084298;
+  background:#cfe2ff;
+  color:#084298;
 }
 
 .statusDelivered{
-background:#d1e7dd;
-color:#0f5132;
+  background:#d1e7dd;
+  color:#0f5132;
 }
 
 .statusCancelled{
-background:#f8d7da;
-color:#842029;
+  background:#f8d7da;
+  color:#842029;
 }
 
-.orderItems{
-margin-top:12px;
-border-top:1px solid #eee;
-padding-top:10px;
+.order-actions{
+  display:flex;
+  gap:8px;
+  margin-top:12px;
 }
 
-.orderItem{
-padding:6px 0;
-font-size:14px;
+.order-actions button{
+  flex:1;
+  padding:9px;
+  border-radius:7px;
+  font-weight:bold;
 }
 
-.orderAddress{
-font-size:14px;
-color:#555;
-margin-top:10px;
-line-height:1.5;
+.view-btn{
+  background:#111;
+  color:white;
 }
 
-.orderActions{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-margin-top:12px;
+.cancel-btn{
+  background:#dc3545;
+  color:white;
 }
 
-.orderActions button{
-padding:9px 13px;
-border:0;
-border-radius:7px;
-cursor:pointer;
+.support-btn{
+  background:#198754;
+  color:white;
 }
 
-.cancelOrderBtn{
-background:#dc3545;
-color:#fff;
+.info{
+  padding:12px;
+  background:#f1f1f1;
+  border-radius:8px;
+  margin:10px 0;
+  font-size:14px;
 }
 
-.supportOrderBtn{
-background:#111;
-color:#fff;
+footer{
+  background:#111;
+  color:white;
+  text-align:center;
+  padding:25px;
+  margin-top:30px;
 }
 
-.viewOrderBtn{
-background:#0d6efd;
-color:#fff;
+@media(max-width:600px){
+
+  .logo{
+    font-size:19px;
+  }
+
+  .nav-btn{
+    padding:7px 9px;
+    font-size:12px;
+  }
+
+  .hero h1{
+    font-size:30px;
+  }
+
+  .products{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+
+  .product-card img{
+    height:200px;
+  }
+
+  .product-name{
+    font-size:15px;
+  }
+
+  .price{
+    font-size:17px;
+  }
 }
-
-.cancelDisabled{
-background:#ddd;
-color:#777;
-cursor:not-allowed!important;
-}
-
-.cancelInfo{
-font-size:12px;
-color:#777;
-margin-top:8px;
-}
-
-.orderSearchBox{
-display:flex;
-flex-direction:column;
-gap:10px;
-margin-top:15px;
-}
-
-.orderEmpty{
-text-align:center;
-padding:25px 10px;
-color:#666;
-}
-
-.orderLoading{
-text-align:center;
-padding:25px;
-}
-
-.orderDetailModal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.65);
-z-index:10000;
-overflow:auto;
-padding:15px;
-}
-
-.orderDetailBox{
-max-width:600px;
-background:#fff;
-margin:30px auto;
-padding:20px;
-border-radius:16px;
-position:relative;
-}
-
-.orderDetailClose{
-position:absolute;
-right:12px;
-top:10px;
-width:36px;
-height:36px;
-border:0;
-border-radius:50%;
-background:#111;
-color:#fff;
-font-size:22px;
-cursor:pointer;
-}
-
-@media(max-width:700px){
-
-.detailGrid{
-grid-template-columns:1fr;
-}
-
-.detailBox,
-.supportBox,
-.ordersBox{
-margin:5px auto;
-padding:15px;
-}
-
-.detailImage{
-max-height:350px;
-}
-
-.productDetail,
-.supportModal,
-.ordersModal{
-padding:8px;
-}
-
-.orderActions{
-flex-direction:column;
-}
-
-.orderActions button{
-width:100%;
-}
-
-}
-
 </style>
 </head>
 
 <body>
 
-<header>
+<header class="navbar">
 
-<div class="logo">
-NARI FASHION
-</div>
+  <div class="logo">
+    NARI FASHION
+  </div>
 
-<div style="display:flex;gap:8px;align-items:center">
+  <div class="nav-right">
 
-<button
-id="myOrdersBtn"
-class="admin"
-style="
-border:0;
-cursor:pointer;
-padding:8px 12px;
-"
->
-📦 My Orders
-</button>
+    <button class="nav-btn" id="cartBtn">
+      🛒 Cart <span id="cartCount">0</span>
+    </button>
 
-<a
-href="admin.html"
-class="admin"
->
-Admin
-</a>
+    <button class="nav-btn" id="myOrdersBtn">
+      📦 My Orders
+    </button>
 
-</div>
+    <a href="admin.html" class="nav-btn admin-btn">
+      Admin
+    </a>
+
+  </div>
 
 </header>
 
 
-<main>
-
 <section class="hero">
 
-<h1>
-Fashion for Every Style
-</h1>
+  <h1>NARI FASHION</h1>
 
-<p>
-Latest products • Easy ordering • Fast support
-</p>
+  <p>Fashion that makes you feel confident.</p>
 
 </section>
 
 
-<div class="tools">
+<div class="search-area">
 
-<input
-id="search"
-placeholder="Product search..."
->
-
-<button id="cartBtn">
-Cart (<span id="cartCount">0</span>)
-</button>
+  <input
+    id="search"
+    class="search-box"
+    type="search"
+    placeholder="🔍 Search products..."
+    autocomplete="off"
+  >
 
 </div>
 
 
-<section
-id="products"
-class="grid"
->
+<main class="container">
 
-<p>
-Loading products...
-</p>
+  <h2 class="section-title">
+    Our Products
+  </h2>
 
-</section>
+  <div id="products" class="products"></div>
+
+  <div id="noProducts" class="no-products" style="display:none;">
+    No products found.
+  </div>
 
 </main>
 
 
-<!-- =====================================================
-     PRODUCT DETAIL
-===================================================== -->
+<!-- PRODUCT DETAIL -->
 
-<div
-id="productDetail"
-class="productDetail hidden"
->
+<div class="modal" id="productModal">
 
-<div class="detailBox">
+  <div class="modal-box">
 
-<button
-id="detailClose"
-class="detailClose"
->
-×
-</button>
+    <button class="close" onclick="closeModal('productModal')">
+      ×
+    </button>
 
-<div class="detailGrid">
+    <img id="detailImg" class="detail-img">
 
-<div>
+    <div id="detailName" class="detail-name"></div>
 
-<img
-id="detailImage"
-class="detailImage"
->
+    <div id="detailPrice" class="detail-price"></div>
 
-</div>
+    <div id="detailStock"></div>
 
+    <div class="size-title">
+      Select Size
+    </div>
 
-<div>
+    <div id="sizes" class="sizes"></div>
 
-<h2 id="detailName"></h2>
+    <div class="qty-box">
 
-<div
-id="detailPrice"
-class="detailPrice"
-></div>
+      <button class="qty-btn" onclick="changeDetailQty(-1)">
+        −
+      </button>
 
-<div id="detailStock"></div>
+      <strong id="detailQty">1</strong>
 
-<div
-id="sizeArea"
-class="sizeGroup"
-></div>
+      <button class="qty-btn" onclick="changeDetailQty(1)">
+        +
+      </button>
 
+    </div>
 
-<div class="qtyBox">
+    <button class="add-cart" onclick="addToCart()">
+      Add To Cart
+    </button>
 
-<button id="detailMinus">
-−
-</button>
-
-<span id="detailQty">
-1
-</span>
-
-<button id="detailPlus">
-+
-</button>
+  </div>
 
 </div>
 
 
-<button
-id="detailAdd"
-class="detailAdd"
->
-Add to Cart
-</button>
+<!-- CART -->
 
-<p id="detailMsg"></p>
+<div class="cart-drawer" id="cartDrawer">
 
-</div>
+  <div class="cart-header">
 
-</div>
+    <h2>Your Cart</h2>
 
-</div>
+    <button class="close" onclick="closeCart()">
+      ×
+    </button>
 
-</div>
+  </div>
 
+  <div id="cartItems"></div>
 
-<!-- =====================================================
-     CART
-===================================================== -->
-
-<div
-id="cart"
-class="drawer hidden"
->
-
-<div class="drawerHead">
-
-<h2>
-Your Cart
-</h2>
-
-<button id="closeCart">
-×
-</button>
-
-</div>
+  <div class="cart-total">
+    Total: ₹<span id="cartTotal">0</span>
+  </div>
 
 
-<div id="cartItems"></div>
+  <div class="form-group">
 
-<div
-id="cartTotal"
-class="cartTotal"
-></div>
+    <label>Name</label>
 
+    <input
+      id="customerName"
+      type="text"
+      placeholder="Your name"
+    >
 
-<div class="checkout">
-
-<h3>
-Delivery Address
-</h3>
+  </div>
 
 
-<div class="addressBox">
+  <div class="form-group">
 
-<input
-id="custName"
-placeholder="Full name"
->
+    <label>Phone</label>
 
-<input
-id="custPhone"
-placeholder="Mobile number"
-type="tel"
->
+    <input
+      id="customerPhone"
+      type="tel"
+      maxlength="10"
+      placeholder="10 digit mobile number"
+    >
 
-<input
-id="house"
-placeholder="House / Flat / Building"
->
-
-<input
-id="street"
-placeholder="Street / Area"
->
-
-<input
-id="landmark"
-placeholder="Landmark"
->
-
-<input
-id="city"
-placeholder="City"
->
-
-<input
-id="state"
-placeholder="State"
->
-
-<input
-id="pincode"
-placeholder="PIN code"
-inputmode="numeric"
->
-
-<textarea
-id="addressNote"
-placeholder="Any additional address details"
-></textarea>
+  </div>
 
 
-<button
-id="locationBtn"
-class="locationBtn"
->
-📍 Use Current Location
-</button>
+  <div class="form-group">
+
+    <label>Address</label>
+
+    <textarea
+      id="customerAddress"
+      rows="3"
+      placeholder="Full delivery address"
+    ></textarea>
+
+  </div>
 
 
-<div
-id="locationStatus"
-class="locationStatus"
->
-Current location not selected
-</div>
+  <button
+    class="location-btn"
+    onclick="getLocation()"
+  >
+    📍 Use Current Location
+  </button>
+
+  <div
+    id="locationInfo"
+    class="info"
+    style="display:none;"
+  ></div>
+
+
+  <div class="form-group">
+
+    <label>Payment</label>
+
+    <select id="paymentMethod">
+
+      <option value="COD">
+        Cash on Delivery
+      </option>
+
+    </select>
+
+  </div>
+
+
+  <button
+    class="place-order"
+    onclick="placeOrder()"
+  >
+    🛍️ Place Order
+  </button>
 
 </div>
 
 
-<br>
+<!-- MY ORDERS -->
 
+<div class="modal" id="ordersModal">
 
-<button
-id="placeOrder"
-class="placeBtn"
->
-Place Order
-</button>
+  <div class="modal-box">
 
+    <button
+      class="close"
+      onclick="closeModal('ordersModal')"
+    >
+      ×
+    </button>
 
-<div id="orderMsg"></div>
+    <h2>📦 My Orders</h2>
 
+    <div class="info">
+      Your orders are automatically linked to this device.
+    </div>
 
-<button
-id="supportOpen"
-class="supportButton"
->
-🆘 Help & Support
-</button>
+    <button
+      class="place-order"
+      onclick="loadMyOrders()"
+      style="margin-bottom:15px;"
+    >
+      🔄 Refresh Orders
+    </button>
 
-</div>
+    <div id="myOrdersList"></div>
 
-</div>
-
-
-<!-- =====================================================
-     SUPPORT
-===================================================== -->
-
-<div
-id="supportModal"
-class="supportModal hidden"
->
-
-<div class="supportBox">
-
-<button
-id="supportClose"
-class="supportClose"
->
-×
-</button>
-
-
-<h2>
-🆘 Help & Support
-</h2>
-
-
-<p class="supportIntro">
-
-Order se related koi problem hai to neeche complaint submit karein.
-Hamari team aapki problem check karegi.
-
-</p>
-
-
-<div class="supportForm">
-
-<label class="formLabel">
-Order ID
-</label>
-
-<input
-id="supportOrderId"
-placeholder="Example: NF-ABC123"
->
-
-
-<label class="formLabel">
-Mobile Number
-</label>
-
-<input
-id="supportPhone"
-type="tel"
-placeholder="10 digit mobile number"
->
-
-
-<label class="formLabel">
-Problem Type
-</label>
-
-
-<select id="supportType">
-
-<option value="">
-Select problem
-</option>
-
-<option value="Wrong Product">
-Wrong Product
-</option>
-
-<option value="Wrong Size">
-Wrong Size
-</option>
-
-<option value="Damaged Product">
-Damaged Product
-</option>
-
-<option value="Delivery Problem">
-Delivery Problem
-</option>
-
-<option value="Return / Exchange">
-Return / Exchange
-</option>
-
-<option value="Payment Problem">
-Payment Problem
-</option>
-
-<option value="Other">
-Other
-</option>
-
-</select>
-
-
-<label class="formLabel">
-Problem Details
-</label>
-
-<textarea
-id="supportDetails"
-placeholder="Apni problem yahan detail me likhein..."
-></textarea>
-
-
-<button
-id="supportSubmit"
-class="supportSubmit"
->
-Submit Complaint
-</button>
-
-
-<div
-id="supportMsg"
-class="supportMsg"
-></div>
-
-</div>
-
-</div>
+  </div>
 
 </div>
 
 
-<!-- =====================================================
-     MY ORDERS
-===================================================== -->
+<!-- ORDER DETAIL -->
 
-<div
-id="ordersModal"
-class="ordersModal hidden"
->
+<div class="modal" id="orderDetailModal">
 
-<div class="ordersBox">
+  <div class="modal-box">
 
-<button
-id="ordersClose"
-class="ordersClose"
->
-×
-</button>
+    <button
+      class="close"
+      onclick="closeModal('orderDetailModal')"
+    >
+      ×
+    </button>
 
+    <h2>Order Details</h2>
 
-<h2>
-📦 My Orders
-</h2>
+    <div id="orderDetailContent"></div>
 
-
-<p class="supportIntro">
-
-Apne orders dekhne ke liye wahi mobile number daalein
-jo order karte waqt use kiya tha.
-
-</p>
-
-
-<div class="orderSearchBox">
-
-<input
-id="orderSearchPhone"
-type="tel"
-inputmode="numeric"
-maxlength="10"
-placeholder="10 digit mobile number"
->
-
-<button
-id="searchOrders"
-class="orderSearchBtn"
->
-View My Orders
-</button>
+  </div>
 
 </div>
 
 
-<div id="ordersMsg"></div>
+<!-- SUPPORT -->
 
-<div id="myOrdersList"></div>
+<div class="modal" id="supportModal">
+
+  <div class="modal-box">
+
+    <button
+      class="close"
+      onclick="closeModal('supportModal')"
+    >
+      ×
+    </button>
+
+    <h2>📞 Customer Support</h2>
+
+    <div class="form-group">
+
+      <label>Subject</label>
+
+      <input
+        id="supportSubject"
+        placeholder="Problem with order"
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Message</label>
+
+      <textarea
+        id="supportMessage"
+        rows="5"
+        placeholder="Describe your problem..."
+      ></textarea>
+
+    </div>
+
+    <button
+      class="place-order"
+      onclick="submitSupport()"
+    >
+      Send Complaint
+    </button>
+
+  </div>
 
 </div>
 
-</div>
+
+<footer>
+
+  <p>© 2026 NARI FASHION</p>
+
+  <p style="margin-top:6px;">
+    Fashion • Quality • Style
+  </p>
+
+</footer>
 
 
-<!-- =====================================================
-     ORDER DETAIL
-===================================================== -->
+<!-- FIREBASE -->
 
-<div
-id="orderDetailModal"
-class="orderDetailModal hidden"
->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 
-<div class="orderDetailBox">
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 
-<button
-id="orderDetailClose"
-class="orderDetailClose"
->
-×
-</button>
-
-<div id="orderDetailContent"></div>
-
-</div>
-
-</div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 
 <script>
 
-/* =====================================================
-   FIREBASE
-===================================================== */
-
 const firebaseConfig = {
 
-apiKey:
-"AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
+  apiKey:
+    "AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
 
-authDomain:
-"nari-fashion-947a7.firebaseapp.com",
+  authDomain:
+    "nari-fashion-947a7.firebaseapp.com",
 
-projectId:
-"nari-fashion-947a7",
+  projectId:
+    "nari-fashion-947a7",
 
-storageBucket:
-"nari-fashion-947a7.firebasestorage.app",
+  storageBucket:
+    "nari-fashion-947a7.firebasestorage.app",
 
-messagingSenderId:
-"529668256601",
+  messagingSenderId:
+    "529668256601",
 
-appId:
-"1:529668256601:web:b3cc39c8ea7c783133d248"
+  appId:
+    "1:529668256601:web:b3cc39c8ea7c783133d248",
+
+  measurementId:
+    "G-6QLMB312CM"
 
 };
 
 
 firebase.initializeApp(firebaseConfig);
 
+
 const db =
-firebase.firestore();
+  firebase.firestore();
+
+const auth =
+  firebase.auth();
 
 
-/* =====================================================
-   VARIABLES
-===================================================== */
+let currentUser = null;
 
 let products = [];
 
@@ -1035,2398 +857,1635 @@ let detailQty = 1;
 
 let currentLocation = null;
 
-let lastOrderId = "";
-
-let myOrders = [];
+let selectedOrderId = null;
 
 
-const $ =
-id => document.getElementById(id);
+/* =========================================
+   CUSTOMER ANONYMOUS AUTH
+========================================= */
+
+auth.onAuthStateChanged(function(user){
+
+  if(user){
+
+    currentUser = user;
+
+    console.log(
+      "Customer UID:",
+      user.uid
+    );
+
+    load();
+
+  }
+
+});
 
 
-/* =====================================================
-   ESCAPE
-===================================================== */
+auth.signInAnonymously()
+.catch(function(error){
 
-function esc(s){
+  console.error(
+    "Anonymous login failed:",
+    error
+  );
 
-return String(s ?? "")
-.replace(
-/[&<>"']/g,
+  alert(
+    "Customer login start nahi ho pa raha. Firebase Authentication me Anonymous enable karo."
+  );
 
-c => ({
-
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-'"':"&quot;",
-"'":"&#39;"
-
-}[c])
-
-);
-
-}
+});
 
 
-/* =====================================================
-   LOAD PRODUCTS
-===================================================== */
+/* =========================================
+   PRODUCTS
+========================================= */
 
 async function load(){
 
-try{
+  try{
 
-const s =
-await db
-.collection("products")
-.get();
+    const snap =
+      await db
+      .collection("products")
+      .get();
 
+    products =
+      snap.docs.map(function(doc){
 
-products =
-s.docs.map(d=>({
+        return {
+          id:doc.id,
+          ...doc.data()
+        };
 
-id:d.id,
-...d.data()
+      });
 
-}));
+    render(products);
 
+  }catch(error){
 
-render(products);
+    console.error(error);
 
-}catch(e){
+    document.getElementById("products").innerHTML =
+      "<p>Products load nahi ho paaye.</p>";
 
-console.error(e);
-
-$("products").innerHTML =
-"<p>Products load nahi hue. Firebase connection/rules check karein.</p>";
-
-}
-
-}
-
-
-/* =====================================================
-   PRODUCT SIZES
-===================================================== */
-
-function getSizes(p){
-
-let sizes=[];
-
-
-if(Array.isArray(p.sizes)){
-
-sizes =
-sizes.concat(p.sizes);
+  }
 
 }
 
 
-if(typeof p.sizes === "string"){
+function getSizes(product){
 
-sizes =
-sizes.concat(
+  let result = [];
 
-p.sizes
-.split(",")
-.map(x=>x.trim())
-.filter(Boolean)
+  if(Array.isArray(product.sizes)){
 
-);
+    result =
+      result.concat(product.sizes);
 
-}
+  }else if(product.sizes){
 
+    result =
+      result.concat(
+        String(product.sizes)
+        .split(",")
+      );
 
-if(Array.isArray(p.inchSizes)){
+  }
 
-sizes =
-sizes.concat(
+  if(Array.isArray(product.inchSizes)){
 
-p.inchSizes.map(
-x=>x+" inch"
-)
+    result =
+      result.concat(product.inchSizes);
 
-);
+  }else if(product.inchSizes){
 
-}
+    result =
+      result.concat(
+        String(product.inchSizes)
+        .split(",")
+      );
 
+  }
 
-if(typeof p.inchSizes === "string"){
-
-sizes =
-sizes.concat(
-
-p.inchSizes
-.split(",")
-.map(x=>x.trim())
-.filter(Boolean)
-.map(x=>x+" inch")
-
-);
-
-}
-
-
-return [
-...new Set(sizes)
-];
+  return [
+    ...new Set(
+      result
+      .map(function(x){
+        return String(x).trim();
+      })
+      .filter(Boolean)
+    )
+  ];
 
 }
 
-
-/* =====================================================
-   RENDER PRODUCTS
-===================================================== */
 
 function render(list){
 
-$("products").innerHTML =
+  const container =
+    document.getElementById("products");
 
-list.length
-
-?
-
-list.map(p=>`
-
-<article
-class="card productCard"
-data-id="${p.id}"
->
-
-<img
-src="${
-p.image ||
-"https://placehold.co/600x600?text=NARI+FASHION"
-}"
-alt="${esc(p.name||"Product")}"
->
-
-<div class="cardBody">
-
-<h3>
-${esc(p.name||"Product")}
-</h3>
-
-<div class="price">
-
-₹${Number(p.price||0)
-.toLocaleString("en-IN")}
-
-</div>
-
-<div class="stock">
-
-${
-Number(p.stock||0)>0
-
-?
-
-"In stock • "
-+Number(p.stock)
-+" available"
-
-:
-
-"Out of stock"
-
-}
-
-</div>
+  const noProducts =
+    document.getElementById("noProducts");
 
 
-<button
-class="add"
-${Number(p.stock||0)<=0?"disabled":""}
-data-id="${p.id}"
->
-
-Add to Cart
-
-</button>
-
-</div>
-
-</article>
-
-`).join("")
-
-:
-
-"<p>No products added yet.</p>";
+  container.innerHTML = "";
 
 
-document
-.querySelectorAll(".productCard")
-.forEach(card=>{
+  if(!list.length){
 
-card.addEventListener(
-"click",
-e=>{
+    noProducts.style.display =
+      "block";
 
-if(
-e.target.closest(".add")
-)return;
+    return;
 
-openProduct(
-card.dataset.id
-);
-
-});
-
-});
+  }
 
 
-document
-.querySelectorAll(".add")
-.forEach(button=>{
+  noProducts.style.display =
+    "none";
 
-button.onclick =
-e=>{
 
-e.stopPropagation();
+  list.forEach(function(product){
 
-openProduct(
-button.dataset.id
-);
+    const card =
+      document.createElement("div");
 
-};
+    card.className =
+      "product-card";
 
-});
+
+    const image =
+      product.image ||
+      product.imageUrl ||
+      "https://via.placeholder.com/500x600?text=NARI+FASHION";
+
+
+    const price =
+      Number(product.price || 0);
+
+
+    const stock =
+      Number(product.stock ?? 0);
+
+
+    card.innerHTML = `
+
+      <img
+        src="${escapeHtml(image)}"
+        alt="${escapeHtml(product.name || "Product")}"
+        loading="lazy"
+        onerror="this.src='https://via.placeholder.com/500x600?text=Image+Not+Found'"
+      >
+
+      <div class="product-info">
+
+        <div class="product-name">
+          ${escapeHtml(product.name || "Unnamed Product")}
+        </div>
+
+        <div class="price">
+          ₹${price}
+        </div>
+
+        <div class="stock">
+          ${
+            stock > 0
+            ? "✅ In Stock: " + stock
+            : "❌ Out of Stock"
+          }
+        </div>
+
+        <button
+          class="card-btn"
+          onclick="openProduct('${product.id}')"
+          ${stock <= 0 ? "disabled" : ""}
+        >
+          View Product
+        </button>
+
+      </div>
+    `;
+
+
+    container.appendChild(card);
+
+  });
 
 }
 
 
-/* =====================================================
-   OPEN PRODUCT
-===================================================== */
+/* =========================================
+   SEARCH
+========================================= */
+
+document
+.getElementById("search")
+.addEventListener("input", function(e){
+
+  const query =
+    e.target.value
+    .trim()
+    .toLowerCase();
+
+
+  if(!query){
+
+    render(products);
+
+    return;
+
+  }
+
+
+  const filtered =
+    products.filter(function(product){
+
+      const name =
+        String(product.name || "")
+        .toLowerCase();
+
+      const category =
+        String(product.category || "")
+        .toLowerCase();
+
+      const description =
+        String(product.description || "")
+        .toLowerCase();
+
+      const sizes =
+        getSizes(product)
+        .join(" ")
+        .toLowerCase();
+
+
+      return (
+        name.includes(query) ||
+        category.includes(query) ||
+        description.includes(query) ||
+        sizes.includes(query)
+      );
+
+    });
+
+
+  render(filtered);
+
+});
+
+
+/* =========================================
+   PRODUCT DETAIL
+========================================= */
 
 function openProduct(id){
 
-const p =
-products.find(
-x=>x.id===id
-);
-
-if(!p)return;
+  selectedProduct =
+    products.find(function(p){
+      return p.id === id;
+    });
 
 
-selectedProduct=p;
-
-selectedSize="";
-
-detailQty=1;
+  if(!selectedProduct)
+    return;
 
 
-$("detailName").textContent =
-p.name || "Product";
+  detailQty = 1;
+
+  selectedSize = "";
 
 
-$("detailPrice").textContent =
-"₹"
-+Number(p.price||0)
-.toLocaleString("en-IN");
+  document.getElementById("detailImg").src =
+    selectedProduct.image ||
+    selectedProduct.imageUrl ||
+    "https://via.placeholder.com/500x600";
 
 
-$("detailImage").src =
-p.image ||
-"https://placehold.co/600x600?text=NARI+FASHION";
+  document.getElementById("detailName").innerText =
+    selectedProduct.name || "";
 
 
-$("detailStock").textContent =
-
-Number(p.stock||0)>0
-
-?
-
-"Stock available: "
-+Number(p.stock)
-
-:
-
-"Out of stock";
+  document.getElementById("detailPrice").innerText =
+    "₹" + Number(selectedProduct.price || 0);
 
 
-$("detailQty").textContent =
-"1";
+  document.getElementById("detailStock").innerText =
+    "Stock: " +
+    Number(selectedProduct.stock || 0);
 
 
-const sizes =
-getSizes(p);
+  document.getElementById("detailQty").innerText =
+    detailQty;
 
 
-if(sizes.length){
+  const sizes =
+    document.getElementById("sizes");
 
-$("sizeArea").innerHTML = `
 
-<div class="sizeTitle">
-Select Size
-</div>
+  sizes.innerHTML = "";
 
-<div class="sizeButtons">
 
-${sizes.map(size=>`
+  const sizeList =
+    getSizes(selectedProduct);
 
-<button
-class="sizeBtn"
-data-size="${esc(size)}"
->
-${esc(size)}
-</button>
 
-`).join("")}
+  if(!sizeList.length){
 
-</div>
+    selectedSize = "Standard";
 
-`;
+    sizes.innerHTML =
+      "<span>Standard</span>";
 
+  }else{
+
+    sizeList.forEach(function(size){
+
+      const button =
+        document.createElement("button");
+
+      button.className =
+        "size-btn";
+
+      button.innerText =
+        size;
+
+      button.onclick =
+        function(){
+
+          document
+          .querySelectorAll(".size-btn")
+          .forEach(function(btn){
+            btn.classList.remove("active");
+          });
+
+          button.classList.add("active");
+
+          selectedSize = size;
+
+        };
+
+
+      sizes.appendChild(button);
+
+    });
+
+  }
+
+
+  document.getElementById("productModal")
+  .style.display = "block";
+
+}
+
+
+function changeDetailQty(amount){
+
+  if(!selectedProduct)
+    return;
+
+
+  const stock =
+    Number(selectedProduct.stock || 0);
+
+
+  detailQty += amount;
+
+
+  if(detailQty < 1)
+    detailQty = 1;
+
+
+  if(detailQty > stock)
+    detailQty = stock;
+
+
+  document.getElementById("detailQty")
+  .innerText = detailQty;
+
+}
+
+
+function addToCart(){
+
+  if(!selectedProduct)
+    return;
+
+
+  const stock =
+    Number(selectedProduct.stock || 0);
+
+
+  if(stock <= 0){
+
+    alert("Product out of stock.");
+
+    return;
+
+  }
+
+
+  if(!selectedSize){
+
+    const sizes =
+      getSizes(selectedProduct);
+
+    selectedSize =
+      sizes.length
+      ? sizes[0]
+      : "Standard";
+
+  }
+
+
+  const existing =
+    cart.find(function(item){
+
+      return (
+        item.productId === selectedProduct.id &&
+        item.size === selectedSize
+      );
+
+    });
+
+
+  if(existing){
+
+    existing.qty += detailQty;
+
+  }else{
+
+    cart.push({
+
+      productId:
+        selectedProduct.id,
+
+      name:
+        selectedProduct.name || "",
+
+      price:
+        Number(selectedProduct.price || 0),
+
+      image:
+        selectedProduct.image ||
+        selectedProduct.imageUrl ||
+        "",
+
+      size:
+        selectedSize,
+
+      qty:
+        detailQty
+
+    });
+
+  }
+
+
+  saveCart();
+
+  closeModal("productModal");
+
+  updateCartCount();
+
+  alert("Product cart me add ho gaya.");
+
+}
+
+
+function saveCart(){
+
+  localStorage.setItem(
+    "nariFashionCart",
+    JSON.stringify(cart)
+  );
+
+}
+
+
+function loadCart(){
+
+  try{
+
+    cart =
+      JSON.parse(
+        localStorage.getItem("nariFashionCart")
+      ) || [];
+
+  }catch(e){
+
+    cart = [];
+
+  }
+
+  updateCartCount();
+
+}
+
+
+function updateCartCount(){
+
+  const count =
+    cart.reduce(function(total,item){
+
+      return total + Number(item.qty || 0);
+
+    },0);
+
+
+  document.getElementById("cartCount")
+  .innerText = count;
+
+}
+
+
+/* =========================================
+   CART
+========================================= */
 
 document
-.querySelectorAll(".sizeBtn")
-.forEach(btn=>{
+.getElementById("cartBtn")
+.addEventListener("click", openCart);
 
-btn.onclick=()=>{
 
-document
-.querySelectorAll(".sizeBtn")
-.forEach(x=>
-x.classList.remove(
-"selected"
-)
-);
+function openCart(){
 
-btn.classList.add(
-"selected"
-);
+  renderCart();
 
-selectedSize =
-btn.dataset.size;
-
-};
-
-});
-
-}else{
-
-$("sizeArea").innerHTML = `
-
-<div class="sizeTitle">
-Size: Not specified
-</div>
-
-`;
+  document.getElementById("cartDrawer")
+  .style.display = "block";
 
 }
 
 
-$("detailAdd").disabled =
-Number(p.stock||0)<=0;
+function closeCart(){
 
-
-$("detailMsg").textContent = "";
-
-
-$("productDetail")
-.classList.remove(
-"hidden"
-);
+  document.getElementById("cartDrawer")
+  .style.display = "none";
 
 }
 
 
-/* =====================================================
-   CLOSE PRODUCT
-===================================================== */
+function renderCart(){
 
-$("detailClose").onclick=()=>{
+  const box =
+    document.getElementById("cartItems");
 
-$("productDetail")
-.classList.add(
-"hidden"
-);
-
-};
+  box.innerHTML = "";
 
 
-/* =====================================================
-   DETAIL QUANTITY
-===================================================== */
+  if(!cart.length){
 
-$("detailMinus").onclick=()=>{
+    box.innerHTML =
+      "<p>Your cart is empty.</p>";
 
-if(detailQty>1){
+    document.getElementById("cartTotal")
+    .innerText = "0";
 
-detailQty--;
+    return;
 
-$("detailQty").textContent =
-detailQty;
-
-}
-
-};
+  }
 
 
-$("detailPlus").onclick=()=>{
-
-if(!selectedProduct)
-return;
+  let total = 0;
 
 
-const stock =
-Number(
-selectedProduct.stock||0
-);
+  cart.forEach(function(item,index){
+
+    const itemTotal =
+      Number(item.price) *
+      Number(item.qty);
 
 
-if(detailQty<stock){
-
-detailQty++;
-
-$("detailQty").textContent =
-detailQty;
-
-}else{
-
-$("detailMsg").textContent =
-"Stock se zyada quantity nahi le sakte.";
-
-}
-
-};
+    total += itemTotal;
 
 
-/* =====================================================
-   ADD TO CART
-===================================================== */
+    const div =
+      document.createElement("div");
 
-$("detailAdd").onclick=()=>{
-
-if(!selectedProduct)
-return;
+    div.className =
+      "cart-item";
 
 
-const p =
-selectedProduct;
+    div.innerHTML = `
+
+      <img
+        src="${escapeHtml(item.image || "https://via.placeholder.com/100")}"
+      >
+
+      <div class="cart-item-info">
+
+        <strong>
+          ${escapeHtml(item.name)}
+        </strong>
+
+        <div>
+          ₹${item.price}
+        </div>
+
+        <div>
+          Size: ${escapeHtml(item.size)}
+        </div>
+
+        <div>
+          Qty: ${item.qty}
+        </div>
+
+        <button
+          onclick="removeCartItem(${index})"
+          style="
+            margin-top:6px;
+            background:#dc3545;
+            color:white;
+            padding:6px 9px;
+            border-radius:6px;
+          "
+        >
+          Remove
+        </button>
+
+      </div>
+    `;
 
 
-const stock =
-Number(p.stock||0);
+    box.appendChild(div);
+
+  });
 
 
-if(stock<=0)
-return;
-
-
-const sizes =
-getSizes(p);
-
-
-if(
-sizes.length &&
-!selectedSize
-){
-
-$("detailMsg").textContent =
-"Please select a size.";
-
-return;
+  document.getElementById("cartTotal")
+  .innerText = total;
 
 }
 
 
-const existing =
-cart.find(
-i=>
-i.id===p.id &&
-i.size===selectedSize
-);
+function removeCartItem(index){
 
+  cart.splice(index,1);
 
-if(existing){
+  saveCart();
 
-if(
-existing.qty+
-detailQty >
-stock
-){
+  updateCartCount();
 
-$("detailMsg").textContent =
-"Stock se zyada quantity nahi le sakte.";
-
-return;
+  renderCart();
 
 }
 
 
-existing.qty +=
-detailQty;
+/* =========================================
+   LOCATION
+========================================= */
 
-}else{
+function getLocation(){
 
-cart.push({
+  if(!navigator.geolocation){
 
-id:p.id,
+    alert("Location support available nahi hai.");
 
-name:p.name,
+    return;
 
-price:Number(
-p.price||0
-),
-
-qty:detailQty,
-
-size:selectedSize,
-
-stock:stock
-
-});
-
-}
+  }
 
 
-updateCart();
+  navigator.geolocation.getCurrentPosition(
+
+    function(position){
+
+      currentLocation = {
+
+        latitude:
+          position.coords.latitude,
+
+        longitude:
+          position.coords.longitude
+
+      };
 
 
-$("productDetail")
-.classList.add(
-"hidden"
-);
-
-};
+      const info =
+        document.getElementById("locationInfo");
 
 
-/* =====================================================
-   CART UPDATE
-===================================================== */
-
-function updateCart(){
-
-$("cartCount").textContent =
-cart.reduce(
-(a,b)=>a+b.qty,
-0
-);
+      info.style.display =
+        "block";
 
 
-$("cartItems").innerHTML =
+      info.innerHTML =
+        "📍 Location captured successfully.";
 
-cart.length
+    },
 
-?
+    function(error){
 
-cart.map((i,index)=>`
+      console.error(error);
 
-<div class="cartItem">
+      alert(
+        "Location nahi mil paayi. Browser me location permission allow karo."
+      );
 
-<div class="cartInfo">
-${esc(i.name)}
-</div>
+    }
 
-<div class="cartSize">
-
-${
-i.size
-?
-"Size: "
-+esc(i.size)
-:
-"Size: Not specified"
-}
-
-</div>
-
-<div>
-
-₹${(
-i.price*i.qty
-).toLocaleString("en-IN")}
-
-</div>
-
-
-<div class="cartControls">
-
-<button
-onclick="cartMinus(${index})"
->
-−
-</button>
-
-<span>
-${i.qty}
-</span>
-
-<button
-onclick="cartPlus(${index})"
->
-+
-</button>
-
-<button
-class="removeBtn"
-onclick="cartRemove(${index})"
->
-Remove
-</button>
-
-</div>
-
-</div>
-
-`).join("")
-
-:
-
-"<p>Cart empty.</p>";
-
-
-const total =
-cart.reduce(
-(a,b)=>
-a+b.price*b.qty,
-0
-);
-
-
-$("cartTotal").textContent =
-"Total: ₹"
-+total.toLocaleString(
-"en-IN"
-);
+  );
 
 }
 
 
-/* =====================================================
-   CART PLUS
-===================================================== */
-
-window.cartPlus =
-index=>{
-
-const item =
-cart[index];
-
-if(!item)return;
-
-
-if(
-item.qty >=
-item.stock
-){
-
-alert(
-"Stock se zyada quantity nahi le sakte."
-);
-
-return;
-
-}
-
-
-item.qty++;
-
-updateCart();
-
-};
-
-
-/* =====================================================
-   CART MINUS
-===================================================== */
-
-window.cartMinus =
-index=>{
-
-const item =
-cart[index];
-
-if(!item)return;
-
-
-item.qty--;
-
-
-if(item.qty<=0){
-
-cart.splice(
-index,
-1
-);
-
-}
-
-
-updateCart();
-
-};
-
-
-/* =====================================================
-   CART REMOVE
-===================================================== */
-
-window.cartRemove =
-index=>{
-
-cart.splice(
-index,
-1
-);
-
-updateCart();
-
-};
-
-
-/* =====================================================
-   CART OPEN/CLOSE
-===================================================== */
-
-$("cartBtn").onclick=()=>{
-
-$("cart")
-.classList.remove(
-"hidden"
-);
-
-};
-
-
-$("closeCart").onclick=()=>{
-
-$("cart")
-.classList.add(
-"hidden"
-);
-
-};
-
-
-/* =====================================================
-   SEARCH
-===================================================== */
-
-$("search").oninput =
-e=>{
-
-const q =
-e.target.value
-.toLowerCase()
-.trim();
-
-
-render(
-
-products.filter(
-p=>
-
-String(
-p.name||""
-)
-.toLowerCase()
-.includes(q)
-
-)
-
-);
-
-};
-
-
-/* =====================================================
-   CURRENT LOCATION
-===================================================== */
-
-$("locationBtn").onclick=()=>{
-
-if(
-!navigator.geolocation
-){
-
-$("locationStatus").textContent =
-"Is device/browser me location available nahi hai.";
-
-return;
-
-}
-
-
-$("locationStatus").textContent =
-"Location le rahe hain...";
-
-
-navigator.geolocation.getCurrentPosition(
-
-position=>{
-
-const lat =
-position.coords.latitude;
-
-const lng =
-position.coords.longitude;
-
-
-currentLocation={
-
-latitude:lat,
-
-longitude:lng,
-
-mapsUrl:
-"https://www.google.com/maps?q="
-+lat+","+lng
-
-};
-
-
-$("locationStatus").innerHTML =
-
-"✅ Location selected. "
-
-+
-
-`<a
-href="${currentLocation.mapsUrl}"
-target="_blank"
->
-View on Map
-</a>`;
-
-},
-
-error=>{
-
-console.error(error);
-
-
-if(
-error.code===1
-){
-
-$("locationStatus").textContent =
-"Location permission denied. Browser me location Allow karein.";
-
-}else{
-
-$("locationStatus").textContent =
-"Location nahi mil payi. Dobara try karein.";
-
-}
-
-},
-
-{
-
-enableHighAccuracy:true,
-
-timeout:15000,
-
-maximumAge:0
-
-}
-
-);
-
-};
-
-
-/* =====================================================
-   GENERATE ORDER ID
-===================================================== */
-
-function generateOrderId(){
-
-const random =
-Math.random()
-.toString(36)
-.substring(2,8)
-.toUpperCase();
-
-
-return "NF-"+random;
-
-}
-
-
-/* =====================================================
+/* =========================================
    PLACE ORDER
-===================================================== */
+========================================= */
 
-$("placeOrder").onclick =
-async()=>{
+async function placeOrder(){
 
-if(!cart.length){
+  if(!currentUser){
 
-$("orderMsg").textContent =
-"Cart empty hai.";
+    alert(
+      "Customer account ready nahi hua. Thoda wait karke try karo."
+    );
 
-return;
+    return;
+
+  }
+
+
+  if(!cart.length){
+
+    alert("Cart empty hai.");
+
+    return;
+
+  }
+
+
+  const name =
+    document.getElementById("customerName")
+    .value.trim();
+
+
+  const phone =
+    document.getElementById("customerPhone")
+    .value.trim();
+
+
+  const address =
+    document.getElementById("customerAddress")
+    .value.trim();
+
+
+  const paymentMethod =
+    document.getElementById("paymentMethod")
+    .value;
+
+
+  if(!name){
+
+    alert("Name enter karo.");
+
+    return;
+
+  }
+
+
+  if(!/^[0-9]{10}$/.test(phone)){
+
+    alert(
+      "Valid 10 digit mobile number enter karo."
+    );
+
+    return;
+
+  }
+
+
+  if(!address){
+
+    alert("Delivery address enter karo.");
+
+    return;
+
+  }
+
+
+  const total =
+    cart.reduce(function(sum,item){
+
+      return (
+        sum +
+        Number(item.price || 0) *
+        Number(item.qty || 0)
+      );
+
+    },0);
+
+
+  const order = {
+
+    customerUid:
+      currentUser.uid,
+
+    customerName:
+      name,
+
+    customerPhone:
+      phone,
+
+    customerAddress:
+      address,
+
+    location:
+      currentLocation || null,
+
+    paymentMethod:
+      paymentMethod,
+
+    items:
+      cart.map(function(item){
+
+        return {
+
+          productId:
+            item.productId,
+
+          name:
+            item.name,
+
+          price:
+            Number(item.price),
+
+          size:
+            item.size,
+
+          qty:
+            Number(item.qty),
+
+          image:
+            item.image || ""
+
+        };
+
+      }),
+
+    total:
+      total,
+
+    status:
+      "pending",
+
+    createdAt:
+      firebase.firestore.FieldValue.serverTimestamp()
+
+  };
+
+
+  try{
+
+    const ref =
+      await db
+      .collection("orders")
+      .add(order);
+
+
+    cart = [];
+
+    saveCart();
+
+    updateCartCount();
+
+    renderCart();
+
+
+    document.getElementById("customerName")
+    .value = "";
+
+    document.getElementById("customerPhone")
+    .value = "";
+
+    document.getElementById("customerAddress")
+    .value = "";
+
+
+    currentLocation = null;
+
+
+    alert(
+      "✅ Order successfully placed!\n\nOrder ID: " +
+      ref.id
+    );
+
+
+    closeCart();
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "❌ Order place nahi hua.\n\n" +
+      error.message
+    );
+
+  }
 
 }
 
 
-const name =
-$("custName").value.trim();
+/* =========================================
+   MY ORDERS
+========================================= */
 
-const phone =
-$("custPhone").value.trim();
+document
+.getElementById("myOrdersBtn")
+.addEventListener("click", function(){
 
-const house =
-$("house").value.trim();
+  document.getElementById("ordersModal")
+  .style.display = "block";
 
-const street =
-$("street").value.trim();
-
-const landmark =
-$("landmark").value.trim();
-
-const city =
-$("city").value.trim();
-
-const state =
-$("state").value.trim();
-
-const pincode =
-$("pincode").value.trim();
-
-const note =
-$("addressNote").value.trim();
-
-
-if(
-!name ||
-!phone ||
-!house ||
-!street ||
-!city ||
-!state ||
-!pincode
-){
-
-$("orderMsg").textContent =
-"Name, mobile aur complete address bharna zaroori hai.";
-
-return;
-
-}
-
-
-if(
-!/^[0-9]{10}$/.test(phone)
-){
-
-$("orderMsg").textContent =
-"Valid 10 digit mobile number daalein.";
-
-return;
-
-}
-
-
-if(
-!/^[0-9]{6}$/.test(pincode)
-){
-
-$("orderMsg").textContent =
-"Valid 6 digit PIN code daalein.";
-
-return;
-
-}
-
-
-const addressParts=[
-
-house,
-street,
-landmark,
-city,
-state,
-pincode,
-note
-
-].filter(Boolean);
-
-
-const address =
-addressParts.join(
-", "
-);
-
-
-const total =
-cart.reduce(
-(a,b)=>
-a+b.price*b.qty,
-0
-);
-
-
-const orderItems =
-cart.map(i=>({
-
-productId:i.id,
-
-name:i.name,
-
-price:i.price,
-
-qty:i.qty,
-
-size:
-i.size ||
-"Not specified"
-
-}));
-
-
-const orderId =
-generateOrderId();
-
-
-const orderData={
-
-orderId:orderId,
-
-customerName:name,
-
-customerPhone:phone,
-
-address:address,
-
-house:house,
-
-street:street,
-
-landmark:landmark,
-
-city:city,
-
-state:state,
-
-pincode:pincode,
-
-items:orderItems,
-
-total:total,
-
-status:"pending",
-
-createdAt:
-firebase.firestore
-.FieldValue
-.serverTimestamp()
-
-};
-
-
-if(currentLocation){
-
-orderData.location={
-
-latitude:
-currentLocation.latitude,
-
-longitude:
-currentLocation.longitude,
-
-mapsUrl:
-currentLocation.mapsUrl
-
-};
-
-}
-
-
-$("placeOrder").disabled =
-true;
-
-$("placeOrder").textContent =
-"Placing Order...";
-
-
-try{
-
-await db
-.collection("orders")
-.add(orderData);
-
-
-lastOrderId =
-orderId;
-
-
-$("orderMsg").innerHTML = `
-
-<div class="orderSuccess">
-
-✅ <strong>
-Order placed successfully!
-</strong>
-
-<br><br>
-
-Your Order ID:
-
-<div class="orderId">
-${esc(orderId)}
-</div>
-
-<br>
-
-<strong>
-48 hours ke andar order cancel kar sakte hain.
-</strong>
-
-<br><br>
-
-Is Order ID ko future me
-<strong>My Orders</strong>
-ya
-<strong>Help & Support</strong>
-ke liye sambhal kar rakhein.
-
-</div>
-
-`;
-
-
-cart=[];
-
-updateCart();
-
-
-/*
-   Important:
-   Phone ko clear nahi kar rahe,
-   taki Support me automatically use ho sake.
-*/
-
-$("custName").value =
-"";
-
-$("house").value =
-"";
-
-$("street").value =
-"";
-
-$("landmark").value =
-"";
-
-$("city").value =
-"";
-
-$("state").value =
-"";
-
-$("pincode").value =
-"";
-
-$("addressNote").value =
-"";
-
-
-currentLocation =
-null;
-
-
-$("locationStatus").textContent =
-"Current location not selected";
-
-
-}catch(e){
-
-console.error(e);
-
-
-$("orderMsg").textContent =
-"Order place nahi hua: "
-+e.message;
-
-}finally{
-
-$("placeOrder").disabled =
-false;
-
-$("placeOrder").textContent =
-"Place Order";
-
-}
-
-};
-
-
-/* =====================================================
-   SUPPORT OPEN
-===================================================== */
-
-$("supportOpen").onclick=()=>{
-
-$("supportOrderId").value =
-lastOrderId;
-
-
-$("supportPhone").value =
-$("custPhone").value.trim();
-
-
-$("supportMsg").textContent =
-"";
-
-
-$("supportModal")
-.classList.remove(
-"hidden"
-);
-
-};
-
-
-/* =====================================================
-   SUPPORT CLOSE
-===================================================== */
-
-$("supportClose").onclick=()=>{
-
-$("supportModal")
-.classList.add(
-"hidden"
-);
-
-};
-
-
-/* =====================================================
-   SUPPORT SUBMIT
-===================================================== */
-
-$("supportSubmit").onclick =
-async()=>{
-
-const orderId =
-$("supportOrderId")
-.value.trim();
-
-const phone =
-$("supportPhone")
-.value.trim();
-
-const type =
-$("supportType")
-.value;
-
-const details =
-$("supportDetails")
-.value.trim();
-
-
-if(
-!orderId ||
-!phone ||
-!type ||
-!details
-){
-
-$("supportMsg").textContent =
-"Sabhi details bharna zaroori hai.";
-
-return;
-
-}
-
-
-if(
-!/^[0-9]{10}$/.test(phone)
-){
-
-$("supportMsg").textContent =
-"Valid 10 digit mobile number daalein.";
-
-return;
-
-}
-
-
-$("supportSubmit").disabled =
-true;
-
-$("supportSubmit").textContent =
-"Submitting...";
-
-
-try{
-
-await db
-.collection("supportTickets")
-.add({
-
-orderId:orderId,
-
-customerPhone:phone,
-
-problemType:type,
-
-details:details,
-
-status:"pending",
-
-createdAt:
-firebase.firestore
-.FieldValue
-.serverTimestamp()
+  loadMyOrders();
 
 });
 
-
-$("supportMsg").innerHTML =
-"✅ Complaint successfully submit ho gayi.";
-
-
-$("supportDetails").value =
-"";
-
-
-$("supportType").value =
-"";
-
-
-}catch(e){
-
-console.error(e);
-
-
-$("supportMsg").textContent =
-"Complaint submit nahi hui: "
-+e.message;
-
-}finally{
-
-$("supportSubmit").disabled =
-false;
-
-$("supportSubmit").textContent =
-"Submit Complaint";
-
-}
-
-};
-
-
-/* =====================================================
-   MY ORDERS OPEN
-===================================================== */
-
-$("myOrdersBtn").onclick=()=>{
-
-$("ordersModal")
-.classList.remove(
-"hidden"
-);
-
-$("ordersMsg").textContent =
-"";
-
-$("myOrdersList").innerHTML =
-"";
-
-};
-
-
-/* =====================================================
-   MY ORDERS CLOSE
-===================================================== */
-
-$("ordersClose").onclick=()=>{
-
-$("ordersModal")
-.classList.add(
-"hidden"
-);
-
-};
-
-
-/* =====================================================
-   SEARCH ORDERS
-===================================================== */
-
-$("searchOrders").onclick =
-loadMyOrders;
-
-
-/* =====================================================
-   ENTER KEY
-===================================================== */
-
-$("orderSearchPhone")
-.addEventListener(
-"keydown",
-e=>{
-
-if(
-e.key==="Enter"
-){
-
-loadMyOrders();
-
-}
-
-});
-
-
-/* =====================================================
-   LOAD MY ORDERS
-===================================================== */
 
 async function loadMyOrders(){
 
-const phone =
-$("orderSearchPhone")
-.value.trim();
+  const box =
+    document.getElementById("myOrdersList");
 
 
-if(
-!/^[0-9]{10}$/.test(phone)
-){
+  box.innerHTML =
+    "<p>Loading orders...</p>";
 
-$("ordersMsg").innerHTML =
-"<p style='color:#b00020'>Valid 10 digit mobile number daalein.</p>";
 
-return;
+  if(!currentUser){
+
+    box.innerHTML =
+      "<p>Customer account ready nahi hua.</p>";
+
+    return;
+
+  }
+
+
+  try{
+
+    /*
+      IMPORTANT:
+      Phone number se search nahi kar rahe.
+      Sirf current Firebase anonymous UID ke
+      orders fetch honge.
+    */
+
+    const snap =
+      await db
+      .collection("orders")
+      .where(
+        "customerUid",
+        "==",
+        currentUser.uid
+      )
+      .get();
+
+
+    if(snap.empty){
+
+      box.innerHTML =
+        "<div class='info'>Abhi koi order nahi mila.</div>";
+
+      return;
+
+    }
+
+
+    const orders =
+      snap.docs.map(function(doc){
+
+        return {
+          id:doc.id,
+          ...doc.data()
+        };
+
+      });
+
+
+    orders.sort(function(a,b){
+
+      const at =
+        a.createdAt &&
+        a.createdAt.toMillis
+        ? a.createdAt.toMillis()
+        : 0;
+
+      const bt =
+        b.createdAt &&
+        b.createdAt.toMillis
+        ? b.createdAt.toMillis()
+        : 0;
+
+      return bt - at;
+
+    });
+
+
+    box.innerHTML = "";
+
+
+    orders.forEach(function(order){
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "order-card";
+
+
+      const status =
+        order.status || "pending";
+
+
+      const statusClass =
+        "status" +
+        status.charAt(0).toUpperCase() +
+        status.slice(1);
+
+
+      const date =
+        formatDate(order.createdAt);
+
+
+      card.innerHTML = `
+
+        <div class="order-top">
+
+          <div>
+
+            <strong>
+              Order #${escapeHtml(order.id.slice(-8))}
+            </strong>
+
+            <div style="margin-top:5px;">
+              ${date}
+            </div>
+
+          </div>
+
+          <span class="status ${statusClass}">
+            ${escapeHtml(status.toUpperCase())}
+          </span>
+
+        </div>
+
+
+        <div style="margin-top:10px;">
+          Total:
+          <strong>
+            ₹${Number(order.total || 0)}
+          </strong>
+        </div>
+
+
+        <div style="margin-top:5px;">
+          Items:
+          ${Array.isArray(order.items)
+            ? order.items.length
+            : 0}
+        </div>
+
+
+        <div class="order-actions">
+
+          <button
+            class="view-btn"
+            onclick="viewOrder('${order.id}')"
+          >
+            View
+          </button>
+
+          ${
+            canCancelOrder(order)
+            ?
+            `
+            <button
+              class="cancel-btn"
+              onclick="cancelOrder('${order.id}')"
+            >
+              Cancel
+            </button>
+            `
+            :
+            ""
+          }
+
+          <button
+            class="support-btn"
+            onclick="openSupport('${order.id}')"
+          >
+            Support
+          </button>
+
+        </div>
+
+      `;
+
+
+      box.appendChild(card);
+
+    });
+
+  }catch(error){
+
+    console.error(error);
+
+    box.innerHTML = `
+
+      <div class="info">
+
+        ❌ Orders load nahi ho paaye.
+
+        <br><br>
+
+        ${escapeHtml(error.message)}
+
+      </div>
+
+    `;
+
+  }
 
 }
 
 
-$("searchOrders").disabled =
-true;
-
-$("searchOrders").textContent =
-"Loading...";
-
-
-$("myOrdersList").innerHTML =
-`
-<div class="orderLoading">
-Orders search ho rahe hain...
-</div>
-`;
-
-
-try{
-
-const snapshot =
-await db
-.collection("orders")
-.where(
-"customerPhone",
-"==",
-phone
-)
-.get();
-
-
-myOrders =
-snapshot.docs.map(doc=>({
-
-id:doc.id,
-
-...doc.data()
-
-}));
-
-
-/*
-   Newest order first.
-   createdAt missing ho to bhi error nahi hoga.
-*/
-
-myOrders.sort(
-(a,b)=>{
-
-const aTime =
-a.createdAt &&
-a.createdAt.toMillis
-?
-a.createdAt.toMillis()
-:
-0;
-
-const bTime =
-b.createdAt &&
-b.createdAt.toMillis
-?
-b.createdAt.toMillis()
-:
-0;
-
-return bTime-aTime;
-
-});
-
-
-renderMyOrders();
-
-
-}catch(e){
-
-console.error(e);
-
-
-$("myOrdersList").innerHTML =
-`
-<div class="orderEmpty">
-
-❌ Orders load nahi ho paaye.
-
-<br><br>
-
-${esc(e.message)}
-
-</div>
-`;
-
-}finally{
-
-$("searchOrders").disabled =
-false;
-
-$("searchOrders").textContent =
-"View My Orders";
-
-}
-
-}
-
-
-/* =====================================================
-   STATUS
-===================================================== */
-
-function getStatusClass(status){
-
-status =
-String(
-status||"pending"
-)
-.toLowerCase();
-
-
-if(status==="delivered")
-return "statusDelivered";
-
-
-if(
-status==="cancelled" ||
-status==="canceled"
-)
-return "statusCancelled";
-
-
-if(
-status==="processing" ||
-status==="in_progress"
-)
-return "statusProcessing";
-
-
-return "statusPending";
-
-}
-
-
-/* =====================================================
-   STATUS TEXT
-===================================================== */
-
-function getStatusText(status){
-
-status =
-String(
-status||"pending"
-)
-.toLowerCase();
-
-
-if(status==="delivered")
-return "Delivered";
-
-
-if(
-status==="cancelled" ||
-status==="canceled"
-)
-return "Cancelled";
-
-
-if(
-status==="processing" ||
-status==="in_progress"
-)
-return "Processing";
-
-
-return "Pending";
-
-}
-
-
-/* =====================================================
-   48 HOURS CHECK
-===================================================== */
+/* =========================================
+   ORDER CANCEL
+========================================= */
 
 function canCancelOrder(order){
 
-const status =
-String(
-order.status||"pending"
-)
-.toLowerCase();
+  if(!order)
+    return false;
 
 
-/*
-   Delivered/cancelled order cannot cancel.
-*/
+  if(
+    order.status === "delivered" ||
+    order.status === "cancelled"
+  ){
 
-if(
-status==="delivered" ||
-status==="cancelled" ||
-status==="canceled"
-){
+    return false;
 
-return false;
-
-}
+  }
 
 
-/*
-   Firestore timestamp
-*/
-
-if(
-!order.createdAt ||
-!order.createdAt.toMillis
-){
-
-/*
-   Agar old order me createdAt nahi hai,
-   safety ke liye cancel option nahi denge.
-*/
-
-return false;
-
-}
+  if(!order.createdAt)
+    return true;
 
 
-const created =
-order.createdAt.toMillis();
+  const created =
+    order.createdAt.toMillis
+    ? order.createdAt.toMillis()
+    : 0;
 
 
-const now =
-Date.now();
+  if(!created)
+    return true;
 
 
-const difference =
-now-created;
+  const age =
+    Date.now() - created;
 
 
-/*
-   48 hours
-*/
-
-return difference <
-48*60*60*1000;
+  return (
+    age <=
+    48 * 60 * 60 * 1000
+  );
 
 }
 
 
-/* =====================================================
-   REMAINING TIME
-===================================================== */
+async function cancelOrder(id){
 
-function getRemainingTime(order){
+  if(!currentUser){
 
-if(
-!order.createdAt ||
-!order.createdAt.toMillis
-){
+    alert("Customer account ready nahi hai.");
 
-return "";
+    return;
 
-}
+  }
 
 
-const end =
-order.createdAt.toMillis()
-+
-48*60*60*1000;
+  const ok =
+    confirm(
+      "Kya aap is order ko cancel karna chahte ho?"
+    );
 
 
-const remaining =
-end-Date.now();
+  if(!ok)
+    return;
 
 
-if(
-remaining<=0
-){
+  try{
 
-return "Cancellation period expired";
-
-}
+    const ref =
+      db.collection("orders").doc(id);
 
 
-const hours =
-Math.floor(
-remaining/
-(60*60*1000)
-);
+    const snap =
+      await ref.get();
 
 
-const minutes =
-Math.floor(
-(
-remaining%
-(60*60*1000)
-)/
-(60*1000)
-);
+    if(!snap.exists){
+
+      alert("Order nahi mila.");
+
+      return;
+
+    }
 
 
-return (
-"Cancel available for "
-+hours+
-"h "
-+minutes+
-"m"
-);
-
-}
+    const order =
+      snap.data();
 
 
-/* =====================================================
-   RENDER MY ORDERS
-===================================================== */
+    if(
+      order.customerUid !==
+      currentUser.uid
+    ){
 
-function renderMyOrders(){
+      alert(
+        "Aap is order ko cancel nahi kar sakte."
+      );
 
-if(!myOrders.length){
+      return;
 
-$("myOrdersList").innerHTML = `
-
-<div class="orderEmpty">
-
-📦 Is mobile number se koi order nahi mila.
-
-</div>
-
-`;
-
-return;
-
-}
+    }
 
 
-$("myOrdersList").innerHTML =
+    if(!canCancelOrder(order)){
 
-myOrders.map(
-(order,index)=>{
+      alert(
+        "Ye order ab cancel nahi kiya ja sakta."
+      );
 
-const status =
-String(
-order.status||"pending"
-)
-.toLowerCase();
+      return;
 
-
-const items =
-order.items || [];
+    }
 
 
-const itemsHTML =
-items.map(item=>`
+    await ref.update({
 
-<div class="orderItem">
+      status:
+        "cancelled",
 
-<strong>
-${esc(item.name||"Product")}
-</strong>
+      cancelledAt:
+        firebase.firestore.FieldValue
+        .serverTimestamp(),
 
-×
+      cancelledBy:
+        "customer"
 
-${Number(item.qty||0)}
-
-${
-item.size
-?
-" • Size: "
-+esc(item.size)
-:
-""}
-
-<br>
-
-₹${Number(item.price||0)
-.toLocaleString("en-IN")}
-
-</div>
-
-`).join("");
+    });
 
 
-const cancelAllowed =
-canCancelOrder(order);
+    alert(
+      "✅ Order cancel ho gaya."
+    );
 
 
-const remaining =
-getRemainingTime(order);
+    loadMyOrders();
 
+  }catch(error){
 
-let cancelButton = "";
+    console.error(error);
 
+    alert(
+      "❌ Order cancel nahi hua.\n\n" +
+      error.message
+    );
 
-if(cancelAllowed){
-
-cancelButton = `
-
-<button
-class="cancelOrderBtn"
-onclick="cancelMyOrder('${order.id}')"
->
-❌ Cancel Order
-</button>
-
-`;
-
-}else if(
-status!=="cancelled" &&
-status!=="delivered"
-){
-
-cancelButton = `
-
-<button
-class="cancelDisabled"
-disabled
->
-❌ Cancellation Expired
-</button>
-
-`;
+  }
 
 }
 
 
-return `
+/* =========================================
+   VIEW ORDER
+========================================= */
 
-<div class="orderCard">
+async function viewOrder(id){
 
-<div class="orderCardHead">
+  try{
 
-<div>
+    const snap =
+      await db
+      .collection("orders")
+      .doc(id)
+      .get();
 
-<strong>
-Order ID:
-</strong>
 
-${esc(
-order.orderId ||
-order.id
-)}
+    if(!snap.exists){
 
-</div>
+      alert("Order nahi mila.");
 
+      return;
 
-<span
-class="orderStatus
-${getStatusClass(status)}"
->
+    }
 
-${getStatusText(status)}
 
-</span>
+    const order =
+      snap.data();
 
-</div>
 
+    if(
+      !currentUser ||
+      order.customerUid !== currentUser.uid
+    ){
 
-<div style="margin-top:10px">
+      alert(
+        "Aap is order ko nahi dekh sakte."
+      );
 
-<strong>
-Total:
-</strong>
+      return;
 
-₹${Number(
-order.total||0
-)
-.toLocaleString("en-IN")}
+    }
 
-</div>
 
+    selectedOrderId = id;
 
-<div class="orderItems">
 
-<strong>
-Products
-</strong>
+    let html = `
 
-${itemsHTML}
+      <div class="info">
 
-</div>
+        <strong>Order ID:</strong>
+        ${escapeHtml(id)}
 
+        <br><br>
 
-<div class="orderAddress">
+        <strong>Status:</strong>
+        ${escapeHtml(order.status || "pending")}
 
-<strong>
-Delivery Address
-</strong>
+        <br><br>
 
-<br>
+        <strong>Total:</strong>
+        ₹${Number(order.total || 0)}
 
-${esc(
-order.address||""
-)}
+        <br><br>
 
-</div>
+        <strong>Payment:</strong>
+        ${escapeHtml(order.paymentMethod || "COD")}
 
+      </div>
 
-<div class="orderActions">
 
-<button
-class="viewOrderBtn"
-onclick="viewOrderDetails(${index})"
->
-👁️ View Order
-</button>
+      <h3 style="margin:15px 0 8px;">
+        Items
+      </h3>
 
-${cancelButton}
+    `;
 
 
-<button
-class="supportOrderBtn"
-onclick="openOrderSupport(${index})"
->
-🆘 Help
-</button>
+    if(Array.isArray(order.items)){
 
-</div>
+      order.items.forEach(function(item){
 
+        html += `
 
-${
-remaining
-&& cancelAllowed
+          <div class="order-card">
 
-?
+            <strong>
+              ${escapeHtml(item.name || "Product")}
+            </strong>
 
-`
-<div class="cancelInfo">
-⏱️ ${esc(remaining)}
-</div>
-`
+            <br>
 
-:
+            Size:
+            ${escapeHtml(item.size || "Standard")}
 
-""
+            <br>
 
-}
+            Quantity:
+            ${Number(item.qty || 0)}
 
-</div>
+            <br>
 
-`;
+            Price:
+            ₹${Number(item.price || 0)}
 
-}
-).join("");
+          </div>
 
-}
+        `;
 
+      });
 
-/* =====================================================
-   VIEW ORDER DETAILS
-===================================================== */
+    }
 
-window.viewOrderDetails =
-index=>{
 
-const order =
-myOrders[index];
+    html += `
 
+      <h3 style="margin:15px 0 8px;">
+        Delivery
+      </h3>
 
-if(!order)
-return;
+      <div class="info">
 
+        <strong>Name:</strong>
+        ${escapeHtml(order.customerName || "")}
 
-const status =
-String(
-order.status||"pending"
-)
-.toLowerCase();
+        <br><br>
 
+        <strong>Phone:</strong>
+        ${escapeHtml(order.customerPhone || "")}
 
-const items =
-(order.items||[])
-.map(item=>`
+        <br><br>
 
-<div
-style="
-padding:8px 0;
-border-bottom:1px solid #eee;
-"
->
+        <strong>Address:</strong>
+        ${escapeHtml(order.customerAddress || "")}
 
-<strong>
-${esc(item.name||"Product")}
-</strong>
+      </div>
 
-<br>
+    `;
 
-Quantity:
-${Number(item.qty||0)}
 
-<br>
+    document.getElementById("orderDetailContent")
+    .innerHTML = html;
 
-${
-item.size
-?
-"Size: "+esc(item.size)
-+"<br>"
-:
-""
-}
 
-Price:
-₹${Number(item.price||0)
-.toLocaleString("en-IN")}
+    document.getElementById("orderDetailModal")
+    .style.display = "block";
 
-</div>
+  }catch(error){
 
-`)
-.join("");
+    console.error(error);
 
+    alert(
+      "Order details load nahi ho paaye."
+    );
 
-$("orderDetailContent").innerHTML = `
-
-<h2>
-📦 Order Details
-</h2>
-
-
-<p>
-
-<strong>
-Order ID:
-</strong>
-
-${esc(
-order.orderId ||
-order.id
-)}
-
-</p>
-
-
-<p>
-
-<strong>
-Status:
-</strong>
-
-<span
-class="orderStatus
-${getStatusClass(status)}"
->
-
-${getStatusText(status)}
-
-</span>
-
-</p>
-
-
-<hr>
-
-
-<h3>
-Products
-</h3>
-
-${items}
-
-
-<h3>
-Total: ₹${Number(
-order.total||0
-)
-.toLocaleString("en-IN")}
-</h3>
-
-
-<h3>
-Delivery Address
-</h3>
-
-<p>
-${esc(
-order.address||""
-)}
-</p>
-
-
-${
-order.location &&
-order.location.mapsUrl
-
-?
-
-`
-<a
-href="${esc(order.location.mapsUrl)}"
-target="_blank"
->
-📍 View Delivery Location
-</a>
-`
-
-:
-
-""
+  }
 
 }
 
 
-<div
-style="margin-top:20px"
->
+/* =========================================
+   SUPPORT
+========================================= */
 
-${
-canCancelOrder(order)
+function openSupport(orderId){
 
-?
-
-`
-
-<button
-class="cancelOrderBtn"
-style="
-width:100%;
-padding:12px;
-border:0;
-border-radius:8px;
-cursor:pointer;
-"
-onclick="cancelMyOrder('${order.id}')"
->
-❌ Cancel Order
-</button>
-
-`
-
-:
-
-status!=="cancelled" &&
-status!=="delivered"
-
-?
-
-`
-<p class="cancelInfo">
-48-hour cancellation period khatam ho gaya hai.
-</p>
-`
-
-:
-
-""
-
-}
-
-</div>
-
-`;
+  selectedOrderId =
+    orderId || null;
 
 
-$("orderDetailModal")
-.classList.remove(
-"hidden"
-);
-
-};
-
-
-/* =====================================================
-   CLOSE ORDER DETAIL
-===================================================== */
-
-$("orderDetailClose").onclick=()=>{
-
-$("orderDetailModal")
-.classList.add(
-"hidden"
-);
-
-};
+  document.getElementById("supportSubject")
+  .value =
+    orderId
+    ? "Support for Order " + orderId
+    : "";
 
 
-/* =====================================================
-   CANCEL ORDER
-===================================================== */
-
-window.cancelMyOrder =
-async id=>{
-
-const order =
-myOrders.find(
-o=>o.id===id
-);
+  document.getElementById("supportMessage")
+  .value = "";
 
 
-if(!order){
-
-alert(
-"Order nahi mila."
-);
-
-return;
+  document.getElementById("supportModal")
+  .style.display = "block";
 
 }
 
 
-if(
-!canCancelOrder(order)
-){
+async function submitSupport(){
 
-alert(
-"Is order ko ab cancel nahi kiya ja sakta. Cancellation sirf 48 hours ke andar available hai."
-);
+  if(!currentUser){
 
-return;
+    alert("Customer account ready nahi hai.");
+
+    return;
+
+  }
+
+
+  const subject =
+    document.getElementById("supportSubject")
+    .value.trim();
+
+
+  const message =
+    document.getElementById("supportMessage")
+    .value.trim();
+
+
+  if(!subject){
+
+    alert("Subject enter karo.");
+
+    return;
+
+  }
+
+
+  if(!message){
+
+    alert("Message enter karo.");
+
+    return;
+
+  }
+
+
+  try{
+
+    await db
+    .collection("supportTickets")
+    .add({
+
+      customerUid:
+        currentUser.uid,
+
+      orderId:
+        selectedOrderId || null,
+
+      subject:
+        subject,
+
+      message:
+        message,
+
+      status:
+        "open",
+
+      createdAt:
+        firebase.firestore
+        .FieldValue
+        .serverTimestamp()
+
+    });
+
+
+    alert(
+      "✅ Complaint successfully send ho gayi."
+    );
+
+
+    closeModal("supportModal");
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "❌ Complaint send nahi hui.\n\n" +
+      error.message
+    );
+
+  }
 
 }
 
 
-const confirmCancel =
-confirm(
-"⚠️ Kya aap ye order cancel karna chahte hain?"
-);
+/* =========================================
+   UTILITIES
+========================================= */
 
+function closeModal(id){
 
-if(!confirmCancel)
-return;
-
-
-try{
-
-await db
-.collection("orders")
-.doc(id)
-.update({
-
-status:"cancelled",
-
-cancelledAt:
-firebase.firestore
-.FieldValue
-.serverTimestamp(),
-
-cancelledBy:
-"customer"
-
-});
-
-
-/*
-   Local data update
-*/
-
-order.status =
-"cancelled";
-
-
-order.cancelledBy =
-"customer";
-
-
-renderMyOrders();
-
-
-/*
-   Detail modal bhi close
-*/
-
-$("orderDetailModal")
-.classList.add(
-"hidden"
-);
-
-
-alert(
-"✅ Order successfully cancelled."
-);
-
-
-}catch(e){
-
-console.error(e);
-
-
-alert(
-"Order cancel nahi hua: "
-+e.message
-);
+  document.getElementById(id)
+  .style.display = "none";
 
 }
 
-};
+
+function formatDate(timestamp){
+
+  if(
+    !timestamp ||
+    !timestamp.toDate
+  ){
+
+    return "Date unavailable";
+
+  }
 
 
-/* =====================================================
-   SUPPORT FROM ORDER
-===================================================== */
+  return timestamp
+    .toDate()
+    .toLocaleString("en-IN");
 
-window.openOrderSupport =
-index=>{
-
-const order =
-myOrders[index];
+}
 
 
-if(!order)
-return;
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
 
 
-$("supportOrderId").value =
-order.orderId ||
-order.id;
+/* =========================================
+   INIT
+========================================= */
 
-
-$("supportPhone").value =
-order.customerPhone ||
-$("orderSearchPhone").value;
-
-
-$("supportMsg").textContent =
-"";
-
-
-$("ordersModal")
-.classList.add(
-"hidden"
-);
-
-
-$("supportModal")
-.classList.remove(
-"hidden"
-);
-
-};
-
-
-/* =====================================================
-   INITIAL LOAD
-===================================================== */
-
-load();
-
-updateCart();
+loadCart();
 
 </script>
 
