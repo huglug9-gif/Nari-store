@@ -1,575 +1,726 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>NARI FASHION - Admin Panel</title>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-
-  <style>
-
-    *{
-      box-sizing:border-box;
-      margin:0;
-      padding:0;
-      font-family:Arial, sans-serif;
-    }
-
-    body{
-      background:#f5f5f5;
-      color:#222;
-    }
-
-    button{
-      cursor:pointer;
-    }
-
-    /* LOGIN */
-
-    #loginScreen{
-      min-height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:20px;
-      background:linear-gradient(135deg,#111,#333);
-    }
-
-    .loginBox{
-      width:100%;
-      max-width:400px;
-      background:white;
-      padding:30px;
-      border-radius:18px;
-      box-shadow:0 15px 40px rgba(0,0,0,.25);
-    }
-
-    .loginBox h1{
-      text-align:center;
-      margin-bottom:8px;
-      color:#111;
-    }
-
-    .loginBox p{
-      text-align:center;
-      color:#777;
-      margin-bottom:25px;
-    }
-
-    .input{
-      width:100%;
-      padding:13px;
-      border:1px solid #ddd;
-      border-radius:10px;
-      margin-bottom:14px;
-      outline:none;
-      font-size:15px;
-    }
-
-    .input:focus{
-      border-color:#111;
-    }
-
-    .loginBtn{
-      width:100%;
-      padding:14px;
-      border:0;
-      border-radius:10px;
-      background:#111;
-      color:white;
-      font-size:16px;
-      font-weight:bold;
-    }
-
-    #loginError{
-      color:#d00;
-      text-align:center;
-      margin-top:15px;
-      font-size:14px;
-    }
-
-    /* ADMIN */
-
-    #adminPanel{
-      display:none;
-      min-height:100vh;
-    }
-
-    header{
-      background:#111;
-      color:white;
-      padding:15px 20px;
-      position:sticky;
-      top:0;
-      z-index:100;
-    }
-
-    .headerInner{
-      max-width:1300px;
-      margin:auto;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:15px;
-    }
-
-    .logo{
-      font-size:23px;
-      font-weight:bold;
-    }
-
-    .adminText{
-      font-size:13px;
-      color:#ccc;
-    }
-
-    .logoutBtn{
-      background:#fff;
-      color:#111;
-      border:0;
-      border-radius:8px;
-      padding:9px 13px;
-      font-weight:bold;
-    }
-
-    .container{
-      max-width:1300px;
-      margin:auto;
-      padding:20px;
-    }
-
-    /* TABS */
-
-    .tabs{
-      display:flex;
-      gap:8px;
-      overflow-x:auto;
-      margin-bottom:20px;
-      padding-bottom:5px;
-    }
-
-    .tabBtn{
-      border:0;
-      background:white;
-      padding:12px 18px;
-      border-radius:10px;
-      white-space:nowrap;
-      font-weight:bold;
-      box-shadow:0 2px 8px rgba(0,0,0,.08);
-    }
-
-    .tabBtn.active{
-      background:#111;
-      color:white;
-    }
-
-    .tab{
-      display:none;
-    }
-
-    .tab.active{
-      display:block;
-    }
-
-    /* STATS */
-
-    .stats{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:15px;
-      margin-bottom:20px;
-    }
-
-    .stat{
-      background:white;
-      padding:20px;
-      border-radius:15px;
-      box-shadow:0 2px 10px rgba(0,0,0,.07);
-    }
-
-    .stat h3{
-      font-size:28px;
-      margin-bottom:5px;
-    }
-
-    .stat p{
-      color:#777;
-      font-size:14px;
-    }
-
-    /* CARD */
-
-    .card{
-      background:white;
-      border-radius:15px;
-      padding:20px;
-      margin-bottom:20px;
-      box-shadow:0 2px 10px rgba(0,0,0,.07);
-    }
-
-    .card h2{
-      margin-bottom:18px;
-    }
-
-    /* PRODUCT FORM */
-
-    .formGrid{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:15px;
-    }
-
-    .full{
-      grid-column:1/-1;
-    }
-
-    textarea.input{
-      min-height:110px;
-      resize:vertical;
-    }
-
-    .mainBtn{
-      border:0;
-      padding:12px 18px;
-      background:#111;
-      color:white;
-      border-radius:9px;
-      font-weight:bold;
-    }
-
-    .secondaryBtn{
-      border:1px solid #ddd;
-      padding:12px 18px;
-      background:white;
-      color:#111;
-      border-radius:9px;
-      font-weight:bold;
-    }
-
-    .dangerBtn{
-      border:0;
-      padding:9px 12px;
-      background:#d32f2f;
-      color:white;
-      border-radius:8px;
-      font-weight:bold;
-    }
-
-    .successBtn{
-      border:0;
-      padding:9px 12px;
-      background:#198754;
-      color:white;
-      border-radius:8px;
-      font-weight:bold;
-    }
-
-    .processingBtn{
-      border:0;
-      padding:9px 12px;
-      background:#f59e0b;
-      color:white;
-      border-radius:8px;
-      font-weight:bold;
-    }
-
-    /* IMAGE */
-
-    .imagePreview{
-      width:150px;
-      height:150px;
-      border-radius:12px;
-      object-fit:cover;
-      display:none;
-      border:1px solid #ddd;
-      margin-top:10px;
-    }
-
-    .uploadStatus{
-      margin-top:8px;
-      font-size:14px;
-      color:#555;
-    }
-
-    /* PRODUCTS */
-
-    .productGrid{
-      display:grid;
-      grid-template-columns:repeat(4,1fr);
-      gap:15px;
-    }
-
-    .productCard{
-      background:white;
-      border:1px solid #eee;
-      border-radius:14px;
-      overflow:hidden;
-    }
-
-    .productCard img{
-      width:100%;
-      height:220px;
-      object-fit:cover;
-      background:#eee;
-    }
-
-    .productInfo{
-      padding:13px;
-    }
-
-    .productInfo h3{
-      margin-bottom:6px;
-    }
-
-    .price{
-      font-size:18px;
-      font-weight:bold;
-      margin-bottom:8px;
-    }
-
-    .category{
-      color:#777;
-      font-size:13px;
-      margin-bottom:10px;
-    }
-
-    .sizes{
-      font-size:13px;
-      margin-bottom:12px;
-    }
-
-    .actions{
-      display:flex;
-      gap:7px;
-      flex-wrap:wrap;
-    }
-
-    /* ORDERS */
-
-    .orderCard{
-      background:white;
-      border:1px solid #eee;
-      border-radius:15px;
-      padding:18px;
-      margin-bottom:15px;
-    }
-
-    .orderTop{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      margin-bottom:15px;
-      flex-wrap:wrap;
-    }
-
-    .orderId{
-      font-size:13px;
-      color:#777;
-      word-break:break-all;
-    }
-
-    .status{
-      display:inline-block;
-      padding:6px 10px;
-      border-radius:20px;
-      font-size:12px;
-      font-weight:bold;
-    }
-
-    .pending{
-      background:#fff3cd;
-      color:#856404;
-    }
-
-    .processing{
-      background:#cff4fc;
-      color:#055160;
-    }
-
-    .delivered{
-      background:#d1e7dd;
-      color:#0f5132;
-    }
-
-    .cancelled{
-      background:#f8d7da;
-      color:#842029;
-    }
-
-    .orderGrid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:15px;
-    }
-
-    .orderBox{
-      background:#f8f8f8;
-      padding:13px;
-      border-radius:10px;
-    }
-
-    .orderBox h4{
-      margin-bottom:7px;
-    }
-
-    .orderBox p{
-      font-size:14px;
-      line-height:1.6;
-    }
-
-    .orderItems{
-      margin-top:15px;
-      border-top:1px solid #eee;
-      padding-top:15px;
-    }
-
-    .orderItem{
-      display:flex;
-      justify-content:space-between;
-      padding:8px 0;
-      border-bottom:1px solid #eee;
-      font-size:14px;
-      gap:10px;
-    }
-
-    .orderTotal{
-      text-align:right;
-      font-size:19px;
-      font-weight:bold;
-      margin-top:12px;
-    }
-
-    .orderActions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:15px;
-    }
-
-    /* COMPLAINTS / REVIEWS */
-
-    .simpleCard{
-      background:white;
-      border:1px solid #eee;
-      padding:17px;
-      border-radius:13px;
-      margin-bottom:12px;
-    }
-
-    .simpleCard h3{
-      margin-bottom:7px;
-    }
-
-    .simpleCard p{
-      color:#555;
-      line-height:1.6;
-    }
-
-    .star{
-      color:#f59e0b;
-      font-size:18px;
-    }
-
-    .empty{
-      background:white;
-      padding:30px;
-      text-align:center;
-      color:#777;
-      border-radius:14px;
-    }
-
-    .loading{
-      padding:20px;
-      text-align:center;
-      color:#777;
-    }
-
-    /* MOBILE */
-
-    @media(max-width:900px){
-
-      .stats{
-        grid-template-columns:repeat(2,1fr);
-      }
-
-      .productGrid{
-        grid-template-columns:repeat(2,1fr);
-      }
-
-    }
-
-    @media(max-width:600px){
-
-      .container{
-        padding:12px;
-      }
-
-      .headerInner{
-        flex-wrap:wrap;
-      }
-
-      .formGrid,
-      .orderGrid{
-        grid-template-columns:1fr;
-      }
-
-      .productGrid{
-        grid-template-columns:1fr 1fr;
-        gap:10px;
-      }
-
-      .productCard img{
-        height:170px;
-      }
-
-      .stats{
-        gap:8px;
-      }
-
-      .stat{
-        padding:14px;
-      }
-
-      .stat h3{
-        font-size:23px;
-      }
-
-    }
-
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>NARI FASHION — Admin Dashboard</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f4f5f7;
+  color:#171717;
+}
+
+button{
+  cursor:pointer;
+  border:0;
+}
+
+input,textarea,select{
+  font-family:inherit;
+}
+
+/* ================= LOGIN ================= */
+
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(135deg,#111,#292929);
+}
+
+.loginBox{
+  width:100%;
+  max-width:410px;
+  background:#fff;
+  padding:35px;
+  border-radius:22px;
+  box-shadow:0 25px 60px rgba(0,0,0,.3);
+}
+
+.loginLogo{
+  text-align:center;
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:1px;
+}
+
+.loginSub{
+  text-align:center;
+  color:#888;
+  margin:7px 0 28px;
+}
+
+.input{
+  width:100%;
+  padding:13px 14px;
+  border:1px solid #ddd;
+  border-radius:11px;
+  outline:none;
+  margin-bottom:14px;
+  background:#fff;
+}
+
+.input:focus{
+  border-color:#111;
+  box-shadow:0 0 0 3px rgba(0,0,0,.06);
+}
+
+.loginBtn{
+  width:100%;
+  padding:14px;
+  border-radius:11px;
+  background:#111;
+  color:#fff;
+  font-size:16px;
+  font-weight:700;
+}
+
+#loginError{
+  color:#d32f2f;
+  text-align:center;
+  font-size:13px;
+  margin-top:14px;
+}
+
+/* ================= ADMIN ================= */
+
+#adminPanel{
+  display:none;
+  min-height:100vh;
+}
+
+.layout{
+  display:flex;
+  min-height:100vh;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+  width:250px;
+  background:#111;
+  color:#fff;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  padding:22px 15px;
+  z-index:1000;
+}
+
+.brand{
+  padding:8px 12px 25px;
+  border-bottom:1px solid #333;
+  margin-bottom:20px;
+}
+
+.brand h1{
+  font-size:23px;
+}
+
+.brand p{
+  color:#aaa;
+  font-size:12px;
+  margin-top:5px;
+}
+
+.nav{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.nav button{
+  width:100%;
+  padding:13px 15px;
+  border-radius:10px;
+  background:transparent;
+  color:#ccc;
+  text-align:left;
+  font-size:14px;
+  font-weight:600;
+}
+
+.nav button:hover,
+.nav button.active{
+  background:#fff;
+  color:#111;
+}
+
+.logout{
+  position:absolute;
+  bottom:22px;
+  left:15px;
+  right:15px;
+  padding:12px;
+  background:#222;
+  color:#fff;
+  border-radius:10px;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+  margin-left:250px;
+  width:calc(100% - 250px);
+  padding:25px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+.pageTitle h2{
+  font-size:25px;
+}
+
+.pageTitle p{
+  color:#888;
+  font-size:13px;
+  margin-top:5px;
+}
+
+.refreshBtn{
+  background:#fff;
+  border:1px solid #ddd;
+  padding:10px 15px;
+  border-radius:9px;
+  font-weight:600;
+}
+
+/* ================= SECTIONS ================= */
+
+.section{
+  display:none;
+}
+
+.section.active{
+  display:block;
+}
+
+/* ================= STATS ================= */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:22px;
+}
+
+.statCard{
+  background:#fff;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 3px 15px rgba(0,0,0,.05);
+}
+
+.statTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.statIcon{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#f1f1f1;
+  font-size:20px;
+}
+
+.statCard h3{
+  font-size:28px;
+  margin-top:17px;
+}
+
+.statCard p{
+  color:#888;
+  font-size:13px;
+  margin-top:4px;
+}
+
+/* ================= CARD ================= */
+
+.card{
+  background:#fff;
+  border-radius:17px;
+  padding:20px;
+  box-shadow:0 3px 15px rgba(0,0,0,.05);
+  margin-bottom:20px;
+}
+
+.cardHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.cardHeader h3{
+  font-size:18px;
+}
+
+/* ================= BUTTONS ================= */
+
+.primaryBtn{
+  background:#111;
+  color:#fff;
+  padding:11px 17px;
+  border-radius:9px;
+  font-weight:700;
+}
+
+.lightBtn{
+  background:#f3f3f3;
+  color:#111;
+  padding:9px 13px;
+  border-radius:8px;
+  font-weight:600;
+}
+
+.greenBtn{
+  background:#198754;
+  color:#fff;
+  padding:9px 13px;
+  border-radius:8px;
+  font-weight:700;
+}
+
+.orangeBtn{
+  background:#f59e0b;
+  color:#fff;
+  padding:9px 13px;
+  border-radius:8px;
+  font-weight:700;
+}
+
+.redBtn{
+  background:#dc3545;
+  color:#fff;
+  padding:9px 13px;
+  border-radius:8px;
+  font-weight:700;
+}
+
+/* ================= FORM ================= */
+
+.formGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.formGroup label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:7px;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+textarea.input{
+  min-height:110px;
+  resize:vertical;
+}
+
+.imagePreview{
+  width:140px;
+  height:140px;
+  object-fit:cover;
+  border-radius:12px;
+  display:none;
+  margin-top:8px;
+  border:1px solid #ddd;
+}
+
+.uploadStatus{
+  font-size:13px;
+  color:#777;
+  margin-top:7px;
+}
+
+/* ================= PRODUCTS ================= */
+
+.productGrid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+}
+
+.productCard{
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:15px;
+  overflow:hidden;
+}
+
+.productImage{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  background:#eee;
+}
+
+.productBody{
+  padding:14px;
+}
+
+.productBody h3{
+  font-size:16px;
+  margin-bottom:7px;
+}
+
+.productPrice{
+  font-size:18px;
+  font-weight:800;
+}
+
+.productCategory{
+  color:#888;
+  font-size:12px;
+  margin:6px 0;
+}
+
+.productSizes{
+  font-size:12px;
+  margin-bottom:12px;
+}
+
+.productActions{
+  display:flex;
+  gap:7px;
+}
+
+/* ================= ORDERS ================= */
+
+.orderCard{
+  border:1px solid #eee;
+  border-radius:15px;
+  padding:18px;
+  margin-bottom:15px;
+}
+
+.orderHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:15px;
+}
+
+.orderNumber{
+  font-weight:800;
+}
+
+.orderId{
+  color:#999;
+  font-size:11px;
+  margin-top:4px;
+  word-break:break-all;
+}
+
+.status{
+  padding:6px 11px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:800;
+}
+
+.status.pending{
+  background:#fff3cd;
+  color:#856404;
+}
+
+.status.processing{
+  background:#cff4fc;
+  color:#055160;
+}
+
+.status.delivered{
+  background:#d1e7dd;
+  color:#0f5132;
+}
+
+.status.cancelled{
+  background:#f8d7da;
+  color:#842029;
+}
+
+.orderInfo{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.infoBox{
+  background:#f7f7f7;
+  padding:13px;
+  border-radius:10px;
+}
+
+.infoBox h4{
+  font-size:13px;
+  margin-bottom:6px;
+}
+
+.infoBox p{
+  font-size:13px;
+  color:#555;
+  line-height:1.6;
+}
+
+.items{
+  border-top:1px solid #eee;
+  margin-top:15px;
+  padding-top:15px;
+}
+
+.itemRow{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  border-bottom:1px solid #eee;
+  font-size:13px;
+}
+
+.total{
+  text-align:right;
+  font-size:19px;
+  font-weight:800;
+  margin-top:12px;
+}
+
+.orderActions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
+}
+
+/* ================= SIMPLE CARDS ================= */
+
+.simpleCard{
+  border:1px solid #eee;
+  border-radius:13px;
+  padding:16px;
+  margin-bottom:12px;
+}
+
+.simpleCard h3{
+  margin-bottom:8px;
+}
+
+.simpleCard p{
+  color:#666;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.stars{
+  color:#f59e0b;
+  font-size:18px;
+  margin-bottom:6px;
+}
+
+/* ================= EMPTY ================= */
+
+.empty{
+  text-align:center;
+  padding:35px 20px;
+  color:#888;
+  background:#fafafa;
+  border-radius:12px;
+}
+
+.loading{
+  text-align:center;
+  padding:30px;
+  color:#888;
+}
+
+/* ================= MOBILE ================= */
+
+.mobileHeader{
+  display:none;
+}
+
+@media(max-width:1100px){
+
+  .productGrid{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:800px){
+
+  .sidebar{
+    width:220px;
+  }
+
+  .main{
+    margin-left:220px;
+    width:calc(100% - 220px);
+  }
+
+  .productGrid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+}
+
+@media(max-width:600px){
+
+  .sidebar{
+    display:none;
+  }
+
+  .main{
+    margin-left:0;
+    width:100%;
+    padding:12px;
+  }
+
+  .mobileHeader{
+    display:flex;
+    background:#111;
+    color:#fff;
+    padding:15px;
+    justify-content:space-between;
+    align-items:center;
+    margin:-12px -12px 18px;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+
+  .statCard{
+    padding:14px;
+  }
+
+  .statCard h3{
+    font-size:23px;
+  }
+
+  .formGrid,
+  .orderInfo{
+    grid-template-columns:1fr;
+  }
+
+  .productGrid{
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+  }
+
+  .productImage{
+    height:160px;
+  }
+
+  .card{
+    padding:14px;
+  }
+
+}
+
+/* ================= MOBILE NAV ================= */
+
+.mobileNav{
+  display:none;
+}
+
+@media(max-width:600px){
+
+  .mobileNav{
+    display:flex;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    background:#111;
+    z-index:999;
+    padding:7px;
+    justify-content:space-around;
+  }
+
+  .mobileNav button{
+    background:transparent;
+    color:#bbb;
+    font-size:10px;
+    padding:6px;
+  }
+
+  .mobileNav button.active{
+    color:#fff;
+  }
+
+  body{
+    padding-bottom:65px;
+  }
+
+}
+
+</style>
 </head>
 
 <body>
 
-
-<!-- =========================
-     LOGIN SCREEN
-========================= -->
+<!-- ================= LOGIN ================= -->
 
 <div id="loginScreen">
 
   <div class="loginBox">
 
-    <h1>NARI FASHION</h1>
+    <div class="loginLogo">
+      NARI FASHION
+    </div>
 
-    <p>Admin Panel</p>
+    <div class="loginSub">
+      Admin Dashboard
+    </div>
 
     <input
-      type="email"
       id="email"
+      type="email"
       class="input"
       placeholder="Admin Email"
     >
 
     <input
-      type="password"
       id="password"
+      type="password"
       class="input"
       placeholder="Password"
     >
@@ -588,2378 +739,947 @@
 </div>
 
 
-<!-- =========================
-     ADMIN PANEL
-========================= -->
+<!-- ================= ADMIN ================= -->
 
 <div id="adminPanel">
 
-  <header>
+<div class="layout">
 
-    <div class="headerInner">
+<!-- SIDEBAR -->
 
-      <div>
+<aside class="sidebar">
 
-        <div class="logo">
-          NARI FASHION
-        </div>
+  <div class="brand">
+    <h1>NARI FASHION</h1>
+    <p>Admin Dashboard</p>
+  </div>
 
-        <div class="adminText">
-          Admin Dashboard
-        </div>
+  <div class="nav">
 
-      </div>
-
-      <button
-        class="logoutBtn"
-        onclick="logout()"
-      >
-        Logout
-      </button>
-
-    </div>
-
-  </header>
-
-
-  <main class="container">
-
-
-    <!-- TABS -->
-
-    <div class="tabs">
-
-      <button
-        class="tabBtn active"
-        onclick="openTab('dashboard',this)"
-      >
-        Dashboard
-      </button>
-
-      <button
-        class="tabBtn"
-        onclick="openTab('products',this)"
-      >
-        Products
-      </button>
-
-      <button
-        class="tabBtn"
-        onclick="openTab('orders',this)"
-      >
-        Orders
-      </button>
-
-      <button
-        class="tabBtn"
-        onclick="openTab('complaints',this)"
-      >
-        Complaints
-      </button>
-
-      <button
-        class="tabBtn"
-        onclick="openTab('reviews',this)"
-      >
-        Reviews
-      </button>
-
-    </div>
-
-
-    <!-- =========================
-         DASHBOARD
-    ========================== -->
-
-    <section
-      id="dashboard"
-      class="tab active"
+    <button
+      class="active"
+      onclick="openSection('dashboard',this)"
     >
+      📊 Dashboard
+    </button>
 
-      <div class="stats">
+    <button
+      onclick="openSection('products',this)"
+    >
+      🛍️ Products
+    </button>
 
-        <div class="stat">
-          <h3 id="statProducts">0</h3>
-          <p>Total Products</p>
-        </div>
+    <button
+      onclick="openSection('orders',this)"
+    >
+      📦 Orders
+    </button>
 
-        <div class="stat">
-          <h3 id="statOrders">0</h3>
-          <p>Total Orders</p>
-        </div>
+    <button
+      onclick="openSection('complaints',this)"
+    >
+      💬 Complaints
+    </button>
 
-        <div class="stat">
-          <h3 id="statPending">0</h3>
-          <p>Pending Orders</p>
-        </div>
+    <button
+      onclick="openSection('reviews',this)"
+    >
+      ⭐ Reviews
+    </button>
 
-        <div class="stat">
-          <h3 id="statSales">₹0</h3>
-          <p>Total Sales</p>
-        </div>
+  </div>
 
-      </div>
+  <button
+    class="logout"
+    onclick="logout()"
+  >
+    Logout
+  </button>
+
+</aside>
 
 
-      <div class="card">
+<!-- MAIN -->
 
-        <h2>Welcome to NARI FASHION 👋</h2>
+<main class="main">
+
+  <div class="mobileHeader">
+
+    <strong>NARI FASHION</strong>
+
+    <button
+      onclick="logout()"
+      style="background:#222;color:#fff;padding:7px 10px;border-radius:7px"
+    >
+      Logout
+    </button>
+
+  </div>
+
+
+  <!-- DASHBOARD -->
+
+  <section
+    id="dashboard"
+    class="section active"
+  >
+
+    <div class="topbar">
+
+      <div class="pageTitle">
+
+        <h2>Dashboard</h2>
 
         <p>
-          Yahan se tum products, orders, complaints aur reviews manage kar sakte ho.
+          NARI FASHION ka overview
         </p>
 
       </div>
 
-    </section>
+      <button
+        class="refreshBtn"
+        onclick="loadAll()"
+      >
+        ↻ Refresh
+      </button>
+
+    </div>
 
 
-    <!-- =========================
-         PRODUCTS
-    ========================== -->
+    <div class="stats">
 
-    <section
-      id="products"
-      class="tab"
-    >
+      <div class="statCard">
 
-      <div class="card">
+        <div class="statTop">
+          <span>Products</span>
+          <div class="statIcon">🛍️</div>
+        </div>
 
-        <h2 id="productFormTitle">
+        <h3 id="statProducts">0</h3>
+        <p>Total Products</p>
+
+      </div>
+
+
+      <div class="statCard">
+
+        <div class="statTop">
+          <span>Orders</span>
+          <div class="statIcon">📦</div>
+        </div>
+
+        <h3 id="statOrders">0</h3>
+        <p>Total Orders</p>
+
+      </div>
+
+
+      <div class="statCard">
+
+        <div class="statTop">
+          <span>Pending</span>
+          <div class="statIcon">⏳</div>
+        </div>
+
+        <h3 id="statPending">0</h3>
+        <p>Pending Orders</p>
+
+      </div>
+
+
+      <div class="statCard">
+
+        <div class="statTop">
+          <span>Sales</span>
+          <div class="statIcon">₹</div>
+        </div>
+
+        <h3 id="statSales">₹0</h3>
+        <p>Delivered Sales</p>
+
+      </div>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="cardHeader">
+
+        <h3>Welcome 👋</h3>
+
+      </div>
+
+      <p style="color:#777;font-size:14px">
+        Yahan se tum NARI FASHION ke products,
+        orders, complaints aur customer reviews
+        manage kar sakte ho.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- PRODUCTS -->
+
+  <section
+    id="products"
+    class="section"
+  >
+
+    <div class="topbar">
+
+      <div class="pageTitle">
+
+        <h2>Products</h2>
+
+        <p>
+          Products add aur manage karo
+        </p>
+
+      </div>
+
+      <button
+        class="refreshBtn"
+        onclick="loadProducts()"
+      >
+        ↻ Refresh
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="cardHeader">
+
+        <h3 id="productFormTitle">
           Add New Product
-        </h2>
+        </h3>
 
-        <input
-          type="hidden"
-          id="editProductId"
-        >
+      </div>
 
-        <div class="formGrid">
+      <input
+        type="hidden"
+        id="editProductId"
+      >
 
-          <div>
+      <div class="formGrid">
 
-            <label>Product Name</label>
+        <div class="formGroup">
 
-            <input
-              id="productName"
-              class="input"
-              placeholder="Example: Women's Kurti"
-            >
+          <label>Product Name</label>
 
-          </div>
-
-
-          <div>
-
-            <label>Category</label>
-
-            <input
-              id="productCategory"
-              class="input"
-              placeholder="Example: Kurti"
-            >
-
-          </div>
-
-
-          <div>
-
-            <label>Price</label>
-
-            <input
-              type="number"
-              id="productPrice"
-              class="input"
-              placeholder="999"
-            >
-
-          </div>
-
-
-          <div>
-
-            <label>Sizes</label>
-
-            <input
-              id="productSizes"
-              class="input"
-              placeholder="S,M,L,XL"
-            >
-
-          </div>
-
-
-          <div class="full">
-
-            <label>Description</label>
-
-            <textarea
-              id="productDescription"
-              class="input"
-              placeholder="Product description..."
-            ></textarea>
-
-          </div>
-
-
-          <div class="full">
-
-            <label>Product Image</label>
-
-            <input
-              type="file"
-              id="productImage"
-              class="input"
-              accept="image/*"
-              onchange="previewImage(event)"
-            >
-
-            <img
-              id="imagePreview"
-              class="imagePreview"
-              alt="Preview"
-            >
-
-            <div
-              id="uploadStatus"
-              class="uploadStatus"
-            ></div>
-
-          </div>
+          <input
+            id="productName"
+            class="input"
+            placeholder="Example: Designer Kurti"
+          >
 
         </div>
 
 
-        <div
-          style="
-            display:flex;
-            gap:10px;
-            flex-wrap:wrap;
-            margin-top:10px;
-          "
-        >
+        <div class="formGroup">
 
-          <button
-            class="mainBtn"
-            onclick="saveProduct()"
-          >
-            Save Product
-          </button>
+          <label>Category</label>
 
-          <button
-            class="secondaryBtn"
-            onclick="resetProductForm()"
+          <input
+            id="productCategory"
+            class="input"
+            placeholder="Example: Kurti"
           >
-            Clear
-          </button>
+
+        </div>
+
+
+        <div class="formGroup">
+
+          <label>Price</label>
+
+          <input
+            id="productPrice"
+            type="number"
+            class="input"
+            placeholder="999"
+          >
+
+        </div>
+
+
+        <div class="formGroup">
+
+          <label>Sizes</label>
+
+          <input
+            id="productSizes"
+            class="input"
+            placeholder="S,M,L,XL"
+          >
+
+        </div>
+
+
+        <div class="formGroup full">
+
+          <label>Description</label>
+
+          <textarea
+            id="productDescription"
+            class="input"
+            placeholder="Product description..."
+          ></textarea>
+
+        </div>
+
+
+        <div class="formGroup full">
+
+          <label>Product Image</label>
+
+          <input
+            id="productImage"
+            type="file"
+            accept="image/*"
+            class="input"
+            onchange="previewImage(event)"
+          >
+
+          <img
+            id="imagePreview"
+            class="imagePreview"
+          >
+
+          <div
+            id="uploadStatus"
+            class="uploadStatus"
+          ></div>
 
         </div>
 
       </div>
 
 
-      <div class="card">
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
 
-        <div
-          style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:10px;
-            flex-wrap:wrap;
-          "
+        <button
+          class="primaryBtn"
+          onclick="saveProduct()"
         >
+          Save Product
+        </button>
 
-          <h2>All Products</h2>
+        <button
+          class="lightBtn"
+          onclick="resetProductForm()"
+        >
+          Clear
+        </button>
 
-          <button
-            class="secondaryBtn"
-            onclick="loadProducts()"
-          >
-            Refresh
-          </button>
+      </div>
 
+    </div>
+
+
+    <div class="card">
+
+      <div class="cardHeader">
+
+        <h3>All Products</h3>
+
+      </div>
+
+      <div
+        id="productList"
+        class="productGrid"
+      >
+        <div class="loading">
+          Loading...
         </div>
+      </div>
 
-        <div
-          id="productList"
-          class="productGrid"
-        >
-          <div class="loading">
-            Loading...
-          </div>
+    </div>
+
+  </section>
+
+
+  <!-- ORDERS -->
+
+  <section
+    id="orders"
+    class="section"
+  >
+
+    <div class="topbar">
+
+      <div class="pageTitle">
+
+        <h2>Orders</h2>
+
+        <p>
+          Customer orders manage karo
+        </p>
+
+      </div>
+
+      <button
+        class="refreshBtn"
+        onclick="loadOrders()"
+      >
+        ↻ Refresh
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <div id="orderList">
+
+        <div class="loading">
+          Loading orders...
         </div>
 
       </div>
 
-    </section>
+    </div>
+
+  </section>
 
 
-    <!-- =========================
-         ORDERS
-    ========================== -->
+  <!-- COMPLAINTS -->
 
-    <section
-      id="orders"
-      class="tab"
-    >
+  <section
+    id="complaints"
+    class="section"
+  >
 
-      <div class="card">
+    <div class="topbar">
 
-        <div
-          style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            flex-wrap:wrap;
-            gap:10px;
-          "
-        >
+      <div class="pageTitle">
 
-          <h2>Customer Orders</h2>
+        <h2>Complaints</h2>
 
-          <button
-            class="secondaryBtn"
-            onclick="loadOrders()"
-          >
-            Refresh Orders
-          </button>
+        <p>
+          Customer support requests
+        </p>
 
-        </div>
+      </div>
 
-        <div id="orderList">
+      <button
+        class="refreshBtn"
+        onclick="loadComplaints()"
+      >
+        ↻ Refresh
+      </button>
 
-          <div class="loading">
-            Loading...
-          </div>
+    </div>
 
+
+    <div class="card">
+
+      <div id="complaintList">
+
+        <div class="loading">
+          Loading...
         </div>
 
       </div>
 
-    </section>
+    </div>
+
+  </section>
 
 
-    <!-- =========================
-         COMPLAINTS
-    ========================== -->
+  <!-- REVIEWS -->
 
-    <section
-      id="complaints"
-      class="tab"
-    >
+  <section
+    id="reviews"
+    class="section"
+  >
 
-      <div class="card">
+    <div class="topbar">
 
-        <div
-          style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            flex-wrap:wrap;
-            gap:10px;
-          "
-        >
+      <div class="pageTitle">
 
-          <h2>Customer Complaints</h2>
+        <h2>Reviews</h2>
 
-          <button
-            class="secondaryBtn"
-            onclick="loadComplaints()"
-          >
-            Refresh
-          </button>
+        <p>
+          Customer product reviews
+        </p>
 
-        </div>
+      </div>
 
-        <div id="complaintList">
+      <button
+        class="refreshBtn"
+        onclick="loadReviews()"
+      >
+        ↻ Refresh
+      </button>
 
-          <div class="loading">
-            Loading...
-          </div>
+    </div>
 
+
+    <div class="card">
+
+      <div id="reviewList">
+
+        <div class="loading">
+          Loading...
         </div>
 
       </div>
 
-    </section>
+    </div>
+
+  </section>
+
+</main>
+
+</div>
 
 
-    <!-- =========================
-         REVIEWS
-    ========================== -->
+<!-- MOBILE NAV -->
 
-    <section
-      id="reviews"
-      class="tab"
-    >
+<div class="mobileNav">
 
-      <div class="card">
+  <button
+    class="active"
+    onclick="openMobile('dashboard',this)"
+  >
+    📊<br>Home
+  </button>
 
-        <div
-          style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            flex-wrap:wrap;
-            gap:10px;
-          "
-        >
+  <button
+    onclick="openMobile('products',this)"
+  >
+    🛍️<br>Products
+  </button>
 
-          <h2>Customer Reviews</h2>
+  <button
+    onclick="openMobile('orders',this)"
+  >
+    📦<br>Orders
+  </button>
 
-          <button
-            class="secondaryBtn"
-            onclick="loadReviews()"
-          >
-            Refresh
-          </button>
+  <button
+    onclick="openMobile('complaints',this)"
+  >
+    💬<br>Support
+  </button>
 
-        </div>
+  <button
+    onclick="openMobile('reviews',this)"
+  >
+    ⭐<br>Reviews
+  </button>
 
-        <div id="reviewList">
-
-          <div class="loading">
-            Loading...
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-
-  </main>
+</div>
 
 </div>
 
 
 <script>
 
-  /* =====================================================
-     FIREBASE CONFIG
-  ===================================================== */
+/* ================= FIREBASE ================= */
 
-  const firebaseConfig = {
+const firebaseConfig = {
+  apiKey:"AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
+  authDomain:"nari-fashion-947a7.firebaseapp.com",
+  projectId:"nari-fashion-947a7",
+  storageBucket:"nari-fashion-947a7.firebasestorage.app",
+  messagingSenderId:"529668256601",
+  appId:"1:529668256601:web:b3cc39c8ea7c783133d248",
+  measurementId:"G-6QLMB312CM"
+};
 
-    apiKey:
-      "AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
+firebase.initializeApp(firebaseConfig);
 
-    authDomain:
-      "nari-fashion-947a7.firebaseapp.com",
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-    projectId:
-      "nari-fashion-947a7",
-
-    storageBucket:
-      "nari-fashion-947a7.firebasestorage.app",
-
-    messagingSenderId:
-      "529668256601",
-
-    appId:
-      "1:529668256601:web:b3cc39c8ea7c783133d248",
-
-    measurementId:
-      "G-6QLMB312CM"
-
-  };
+const ADMIN_UID =
+"GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
 
 
-  firebase.initializeApp(firebaseConfig);
+/* ================= CLOUDINARY ================= */
+
+const CLOUDINARY_CLOUD_NAME =
+"ctw8rkyn";
+
+const CLOUDINARY_UPLOAD_PRESET =
+"nari_fashion";
+
+const CLOUDINARY_UPLOAD_URL =
+"https://api.cloudinary.com/v1_1/" +
+CLOUDINARY_CLOUD_NAME +
+"/image/upload";
 
 
-  const auth = firebase.auth();
-
-  const db = firebase.firestore();
-
-
-  /* =====================================================
-     ADMIN UID
-  ===================================================== */
-
-  const ADMIN_UID =
-    "GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
+let products=[];
+let selectedImageFile=null;
+let existingImageUrl="";
 
 
-  /* =====================================================
-     CLOUDINARY
-  ===================================================== */
+/* ================= AUTH ================= */
 
-  const CLOUDINARY_CLOUD_NAME =
-    "ctw8rkyn";
+auth.onAuthStateChanged(function(user){
 
-  const CLOUDINARY_UPLOAD_PRESET =
-    "nari_fashion";
+  if(user && user.uid===ADMIN_UID){
 
-  const CLOUDINARY_UPLOAD_URL =
-    "https://api.cloudinary.com/v1_1/" +
-    CLOUDINARY_CLOUD_NAME +
-    "/image/upload";
+    document.getElementById("loginScreen").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
 
+    loadAll();
 
-  /* =====================================================
-     GLOBAL VARIABLES
-  ===================================================== */
+  }else{
 
-  let products = [];
+    document.getElementById("loginScreen").style.display="flex";
+    document.getElementById("adminPanel").style.display="none";
 
-  let selectedImageFile = null;
+  }
 
-  let existingImageUrl = "";
+});
 
 
-  /* =====================================================
-     AUTH STATE
-  ===================================================== */
+/* ================= LOGIN ================= */
 
-  auth.onAuthStateChanged(function(user){
+async function login(){
 
-    if(user && user.uid === ADMIN_UID){
+  const email =
+  document.getElementById("email").value.trim();
 
-      showAdmin();
+  const password =
+  document.getElementById("password").value;
 
-      loadAll();
+  const error =
+  document.getElementById("loginError");
+
+  error.textContent="";
+
+  if(!email || !password){
+
+    error.textContent=
+    "Email aur password bharna hai.";
+
+    return;
+  }
+
+  try{
+
+    const result =
+    await auth.signInWithEmailAndPassword(
+      email,
+      password
+    );
+
+    if(result.user.uid!==ADMIN_UID){
+
+      await auth.signOut();
+
+      error.textContent=
+      "Ye account admin nahi hai.";
 
     }
-    else{
 
-      showLogin();
+  }catch(err){
 
-    }
+    console.error(err);
+
+    error.textContent=
+    err.message || "Login failed.";
+
+  }
+
+}
+
+
+/* ================= LOGOUT ================= */
+
+async function logout(){
+
+  await auth.signOut();
+
+}
+
+
+/* ================= NAVIGATION ================= */
+
+function openSection(id,button){
+
+  document.querySelectorAll(".section")
+  .forEach(function(section){
+
+    section.classList.remove("active");
 
   });
 
+  document.getElementById(id)
+  .classList.add("active");
 
-  /* =====================================================
-     SHOW LOGIN
-  ===================================================== */
 
-  function showLogin(){
+  document.querySelectorAll(".nav button")
+  .forEach(function(btn){
 
-    document.getElementById("loginScreen").style.display =
-      "flex";
+    btn.classList.remove("active");
 
-    document.getElementById("adminPanel").style.display =
-      "none";
+  });
 
-  }
-
-
-  /* =====================================================
-     SHOW ADMIN
-  ===================================================== */
-
-  function showAdmin(){
-
-    document.getElementById("loginScreen").style.display =
-      "none";
-
-    document.getElementById("adminPanel").style.display =
-      "block";
-
-  }
-
-
-  /* =====================================================
-     LOGIN
-  ===================================================== */
-
-  async function login(){
-
-    const email =
-      document.getElementById("email").value.trim();
-
-    const password =
-      document.getElementById("password").value;
-
-    const error =
-      document.getElementById("loginError");
-
-
-    error.textContent = "";
-
-
-    if(!email || !password){
-
-      error.textContent =
-        "Email aur password dono bharna hai.";
-
-      return;
-
-    }
-
-
-    try{
-
-      const result =
-        await auth.signInWithEmailAndPassword(
-          email,
-          password
-        );
-
-
-      if(result.user.uid !== ADMIN_UID){
-
-        await auth.signOut();
-
-        error.textContent =
-          "Ye account admin nahi hai.";
-
-        return;
-
-      }
-
-
-    }
-    catch(err){
-
-      console.error(err);
-
-      error.textContent =
-        err.message || "Login failed.";
-
-    }
-
-  }
-
-
-  /* =====================================================
-     LOGOUT
-  ===================================================== */
-
-  async function logout(){
-
-    await auth.signOut();
-
-  }
-
-
-  /* =====================================================
-     LOAD EVERYTHING
-  ===================================================== */
-
-  function loadAll(){
-
-    loadProducts();
-
-    loadOrders();
-
-    loadComplaints();
-
-    loadReviews();
-
-  }
-
-
-  /* =====================================================
-     TABS
-  ===================================================== */
-
-  function openTab(tabId, button){
-
-    document.querySelectorAll(".tab")
-      .forEach(function(tab){
-
-        tab.classList.remove("active");
-
-      });
-
-
-    document.querySelectorAll(".tabBtn")
-      .forEach(function(btn){
-
-        btn.classList.remove("active");
-
-      });
-
-
-    document.getElementById(tabId)
-      .classList.add("active");
-
-
+  if(button){
     button.classList.add("active");
-
-
-    if(tabId === "products"){
-
-      loadProducts();
-
-    }
-
-    if(tabId === "orders"){
-
-      loadOrders();
-
-    }
-
-    if(tabId === "complaints"){
-
-      loadComplaints();
-
-    }
-
-    if(tabId === "reviews"){
-
-      loadReviews();
-
-    }
-
   }
 
 
-  /* =====================================================
-     IMAGE PREVIEW
-  ===================================================== */
-
-  function previewImage(event){
-
-    const file =
-      event.target.files[0];
-
-    if(!file){
-
-      return;
-
-    }
-
-
-    selectedImageFile = file;
-
-
-    const preview =
-      document.getElementById("imagePreview");
-
-
-    preview.src =
-      URL.createObjectURL(file);
-
-    preview.style.display =
-      "block";
-
+  if(id==="products"){
+    loadProducts();
   }
 
-
-  /* =====================================================
-     COMPRESS IMAGE
-  ===================================================== */
-
-  function compressImage(file){
-
-    return new Promise(function(resolve, reject){
-
-      const img =
-        new Image();
-
-      const canvas =
-        document.createElement("canvas");
-
-      const reader =
-        new FileReader();
-
-
-      reader.onload =
-        function(e){
-
-          img.onload =
-            function(){
-
-              const maxSize = 1200;
-
-              let width =
-                img.width;
-
-              let height =
-                img.height;
-
-
-              if(width > maxSize ||
-                 height > maxSize){
-
-                if(width > height){
-
-                  height =
-                    height *
-                    maxSize /
-                    width;
-
-                  width =
-                    maxSize;
-
-                }
-                else{
-
-                  width =
-                    width *
-                    maxSize /
-                    height;
-
-                  height =
-                    maxSize;
-
-                }
-
-              }
-
-
-              canvas.width =
-                width;
-
-              canvas.height =
-                height;
-
-
-              const ctx =
-                canvas.getContext("2d");
-
-
-              ctx.drawImage(
-                img,
-                0,
-                0,
-                width,
-                height
-              );
-
-
-              canvas.toBlob(
-                function(blob){
-
-                  resolve(blob);
-
-                },
-                "image/jpeg",
-                0.82
-              );
-
-            };
-
-
-          img.onerror =
-            reject;
-
-          img.src =
-            e.target.result;
-
-        };
-
-
-      reader.onerror =
-        reject;
-
-      reader.readAsDataURL(file);
-
-    });
-
+  if(id==="orders"){
+    loadOrders();
   }
 
+  if(id==="complaints"){
+    loadComplaints();
+  }
 
-  /* =====================================================
-     UPLOAD IMAGE CLOUDINARY
-  ===================================================== */
+  if(id==="reviews"){
+    loadReviews();
+  }
 
-  async function uploadImage(file){
-
-    const status =
-      document.getElementById("uploadStatus");
-
-
-    status.textContent =
-      "Image compress ho rahi hai...";
+}
 
 
-    const compressed =
-      await compressImage(file);
+function openMobile(id,button){
+
+  openSection(id,null);
+
+  document.querySelectorAll(".mobileNav button")
+  .forEach(function(btn){
+
+    btn.classList.remove("active");
+
+  });
+
+  button.classList.add("active");
+
+}
 
 
-    const formData =
-      new FormData();
+/* ================= LOAD ALL ================= */
+
+function loadAll(){
+
+  loadProducts();
+  loadOrders();
+  loadComplaints();
+  loadReviews();
+
+}
 
 
-    formData.append(
-      "file",
-      compressed
-    );
+/* ================= IMAGE PREVIEW ================= */
+
+function previewImage(event){
+
+  const file=event.target.files[0];
+
+  if(!file)return;
+
+  selectedImageFile=file;
+
+  const preview=
+  document.getElementById("imagePreview");
+
+  preview.src=
+  URL.createObjectURL(file);
+
+  preview.style.display="block";
+
+}
 
 
-    formData.append(
-      "upload_preset",
-      CLOUDINARY_UPLOAD_PRESET
-    );
+/* ================= COMPRESS IMAGE ================= */
 
+function compressImage(file){
 
-    status.textContent =
-      "Image upload ho rahi hai...";
+  return new Promise(function(resolve,reject){
 
+    const reader=new FileReader();
 
-    const response =
-      await fetch(
-        CLOUDINARY_UPLOAD_URL,
-        {
-          method:"POST",
-          body:formData
+    const img=new Image();
+
+    const canvas=document.createElement("canvas");
+
+    reader.onload=function(e){
+
+      img.onload=function(){
+
+        let width=img.width;
+        let height=img.height;
+
+        const max=1200;
+
+        if(width>max || height>max){
+
+          if(width>height){
+
+            height=height*max/width;
+            width=max;
+
+          }else{
+
+            width=width*max/height;
+            height=max;
+
+          }
+
         }
-      );
 
+        canvas.width=width;
+        canvas.height=height;
 
-    const data =
-      await response.json();
+        const ctx=canvas.getContext("2d");
 
-
-    if(!response.ok){
-
-      console.error(data);
-
-      throw new Error(
-        data.error?.message ||
-        "Image upload failed"
-      );
-
-    }
-
-
-    status.textContent =
-      "Image upload ho gayi ✓";
-
-
-    return data.secure_url;
-
-  }
-
-
-  /* =====================================================
-     SAVE PRODUCT
-  ===================================================== */
-
-  async function saveProduct(){
-
-    const name =
-      document.getElementById("productName")
-        .value.trim();
-
-    const category =
-      document.getElementById("productCategory")
-        .value.trim();
-
-    const price =
-      Number(
-        document.getElementById("productPrice")
-          .value
-      );
-
-    const sizesText =
-      document.getElementById("productSizes")
-        .value.trim();
-
-    const description =
-      document.getElementById("productDescription")
-        .value.trim();
-
-    const editId =
-      document.getElementById("editProductId")
-        .value.trim();
-
-
-    if(!name){
-
-      alert("Product name bharna hai.");
-
-      return;
-
-    }
-
-
-    if(!price || price <= 0){
-
-      alert("Valid price bharna hai.");
-
-      return;
-
-    }
-
-
-    if(!category){
-
-      alert("Category bharna hai.");
-
-      return;
-
-    }
-
-
-    let imageUrl =
-      existingImageUrl;
-
-
-    try{
-
-      if(selectedImageFile){
-
-        imageUrl =
-          await uploadImage(
-            selectedImageFile
-          );
-
-      }
-
-
-      if(!imageUrl){
-
-        alert(
-          "Product image select karo."
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          width,
+          height
         );
 
-        return;
+        canvas.toBlob(function(blob){
 
-      }
+          resolve(blob);
 
-
-      const sizes =
-        sizesText
-          ? sizesText
-              .split(",")
-              .map(function(size){
-                return size.trim();
-              })
-              .filter(Boolean)
-          : [];
-
-
-      const productData = {
-
-        name:name,
-
-        category:category,
-
-        price:price,
-
-        sizes:sizes,
-
-        description:description,
-
-        image:imageUrl,
-
-        imageUrl:imageUrl,
-
-        updatedAt:
-          firebase.firestore.FieldValue
-            .serverTimestamp()
+        },"image/jpeg",.82);
 
       };
 
+      img.onerror=reject;
 
-      if(editId){
+      img.src=e.target.result;
 
-        await db
-          .collection("products")
-          .doc(editId)
-          .update(productData);
+    };
 
+    reader.onerror=reject;
 
-        alert(
-          "Product successfully update ho gaya ✓"
-        );
+    reader.readAsDataURL(file);
 
-      }
-      else{
+  });
 
-        productData.createdAt =
-          firebase.firestore.FieldValue
-            .serverTimestamp();
+}
 
 
-        await db
-          .collection("products")
-          .add(productData);
+/* ================= UPLOAD ================= */
 
+async function uploadImage(file){
 
-        alert(
-          "Product successfully add ho gaya ✓"
-        );
+  const status=
+  document.getElementById("uploadStatus");
 
-      }
+  status.textContent=
+  "Image upload ho rahi hai...";
 
+  const compressed=
+  await compressImage(file);
 
-      resetProductForm();
+  const formData=new FormData();
 
-      loadProducts();
+  formData.append(
+    "file",
+    compressed
+  );
 
+  formData.append(
+    "upload_preset",
+    CLOUDINARY_UPLOAD_PRESET
+  );
+
+  const response=
+  await fetch(
+    CLOUDINARY_UPLOAD_URL,
+    {
+      method:"POST",
+      body:formData
     }
-    catch(error){
+  );
 
-      console.error(error);
+  const data=
+  await response.json();
 
-      alert(
-        "Product save nahi hua:\n" +
-        error.message
-      );
+  if(!response.ok){
 
-    }
+    throw new Error(
+      data.error?.message ||
+      "Image upload failed"
+    );
 
   }
 
+  status.textContent=
+  "Image uploaded ✓";
 
-  /* =====================================================
-     LOAD PRODUCTS
-  ===================================================== */
+  return data.secure_url;
 
-  async function loadProducts(){
+}
 
-    const list =
-      document.getElementById("productList");
 
+/* ================= SAVE PRODUCT ================= */
 
-    list.innerHTML =
-      '<div class="loading">Loading products...</div>';
+async function saveProduct(){
 
+  const name=
+  document.getElementById("productName")
+  .value.trim();
 
-    try{
+  const category=
+  document.getElementById("productCategory")
+  .value.trim();
 
-      const snapshot =
-        await db
-          .collection("products")
-          .get();
-
-
-      products = [];
-
-
-      snapshot.forEach(function(doc){
-
-        products.push({
-
-          id:doc.id,
-
-          ...doc.data()
-
-        });
-
-      });
-
-
-      renderProducts();
-
-      updateStats();
-
-    }
-    catch(error){
-
-      console.error(error);
-
-      list.innerHTML =
-        '<div class="empty">Products load nahi ho paaye.</div>';
-
-    }
-
-  }
-
-
-  /* =====================================================
-     RENDER PRODUCTS
-  ===================================================== */
-
-  function renderProducts(){
-
-    const list =
-      document.getElementById("productList");
-
-
-    if(products.length === 0){
-
-      list.innerHTML =
-        '<div class="empty">Abhi koi product nahi hai.</div>';
-
-      return;
-
-    }
-
-
-    list.innerHTML =
-      products.map(function(product){
-
-        const image =
-          product.image ||
-          product.imageUrl ||
-          "";
-
-
-        const sizes =
-          Array.isArray(product.sizes)
-            ? product.sizes.join(", ")
-            : String(product.sizes || "");
-
-
-        return `
-
-          <div class="productCard">
-
-            <img
-              src="${escapeHtml(image)}"
-              alt="${escapeHtml(product.name || "Product")}"
-              onerror="this.src='https://via.placeholder.com/500x500?text=NARI+FASHION'"
-            >
-
-            <div class="productInfo">
-
-              <h3>
-                ${escapeHtml(product.name || "")}
-              </h3>
-
-              <div class="price">
-                ₹${Number(product.price || 0)}
-              </div>
-
-              <div class="category">
-                ${escapeHtml(product.category || "")}
-              </div>
-
-              <div class="sizes">
-                <b>Sizes:</b>
-                ${escapeHtml(sizes || "Not specified")}
-              </div>
-
-              <div class="actions">
-
-                <button
-                  class="secondaryBtn"
-                  onclick="editProduct('${product.id}')"
-                >
-                  Edit
-                </button>
-
-                <button
-                  class="dangerBtn"
-                  onclick="deleteProduct('${product.id}')"
-                >
-                  Delete
-                </button>
-
-              </div>
-
-            </div>
-
-          </div>
-
-        `;
-
-      }).join("");
-
-  }
-
-
-  /* =====================================================
-     EDIT PRODUCT
-  ===================================================== */
-
-  function editProduct(id){
-
-    const product =
-      products.find(function(item){
-
-        return item.id === id;
-
-      });
-
-
-    if(!product){
-
-      alert("Product nahi mila.");
-
-      return;
-
-    }
-
-
-    document.getElementById("editProductId")
-      .value = product.id;
-
-
-    document.getElementById("productName")
-      .value = product.name || "";
-
-
-    document.getElementById("productCategory")
-      .value = product.category || "";
-
-
+  const price=
+  Number(
     document.getElementById("productPrice")
-      .value = product.price || "";
+    .value
+  );
+
+  const sizesText=
+  document.getElementById("productSizes")
+  .value.trim();
+
+  const description=
+  document.getElementById("productDescription")
+  .value.trim();
+
+  const editId=
+  document.getElementById("editProductId")
+  .value.trim();
 
 
-    document.getElementById("productDescription")
-      .value = product.description || "";
+  if(!name){
 
+    alert("Product name bharna hai.");
+    return;
 
-    const sizes =
-      Array.isArray(product.sizes)
-        ? product.sizes.join(", ")
-        : String(product.sizes || "");
+  }
 
+  if(!category){
 
-    document.getElementById("productSizes")
-      .value = sizes;
+    alert("Category bharna hai.");
+    return;
 
+  }
 
-    existingImageUrl =
-      product.image ||
-      product.imageUrl ||
-      "";
+  if(!price || price<=0){
 
-
-    selectedImageFile = null;
-
-
-    const preview =
-      document.getElementById("imagePreview");
-
-
-    if(existingImageUrl){
-
-      preview.src =
-        existingImageUrl;
-
-      preview.style.display =
-        "block";
-
-    }
-
-
-    document.getElementById("productFormTitle")
-      .textContent =
-        "Edit Product";
-
-
-    document.getElementById("products")
-      .scrollIntoView({
-        behavior:"smooth"
-      });
+    alert("Valid price bharna hai.");
+    return;
 
   }
 
 
-  /* =====================================================
-     DELETE PRODUCT
-  ===================================================== */
+  try{
 
-  async function deleteProduct(id){
+    let imageUrl=existingImageUrl;
 
-    if(!confirm(
-      "Kya tum ye product delete karna chahte ho?"
-    )){
-
-      return;
-
-    }
-
-
-    try{
-
-      await db
-        .collection("products")
-        .doc(id)
-        .delete();
-
-
-      alert(
-        "Product delete ho gaya."
-      );
-
-
-      loadProducts();
-
-    }
-    catch(error){
-
-      console.error(error);
-
-      alert(
-        "Product delete nahi hua:\n" +
-        error.message
-      );
-
-    }
-
-  }
-
-
-  /* =====================================================
-     RESET PRODUCT FORM
-  ===================================================== */
-
-  function resetProductForm(){
-
-    document.getElementById("editProductId")
-      .value = "";
-
-
-    document.getElementById("productName")
-      .value = "";
-
-
-    document.getElementById("productCategory")
-      .value = "";
-
-
-    document.getElementById("productPrice")
-      .value = "";
-
-
-    document.getElementById("productSizes")
-      .value = "";
-
-
-    document.getElementById("productDescription")
-      .value = "";
-
-
-    document.getElementById("productImage")
-      .value = "";
-
-
-    document.getElementById("uploadStatus")
-      .textContent = "";
-
-
-    const preview =
-      document.getElementById("imagePreview");
-
-
-    preview.src = "";
-
-    preview.style.display =
-      "none";
-
-
-    selectedImageFile = null;
-
-    existingImageUrl = "";
-
-
-    document.getElementById("productFormTitle")
-      .textContent =
-        "Add New Product";
-
-  }
-
-
-  /* =====================================================
-     LOAD ORDERS
-  ===================================================== */
-
-  async function loadOrders(){
-
-    const list =
-      document.getElementById("orderList");
-
-
-    list.innerHTML =
-      '<div class="loading">Loading orders...</div>';
-
-
-    try{
-
-      const snapshot =
-        await db
-          .collection("orders")
-          .get();
-
-
-      let orders = [];
-
-
-      snapshot.forEach(function(doc){
-
-        orders.push({
-
-          id:doc.id,
-
-          ...doc.data()
-
-        });
-
-      });
-
-
-      /* Latest orders first */
-
-      orders.sort(function(a,b){
-
-        const aTime =
-          a.createdAt &&
-          a.createdAt.toMillis
-            ? a.createdAt.toMillis()
-            : 0;
-
-
-        const bTime =
-          b.createdAt &&
-          b.createdAt.toMillis
-            ? b.createdAt.toMillis()
-            : 0;
-
-
-        return bTime - aTime;
-
-      });
-
-
-      renderOrders(orders);
-
-      updateOrderStats(orders);
-
-    }
-    catch(error){
-
-      console.error(error);
-
-      list.innerHTML =
-        '<div class="empty">Orders load nahi ho paaye.<br><br>' +
-        escapeHtml(error.message) +
-        '</div>';
-
-    }
-
-  }
-
-
-  /* =====================================================
-     RENDER ORDERS
-  ===================================================== */
-
-  function renderOrders(orders){
-
-    const list =
-      document.getElementById("orderList");
-
-
-    if(orders.length === 0){
-
-      list.innerHTML =
-        '<div class="empty">Abhi koi order nahi hai.</div>';
-
-      return;
-
-    }
-
-
-    list.innerHTML =
-      orders.map(function(order){
-
-        const status =
-          order.status || "pending";
-
-
-        const customerName =
-          order.customerName || "Customer";
-
-
-        const customerPhone =
-          order.customerPhone || "-";
-
-
-        const address =
-          order.customerAddress || "-";
-
-
-        const payment =
-          order.paymentMethod || "-";
-
-
-        const items =
-          Array.isArray(order.items)
-            ? order.items
-            : [];
-
-
-        const itemsHtml =
-          items.length
-            ? items.map(function(item){
-
-                const itemName =
-                  item.name ||
-                  item.productName ||
-                  "Product";
-
-
-                const qty =
-                  Number(item.quantity || item.qty || 1);
-
-
-                const itemPrice =
-                  Number(item.price || 0);
-
-
-                return `
-
-                  <div class="orderItem">
-
-                    <span>
-                      ${escapeHtml(itemName)}
-                      × ${qty}
-                    </span>
-
-                    <strong>
-                      ₹${itemPrice * qty}
-                    </strong>
-
-                  </div>
-
-                `;
-
-              }).join("")
-            : "<p>No item details</p>";
-
-
-        const total =
-          Number(order.total || 0);
-
-
-        const created =
-          formatDate(order.createdAt);
-
-
-        let buttons = "";
-
-
-        if(status === "pending"){
-
-          buttons += `
-
-            <button
-              class="processingBtn"
-              onclick="acceptOrder('${order.id}')"
-            >
-              Accept / Processing
-            </button>
-
-          `;
-
-        }
-
-
-        if(status === "processing"){
-
-          buttons += `
-
-            <button
-              class="successBtn"
-              onclick="deliverOrder('${order.id}')"
-            >
-              Mark Delivered
-            </button>
-
-          `;
-
-        }
-
-
-        if(status !== "delivered" &&
-           status !== "cancelled"){
-
-          buttons += `
-
-            <button
-              class="dangerBtn"
-              onclick="cancelOrderAdmin('${order.id}')"
-            >
-              Cancel Order
-            </button>
-
-          `;
-
-        }
-
-
-        buttons += `
-
-          <button
-            class="secondaryBtn"
-            onclick="deleteOrder('${order.id}')"
-          >
-            Delete
-          </button>
-
-        `;
-
-
-        return `
-
-          <div class="orderCard">
-
-            <div class="orderTop">
-
-              <div>
-
-                <strong>
-                  Order #${escapeHtml(order.id.slice(-8))}
-                </strong>
-
-                <div class="orderId">
-                  ${escapeHtml(order.id)}
-                </div>
-
-              </div>
-
-              <div>
-
-                <span class="status ${status}">
-                  ${escapeHtml(status.toUpperCase())}
-                </span>
-
-              </div>
-
-            </div>
-
-
-            <div class="orderGrid">
-
-
-              <div class="orderBox">
-
-                <h4>Customer</h4>
-
-                <p>
-                  <b>Name:</b>
-                  ${escapeHtml(customerName)}
-                  <br>
-
-                  <b>Phone:</b>
-                  ${escapeHtml(customerPhone)}
-                  <br>
-
-                  <b>Address:</b>
-                  ${escapeHtml(address)}
-                </p>
-
-              </div>
-
-
-              <div class="orderBox">
-
-                <h4>Order Details</h4>
-
-                <p>
-                  <b>Payment:</b>
-                  ${escapeHtml(payment)}
-                  <br>
-
-                  <b>Date:</b>
-                  ${escapeHtml(created)}
-                </p>
-
-              </div>
-
-
-            </div>
-
-
-            <div class="orderItems">
-
-              <h4>
-                Items
-              </h4>
-
-              ${itemsHtml}
-
-              <div class="orderTotal">
-
-                Total:
-                ₹${total}
-
-              </div>
-
-            </div>
-
-
-            <div class="orderActions">
-
-              ${buttons}
-
-            </div>
-
-          </div>
-
-        `;
-
-      }).join("");
-
-  }
-
-
-  /* =====================================================
-     ACCEPT / PROCESSING ORDER
-
-     IMPORTANT:
-     We use UPDATE only.
-     customerUid remains untouched.
-  ===================================================== */
-
-  async function acceptOrder(orderId){
-
-    if(!confirm(
-      "Kya tum is order ko accept karke Processing mein bhejna chahte ho?"
-    )){
-
-      return;
-
-    }
-
-
-    try{
-
-      await db
-        .collection("orders")
-        .doc(orderId)
-        .update({
-
-          status:"processing",
-
-          updatedAt:
-            firebase.firestore.FieldValue
-              .serverTimestamp()
-
-        });
-
-
-      alert(
-        "Order Processing mein chala gaya ✓"
-      );
-
-
-      loadOrders();
-
-    }
-    catch(error){
-
-      console.error(error);
-
-      alert(
-        "Order update nahi hua:\n" +
-        error.message
-      );
-
-    }
-
-  }
-
-
-  /* =====================================================
-     DELIVER ORDER
-
-     IMPORTANT:
-     customerUid preserved.
-  ===================================================== */
-
-  async function deliverOrder(orderId){
-
-    if(!confirm(
-      "Kya ye order delivered ho gaya hai?"
-    )){
-
-      return;
-
-    }
-
-
-    try{
-
-      await db
-        .collection("orders")
-        .doc(orderId)
-        .update({
-
-          status:"delivered",
-
-          updatedAt:
-            firebase.firestore.FieldValue
-              .serverTimestamp()
-
-        });
-
-
-      alert(
-        "Order Delivered mark ho gaya ✓"
-      );
-
-
-      loadOrders();
-
-    }
-    catch(error){
-
-      console.error(error);
-
-      alert(
-        "Order update nahi hua:\n" +
-        error.message
-      );
-
-    }
-
-  }
-
-
-  /* =====================================================
-     ADMIN CANCEL ORDER
-  ===================================================== */
-
-  async function cancelOrderAdmin(orderId){
-
-    if(!confirm(
-      "Kya tum is order ko cancel karna chahte ho?"
-    )){
-
-      return;
-
-    }
-
-
-    try{
-
-      await db
-        .collection("orders")
-        .doc(orderId)
-        .update({
-
-          status:"cancelled",
-
-          cancelledBy:"admin",
-
-          cancelledAt:
-            firebase.firestore.FieldValue
-              .serverTimestamp(),
-
-          updatedAt:
-            firebase.firestore.FieldValue
-              .serverTimestamp()
-
-        });
-
-
-      alert(
-        "Order cancelled ✓"
-      );
-
-
-      loadOrders();
-
-    }
-    catch(error){
-
-      console.error(error);
-
-      alert(
-        "Order cancel nahi hua:\n" +
-        error.message
-      );
-
-    }
-
-  }
-
-
-  /* =====================================================
-     DELETE ORDER
-  ===================================================== */
-
-  async function deleteOrder(orderId){
-
-    if(!confirm(
-      "WARNING: Is order ko permanently delete karna hai?"
-    )){
-
-      return;
-
-    }
-
-
-    try{
-
-      await db
-        .collection("orders")
-        .doc(orderId)
-        .delete();
-
-
-      alert(
-        "Order delete ho gaya."
-      );
-
-
-      loadOrders();
-
-    }
-    catch(error){
-
-      console.error(error);
-
-      alert(
-        "Order delete nahi hua:\n" +
-        error.message
-      );
-
-    }
-
-  }
-
-
-  /* =====================================================
-     LOAD COMPLAINTS
-  ===================================================== */
-
-  async function loadComplaints(){
-
-    const list =
-      document.getElementById("complaintList");
-
-
-    list.innerHTML =
-      '<div class="loading">Loading complaints...</div>';
-
-
-    try{
-
-      const snapshot =
-        await db
-          .collection("supportTickets")
-          .get();
-
-
-      if(snapshot.empty){
-
-        list.innerHTML =
-          '<div class="empty">Abhi koi complaint nahi hai.</div>';
-
-        return;
-
-      }
-
-
-      let html = "";
-
-
-      snapshot.forEach(function(doc){
-
-        const data =
-          doc.data();
-
-
-        html += `
-
-          <div class="simpleCard">
-
-            <h3>
-              ${escapeHtml(
-                data.subject ||
-                data.title ||
-                "Customer Complaint"
-              )}
-            </h3>
-
-            <p>
-
-              <b>Name:</b>
-              ${escapeHtml(
-                data.customerName || "-"
-              )}
-
-              <br>
-
-              <b>Phone:</b>
-              ${escapeHtml(
-                data.customerPhone || "-"
-              )}
-
-              <br><br>
-
-              ${escapeHtml(
-                data.message ||
-                data.description ||
-                "No message"
-              )}
-
-            </p>
-
-          </div>
-
-        `;
-
-      });
-
-
-      list.innerHTML =
-        html;
-
-    }
-    catch(error){
-
-      console.error(error);
-
-      list.innerHTML =
-        '<div class="empty">Complaints load nahi ho paaye.</div>';
-
-    }
-
-  }
-
-
-  /* =====================================================
-     LOAD REVIEWS
-  ===================================================== */
-
-  async function loadReviews(){
-
-    const list =
-      document.getElementById("reviewList");
-
-
-    list.innerHTML =
-      '<div class="loading">Loading reviews...</div>';
-
-
-    try{
-
-      const snapshot =
-        await db
-          .collection("reviews")
-          .get();
-
-
-      if(snapshot.empty){
-
-        list.innerHTML =
-          '<div class="empty">Abhi koi review nahi hai.</div>';
-
-        return;
-
-      }
-
-
-      let html = "";
-
-
-      snapshot.forEach(function(doc){
-
-        const data =
-          doc.data();
-
-
-        const rating =
-          Number(data.rating || 0);
-
-
-        const stars =
-          "★".repeat(
-            Math.min(5, Math.max(0,rating))
-          );
-
-
-        html += `
-
-          <div class="simpleCard">
-
-            <h3>
-              ${escapeHtml(
-                data.productName ||
-                "Product Review"
-              )}
-            </h3>
-
-            <div class="star">
-              ${stars}
-            </div>
-
-            <p>
-
-              <b>
-                ${escapeHtml(
-                  data.customerName ||
-                  "Customer"
-                )}
-              </b>
-
-              <br><br>
-
-              ${escapeHtml(
-                data.comment ||
-                data.review ||
-                "No comment"
-              )}
-
-            </p>
-
-          </div>
-
-        `;
-
-      });
-
-
-      list.innerHTML =
-        html;
-
-    }
-    catch(error){
-
-      console.error(error);
-
-      list.innerHTML =
-        '<div class="empty">Reviews load nahi ho paaye.</div>';
-
-    }
-
-  }
-
-
-  /* =====================================================
-     UPDATE DASHBOARD STATS
-  ===================================================== */
-
-  async function updateStats(){
-
-    try{
-
-      const snapshot =
-        await db
-          .collection("orders")
-          .get();
-
-
-      let orders = [];
-
-
-      snapshot.forEach(function(doc){
-
-        orders.push(doc.data());
-
-      });
-
-
-      updateOrderStats(orders);
-
-    }
-    catch(error){
-
-      console.error(error);
-
-    }
-
-  }
-
-
-  /* =====================================================
-     ORDER STATS
-  ===================================================== */
-
-  function updateOrderStats(orders){
-
-    const totalOrders =
-      orders.length;
-
-
-    const pending =
-      orders.filter(function(order){
-
-        return order.status === "pending";
-
-      }).length;
-
-
-    const delivered =
-      orders.filter(function(order){
-
-        return order.status === "delivered";
-
-      });
-
-
-    const sales =
-      delivered.reduce(function(sum,order){
-
-        return sum +
-          Number(order.total || 0);
-
-      },0);
-
-
-    document.getElementById("statOrders")
-      .textContent =
-        totalOrders;
-
-
-    document.getElementById("statPending")
-      .textContent =
-        pending;
-
-
-    document.getElementById("statSales")
-      .textContent =
-        "₹" + sales;
-
-  }
-
-
-  /* =====================================================
-     FORMAT DATE
-  ===================================================== */
-
-  function formatDate(timestamp){
-
-    if(!timestamp){
-
-      return "-";
-
-    }
-
-
-    try{
-
-      const date =
-        timestamp.toDate
-          ? timestamp.toDate()
-          : new Date(timestamp);
-
-
-      return date.toLocaleString(
-        "en-IN",
-        {
-          dateStyle:"medium",
-          timeStyle:"short"
-        }
-      );
-
-    }
-    catch(error){
-
-      return "-";
-
-    }
-
-  }
-
-
-  /* =====================================================
-     ESCAPE HTML
-  ===================================================== */
-
-  function escapeHtml(value){
-
-    return String(value ?? "")
-
-      .replace(/&/g,"&amp;")
-
-      .replace(/</g,"&lt;")
-
-      .replace(/>/g,"&gt;")
-
-      .replace(/"/g,"&quot;")
-
-      .replace(/'/g,"&#039;");
-
-  }
-
-</script>
-
-</body>
-</html>
+   
