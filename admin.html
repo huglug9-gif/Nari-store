@@ -1,197 +1,583 @@
 <!doctype html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>NARI FASHION Admin</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <link rel="stylesheet" href="admin.css">
+<title>NARI FASHION Admin</title>
 
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<link rel="stylesheet" href="admin.css">
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+
+<style>
+
+.hidden{
+display:none!important;
+}
+
+.imagePreview{
+width:120px;
+height:120px;
+object-fit:cover;
+border-radius:12px;
+border:1px solid #ddd;
+margin-top:10px;
+display:none;
+}
+
+.uploadBox{
+border:2px dashed #ccc;
+padding:15px;
+border-radius:12px;
+margin:10px 0;
+background:#fafafa;
+}
+
+.uploadBox input{
+width:100%;
+}
+
+.uploadStatus{
+font-size:14px;
+margin-top:8px;
+}
+
+.sizeHelp{
+font-size:13px;
+color:#666;
+margin-top:-5px;
+margin-bottom:8px;
+}
+
+.order{
+border:1px solid #ddd;
+border-radius:12px;
+padding:15px;
+margin-bottom:12px;
+background:#fff;
+}
+
+.orderButtons{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin-top:12px;
+}
+
+.orderButtons button{
+padding:8px 12px;
+border:0;
+border-radius:7px;
+cursor:pointer;
+}
+
+.deliveredBtn{
+background:#198754;
+color:#fff;
+}
+
+.deleteOrderBtn{
+background:#dc3545;
+color:#fff;
+}
+
+.mapBtn{
+background:#0d6efd;
+color:#fff;
+}
+
+.statusBadge{
+display:inline-block;
+padding:4px 9px;
+border-radius:20px;
+font-size:12px;
+margin-top:5px;
+background:#eee;
+}
+
+.complaint{
+border:1px solid #ddd;
+border-radius:12px;
+padding:15px;
+margin-bottom:12px;
+background:#fff;
+}
+
+.complaintActions{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:12px;
+}
+
+.complaintActions button{
+border:0;
+padding:8px 12px;
+border-radius:7px;
+cursor:pointer;
+}
+
+.pendingBtn{
+background:#ffc107;
+}
+
+.progressBtn{
+background:#0d6efd;
+color:#fff;
+}
+
+.resolvedBtn{
+background:#198754;
+color:#fff;
+}
+
+.deleteComplaintBtn{
+background:#dc3545;
+color:#fff;
+}
+
+.review{
+border:1px solid #ddd;
+border-radius:12px;
+padding:15px;
+margin-bottom:12px;
+}
+
+.starRating{
+font-size:20px;
+}
+
+.productSizes{
+font-size:13px;
+color:#666;
+margin-top:5px;
+}
+
+@media(max-width:600px){
+
+.orderButtons,
+.complaintActions{
+flex-direction:column;
+}
+
+.orderButtons button,
+.complaintActions button{
+width:100%;
+}
+
+}
+
+</style>
 </head>
 
 <body>
 
+
+<!-- =========================
+     LOGIN
+========================= -->
+
 <div id="login" class="box">
-  <h1>NARI FASHION</h1>
-  <h2>Admin Login</h2>
 
-  <input
-    id="email"
-    type="email"
-    placeholder="Admin email"
-    autocomplete="username"
-  >
+<h1>NARI FASHION</h1>
 
-  <input
-    id="password"
-    type="password"
-    placeholder="Password"
-    autocomplete="current-password"
-  >
+<h2>Admin Login</h2>
 
-  <button id="loginBtn" type="button">Login</button>
+<input
+id="email"
+type="email"
+placeholder="Admin email"
+autocomplete="username"
+>
 
-  <p id="loginMsg"></p>
+<input
+id="password"
+type="password"
+placeholder="Password"
+autocomplete="current-password"
+>
+
+<button
+id="loginBtn"
+type="button"
+>
+Login
+</button>
+
+<p id="loginMsg"></p>
+
 </div>
 
 
-<div id="panel" class="hidden">
+<!-- =========================
+     ADMIN PANEL
+========================= -->
 
-  <header>
-    <b>Admin Dashboard</b>
-    <button id="logout" type="button">Logout</button>
-  </header>
+<div
+id="panel"
+class="hidden"
+>
 
-  <main>
+<header>
 
-    <section class="stats">
-      <div>
-        Products
-        <b id="pCount">0</b>
-      </div>
+<b>Admin Dashboard</b>
 
-      <div>
-        Orders
-        <b id="oCount">0</b>
-      </div>
-    </section>
+<button
+id="logout"
+type="button"
+>
+Logout
+</button>
 
-
-    <section class="form">
-
-      <h2>Add / Edit Product</h2>
-
-      <input id="pid" type="hidden">
-
-      <input
-        id="name"
-        placeholder="Product name"
-      >
-
-      <input
-        id="price"
-        type="number"
-        placeholder="Price"
-      >
-
-      <input
-        id="stock"
-        type="number"
-        placeholder="Stock"
-      >
-
-      <input
-        id="image"
-        placeholder="Image URL"
-      >
-
-      <button id="save" type="button">
-        Save Product
-      </button>
-
-      <button
-        id="clear"
-        class="secondary"
-        type="button"
-      >
-        Clear
-      </button>
-
-      <p id="msg"></p>
-
-    </section>
+</header>
 
 
-    <section>
-
-      <h2>Products</h2>
-
-      <div id="productList"></div>
-
-    </section>
+<main>
 
 
-    <section>
+<!-- =========================
+     STATS
+========================= -->
 
-      <h2>Orders</h2>
+<section class="stats">
 
-      <div id="orders"></div>
+<div>
+Products
+<b id="pCount">0</b>
+</div>
 
-    </section>
+<div>
+Orders
+<b id="oCount">0</b>
+</div>
 
-  </main>
+<div>
+Complaints
+<b id="cCount">0</b>
+</div>
+
+<div>
+Reviews
+<b id="rCount">0</b>
+</div>
+
+</section>
+
+
+<!-- =========================
+     PRODUCT FORM
+========================= -->
+
+<section class="form">
+
+<h2>
+Add / Edit Product
+</h2>
+
+<input
+id="pid"
+type="hidden"
+>
+
+
+<input
+id="name"
+placeholder="Product name"
+>
+
+
+<input
+id="price"
+type="number"
+placeholder="Price"
+>
+
+
+<input
+id="stock"
+type="number"
+placeholder="Stock"
+min="0"
+>
+
+
+<!-- IMAGE UPLOAD -->
+
+<div class="uploadBox">
+
+<b>
+📷 Product Image
+</b>
+
+<p class="sizeHelp">
+Phone/Gallery se image select karein.
+</p>
+
+<input
+id="imageFile"
+type="file"
+accept="image/*"
+>
+
+<img
+id="imagePreview"
+class="imagePreview"
+>
+
+<div
+id="uploadStatus"
+class="uploadStatus"
+></div>
+
+</div>
+
+
+<!-- OPTIONAL IMAGE URL -->
+
+<input
+id="image"
+placeholder="Image URL (optional)"
+>
+
+
+<!-- STANDARD SIZES -->
+
+<label>
+<b>Standard Sizes</b>
+</label>
+
+<input
+id="sizes"
+placeholder="Example: S,M,L,XL,XXL"
+>
+
+<div class="sizeHelp">
+Example: S,M,L,XL,XXL
+</div>
+
+
+<!-- INCH SIZES -->
+
+<label>
+<b>Inch Sizes</b>
+</label>
+
+<input
+id="inchSizes"
+placeholder="Example: 28,30,32,34,36,38,40,42"
+>
+
+<div class="sizeHelp">
+Example: 28,30,32,34,36,38,40,42
+</div>
+
+
+<button
+id="save"
+type="button"
+>
+Save Product
+</button>
+
+
+<button
+id="clear"
+class="secondary"
+type="button"
+>
+Clear
+</button>
+
+
+<p id="msg"></p>
+
+</section>
+
+
+<!-- =========================
+     PRODUCTS
+========================= -->
+
+<section>
+
+<h2>
+Products
+</h2>
+
+<div id="productList"></div>
+
+</section>
+
+
+<!-- =========================
+     ORDERS
+========================= -->
+
+<section>
+
+<h2>
+📦 Orders
+</h2>
+
+<div id="orders"></div>
+
+</section>
+
+
+<!-- =========================
+     CUSTOMER COMPLAINTS
+========================= -->
+
+<section>
+
+<h2>
+🆘 Customer Complaints
+</h2>
+
+<div id="complaints"></div>
+
+</section>
+
+
+<!-- =========================
+     REVIEWS
+========================= -->
+
+<section>
+
+<h2>
+⭐ Customer Reviews
+</h2>
+
+<div id="reviews"></div>
+
+</section>
+
+
+</main>
 
 </div>
 
 
 <script>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
-  authDomain: "nari-fashion-947a7.firebaseapp.com",
-  projectId: "nari-fashion-947a7",
-  storageBucket: "nari-fashion-947a7.firebasestorage.app",
-  messagingSenderId: "529668256601",
-  appId: "1:529668256601:web:b3cc39c8ea7c783133d248"
+/* =========================
+   FIREBASE CONFIG
+========================= */
+
+const firebaseConfig={
+
+apiKey:
+"AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
+
+authDomain:
+"nari-fashion-947a7.firebaseapp.com",
+
+projectId:
+"nari-fashion-947a7",
+
+storageBucket:
+"nari-fashion-947a7.firebasestorage.app",
+
+messagingSenderId:
+"529668256601",
+
+appId:
+"1:529668256601:web:b3cc39c8ea7c783133d248"
+
 };
 
 
 /* CURRENT ADMIN UID */
-const ADMIN_UID = "GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
 
+const ADMIN_UID=
+"GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
+
+
+/* FIREBASE */
 
 firebase.initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
-const db = firebase.firestore();
+const auth=
+firebase.auth();
 
-const $ = id => document.getElementById(id);
+const db=
+firebase.firestore();
 
-let products = [];
+const storage=
+firebase.storage();
+
+
+const $=id=>
+document.getElementById(id);
+
+
+let products=[];
+
+let selectedImageFile=null;
 
 
 /* =========================
    LOGIN
 ========================= */
 
-$("loginBtn").addEventListener("click", async () => {
+$("loginBtn").addEventListener(
+"click",
+async()=>{
 
-  const email = $("email").value.trim();
-  const password = $("password").value;
+const email=
+$("email").value.trim();
 
-  if (!email || !password) {
-    $("loginMsg").textContent =
-      "Email aur password bharo.";
-    return;
-  }
+const password=
+$("password").value;
 
-  $("loginBtn").disabled = true;
-  $("loginBtn").textContent = "Logging in...";
-  $("loginMsg").textContent = "";
 
-  try {
+if(!email||!password){
 
-    await auth.signInWithEmailAndPassword(
-      email,
-      password
-    );
+$("loginMsg").textContent=
+"Email aur password bharo.";
 
-  } catch (e) {
+return;
 
-    console.error(e);
+}
 
-    $("loginMsg").textContent =
-      "Login failed: " + (e.code || e.message);
 
-  } finally {
+$("loginBtn").disabled=true;
 
-    $("loginBtn").disabled = false;
-    $("loginBtn").textContent = "Login";
+$("loginBtn").textContent=
+"Logging in...";
 
-  }
+$("loginMsg").textContent="";
+
+
+try{
+
+await auth
+.signInWithEmailAndPassword(
+email,
+password
+);
+
+}catch(e){
+
+console.error(e);
+
+$("loginMsg").textContent=
+"Login failed: "
++(e.code||e.message);
+
+}finally{
+
+$("loginBtn").disabled=false;
+
+$("loginBtn").textContent=
+"Login";
+
+}
 
 });
 
@@ -200,8 +586,10 @@ $("loginBtn").addEventListener("click", async () => {
    LOGOUT
 ========================= */
 
-$("logout").onclick = () => {
-  auth.signOut();
+$("logout").onclick=()=>{
+
+auth.signOut();
+
 };
 
 
@@ -209,34 +597,42 @@ $("logout").onclick = () => {
    AUTH CHECK
 ========================= */
 
-auth.onAuthStateChanged(async user => {
+auth.onAuthStateChanged(
+async user=>{
 
-  if (user && user.uid === ADMIN_UID) {
+if(
+user &&
+user.uid===ADMIN_UID
+){
 
-    $("login").classList.add("hidden");
+$("login")
+.classList.add("hidden");
 
-    $("panel").classList.remove("hidden");
+$("panel")
+.classList.remove("hidden");
 
-    await load();
+await load();
 
-  }
+}
 
-  else if (user) {
+else if(user){
 
-    $("loginMsg").textContent =
-      "This account is not the admin account.";
+$("loginMsg").textContent=
+"This account is not the admin account.";
 
-    await auth.signOut();
+await auth.signOut();
 
-  }
+}
 
-  else {
+else{
 
-    $("login").classList.remove("hidden");
+$("login")
+.classList.remove("hidden");
 
-    $("panel").classList.add("hidden");
+$("panel")
+.classList.add("hidden");
 
-  }
+}
 
 });
 
@@ -245,11 +641,133 @@ auth.onAuthStateChanged(async user => {
    LOAD EVERYTHING
 ========================= */
 
-async function load() {
+async function load(){
 
-  await loadProducts();
+await loadProducts();
 
-  await loadOrders();
+await loadOrders();
+
+await loadComplaints();
+
+await loadReviews();
+
+}
+
+
+/* =========================
+   IMAGE SELECT
+========================= */
+
+$("imageFile").addEventListener(
+"change",
+event=>{
+
+const file=
+event.target.files[0];
+
+selectedImageFile=file||null;
+
+
+if(!file){
+
+$("imagePreview").style.display=
+"none";
+
+return;
+
+}
+
+
+if(!file.type.startsWith("image/")){
+
+$("uploadStatus").textContent=
+"Please image file select karein.";
+
+selectedImageFile=null;
+
+return;
+
+}
+
+
+if(file.size>5*1024*1024){
+
+$("uploadStatus").textContent=
+"Image 5MB se chhoti honi chahiye.";
+
+selectedImageFile=null;
+
+return;
+
+}
+
+
+const reader=
+new FileReader();
+
+
+reader.onload=e=>{
+
+$("imagePreview").src=
+e.target.result;
+
+$("imagePreview").style.display=
+"block";
+
+};
+
+
+reader.readAsDataURL(file);
+
+
+$("uploadStatus").textContent=
+"Image selected: "
++file.name;
+
+});
+
+
+/* =========================
+   UPLOAD IMAGE
+========================= */
+
+async function uploadImage(file){
+
+if(!file)return null;
+
+
+const safeName=
+file.name
+.replace(/[^a-zA-Z0-9._-]/g,"_");
+
+
+const path=
+"products/"
++Date.now()
++"_"+safeName;
+
+
+const ref=
+storage.ref().child(path);
+
+
+$("uploadStatus").textContent=
+"Image upload ho rahi hai...";
+
+
+const snapshot=
+await ref.put(file);
+
+
+const url=
+await snapshot.ref.getDownloadURL();
+
+
+$("uploadStatus").textContent=
+"✅ Image uploaded";
+
+
+return url;
 
 }
 
@@ -258,152 +776,133 @@ async function load() {
    LOAD PRODUCTS
 ========================= */
 
-async function loadProducts() {
+async function loadProducts(){
 
-  try {
+try{
 
-    const snapshot =
-      await db.collection("products").get();
-
-    products = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
-
-    $("pCount").textContent =
-      products.length;
+const snapshot=
+await db
+.collection("products")
+.get();
 
 
-    $("productList").innerHTML =
-      products.map(p => `
+products=
+snapshot.docs.map(doc=>({
 
-        <div class="item">
+id:doc.id,
+...doc.data()
 
-          <div>
-
-            <img
-              src="${p.image || "https://placehold.co/100"}"
-            >
-
-            <b>${esc(p.name)}</b>
-
-            <div>
-              ₹${Number(p.price || 0)}
-              • Stock ${Number(p.stock || 0)}
-            </div>
-
-          </div>
+}));
 
 
-          <div class="actions">
-
-            <button
-              onclick="editProduct('${p.id}')"
-            >
-              Edit
-            </button>
+$("pCount").textContent=
+products.length;
 
 
-            <button
-              class="danger"
-              onclick="deleteProduct('${p.id}')"
-            >
-              Delete
-            </button>
+$("productList").innerHTML=
 
-          </div>
+products.map(p=>{
 
-        </div>
+const sizes=
+Array.isArray(p.sizes)
+?p.sizes.join(", ")
+:(p.sizes||"");
 
-      `).join("") || "<p>No products.</p>";
 
-  }
+const inchSizes=
+Array.isArray(p.inchSizes)
+?p.inchSizes.join(", ")
+:(p.inchSizes||"");
 
-  catch (e) {
 
-    $("productList").innerHTML =
-      "<p>Products load nahi hue: "
-      + esc(e.message)
-      + "</p>";
+return `
 
-  }
+<div class="item">
 
+<div>
+
+<img
+src="${
+p.image||
+"https://placehold.co/100"
+}"
+style="
+width:80px;
+height:80px;
+object-fit:cover;
+border-radius:8px;
+"
+>
+
+<b>
+${esc(p.name)}
+</b>
+
+<div>
+
+₹${Number(p.price||0)
+.toLocaleString("en-IN")}
+
+•
+
+Stock
+${Number(p.stock||0)}
+
+</div>
+
+<div class="productSizes">
+
+${
+sizes
+?"Sizes: "+esc(sizes)
+:""
 }
 
+${
+inchSizes
+?" | Inch: "+esc(inchSizes)
+:""
+}
 
-/* =========================
-   LOAD ORDERS
-========================= */
+</div>
 
-async function loadOrders() {
-
-  try {
-
-    const snapshot =
-      await db
-        .collection("orders")
-        .orderBy("createdAt", "desc")
-        .get();
+</div>
 
 
-    $("oCount").textContent =
-      snapshot.size;
+<div class="actions">
+
+<button
+onclick="editProduct('${p.id}')"
+>
+Edit
+</button>
 
 
-    $("orders").innerHTML =
-      snapshot.docs.map(doc => {
+<button
+class="danger"
+onclick="deleteProduct('${p.id}')"
+>
+Delete
+</button>
 
-        const o = doc.data();
+</div>
 
-        return `
+</div>
 
-          <div class="order">
+`;
 
-            <b>
-              ${esc(o.customerName || "")}
-            </b>
+}).join("")
 
-            • ${esc(o.customerPhone || "")}
+||"<p>No products.</p>";
 
-            <br>
+}catch(e){
 
-            ${esc(o.address || "")}
+$("productList").innerHTML=
+"<p>Products load nahi hue: "
++esc(e.message)
++"</p>";
 
-            <br>
-
-            <b>
-              ₹${Number(o.total || 0)
-                .toLocaleString("en-IN")}
-            </b>
-
-            • ${esc(o.status || "pending")}
-
-            <br>
-
-            <small>
-              ${(o.items || [])
-                .map(i =>
-                  esc(i.name) + " × " + i.qty
-                )
-                .join(", ")}
-            </small>
-
-          </div>
-
-        `;
-
-      }).join("") || "<p>No orders.</p>";
-
-  }
-
-  catch (e) {
-
-    $("orders").innerHTML =
-      "<p>Orders load nahi hue: "
-      + esc(e.message)
-      + "</p>";
-
-  }
+}
 
 }
 
@@ -412,82 +911,157 @@ async function loadOrders() {
    SAVE PRODUCT
 ========================= */
 
-$("save").onclick = async () => {
+$("save").onclick=
+async()=>{
 
-  const data = {
+const name=
+$("name").value.trim();
 
-    name: $("name").value.trim(),
+const price=
+Number($("price").value);
 
-    price: Number(
-      $("price").value
-    ),
-
-    stock: Number(
-      $("stock").value
-    ),
-
-    image: $("image").value.trim(),
-
-    updatedAt:
-      firebase.firestore.FieldValue
-        .serverTimestamp()
-
-  };
+const stock=
+Number($("stock").value);
 
 
-  if (!data.name) {
+if(!name){
 
-    $("msg").textContent =
-      "Product name required.";
+$("msg").textContent=
+"Product name required.";
 
-    return;
+return;
 
-  }
-
-
-  try {
-
-    if ($("pid").value) {
-
-      await db
-        .collection("products")
-        .doc($("pid").value)
-        .update(data);
-
-    }
-
-    else {
-
-      await db
-        .collection("products")
-        .add({
-
-          ...data,
-
-          createdAt:
-            firebase.firestore.FieldValue
-              .serverTimestamp()
-
-        });
-
-    }
+}
 
 
-    $("msg").textContent =
-      "Saved!";
+if(stock<0){
 
-    clearForm();
+$("msg").textContent=
+"Stock 0 se kam nahi ho sakta.";
 
-    await loadProducts();
+return;
 
-  }
+}
 
-  catch (e) {
 
-    $("msg").textContent =
-      "Save failed: " + e.message;
+let imageUrl=
+$("image").value.trim();
 
-  }
+
+$("save").disabled=true;
+
+$("save").textContent=
+"Saving...";
+
+
+try{
+
+/* UPLOAD NEW IMAGE */
+
+if(selectedImageFile){
+
+const uploaded=
+await uploadImage(
+selectedImageFile
+);
+
+if(uploaded){
+
+imageUrl=uploaded;
+
+}
+
+}
+
+
+/* STANDARD SIZES */
+
+const sizes=
+$("sizes").value
+.split(",")
+.map(x=>x.trim())
+.filter(Boolean);
+
+
+/* INCH SIZES */
+
+const inchSizes=
+$("inchSizes").value
+.split(",")
+.map(x=>x.trim())
+.filter(Boolean);
+
+
+const data={
+
+name:name,
+
+price:price,
+
+stock:stock,
+
+image:imageUrl,
+
+sizes:sizes,
+
+inchSizes:inchSizes,
+
+updatedAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp()
+
+};
+
+
+if($("pid").value){
+
+await db
+.collection("products")
+.doc($("pid").value)
+.update(data);
+
+}else{
+
+await db
+.collection("products")
+.add({
+
+...data,
+
+createdAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp()
+
+});
+
+}
+
+
+$("msg").textContent=
+"✅ Product saved successfully.";
+
+clearForm();
+
+await loadProducts();
+
+}catch(e){
+
+console.error(e);
+
+$("msg").textContent=
+"Save failed: "
++e.message;
+
+}finally{
+
+$("save").disabled=false;
+
+$("save").textContent=
+"Save Product";
+
+}
 
 };
 
@@ -496,20 +1070,38 @@ $("save").onclick = async () => {
    CLEAR FORM
 ========================= */
 
-$("clear").onclick = clearForm;
+$("clear").onclick=
+clearForm;
 
 
-function clearForm() {
+function clearForm(){
 
-  $("pid").value = "";
+$("pid").value="";
 
-  $("name").value = "";
+$("name").value="";
 
-  $("price").value = "";
+$("price").value="";
 
-  $("stock").value = "";
+$("stock").value="";
 
-  $("image").value = "";
+$("image").value="";
+
+$("sizes").value="";
+
+$("inchSizes").value="";
+
+$("imageFile").value="";
+
+$("imagePreview").src="";
+
+$("imagePreview").style.display=
+"none";
+
+$("uploadStatus").textContent="";
+
+selectedImageFile=null;
+
+$("msg").textContent="";
 
 }
 
@@ -518,26 +1110,55 @@ function clearForm() {
    EDIT PRODUCT
 ========================= */
 
-window.editProduct = id => {
+window.editProduct=id=>{
 
-  const p =
-    products.find(x => x.id === id);
+const p=
+products.find(x=>x.id===id);
 
-  if (!p) return;
-
-
-  $("pid").value = id;
-
-  $("name").value = p.name || "";
-
-  $("price").value = p.price || 0;
-
-  $("stock").value = p.stock || 0;
-
-  $("image").value = p.image || "";
+if(!p)return;
 
 
-  scrollTo(0, 0);
+$("pid").value=id;
+
+$("name").value=
+p.name||"";
+
+$("price").value=
+p.price||0;
+
+$("stock").value=
+p.stock||0;
+
+$("image").value=
+p.image||"";
+
+
+$("sizes").value=
+Array.isArray(p.sizes)
+?p.sizes.join(",")
+:(p.sizes||"");
+
+
+$("inchSizes").value=
+Array.isArray(p.inchSizes)
+?p.inchSizes.join(",")
+:(p.inchSizes||"");
+
+
+if(p.image){
+
+$("imagePreview").src=
+p.image;
+
+$("imagePreview").style.display=
+"block";
+
+}
+
+
+selectedImageFile=null;
+
+scrollTo(0,0);
 
 };
 
@@ -546,29 +1167,597 @@ window.editProduct = id => {
    DELETE PRODUCT
 ========================= */
 
-window.deleteProduct = async id => {
+window.deleteProduct=
+async id=>{
 
-  if (!confirm("Delete product?")) {
-    return;
-  }
+if(!confirm(
+"Delete product?"
+))return;
 
 
-  try {
+try{
 
-    await db
-      .collection("products")
-      .doc(id)
-      .delete();
+await db
+.collection("products")
+.doc(id)
+.delete();
 
-    await loadProducts();
 
-  }
+await loadProducts();
 
-  catch (e) {
+}catch(e){
 
-    alert(e.message);
+alert(e.message);
 
-  }
+}
+
+};
+
+
+/* =========================
+   LOAD ORDERS
+========================= */
+
+async function loadOrders(){
+
+try{
+
+const snapshot=
+await db
+.collection("orders")
+.orderBy(
+"createdAt",
+"desc"
+)
+.get();
+
+
+$("oCount").textContent=
+snapshot.size;
+
+
+$("orders").innerHTML=
+
+snapshot.docs.map(doc=>{
+
+const o=doc.data();
+
+const status=
+(o.status||"pending")
+.toLowerCase();
+
+
+const items=
+(o.items||[])
+.map(i=>
+esc(i.name)
++" × "
++i.qty
++(i.size
+?" ("+esc(i.size)+")"
+:"")
+)
+.join(", ");
+
+
+let locationButton="";
+
+
+if(
+o.location &&
+o.location.mapsUrl
+){
+
+locationButton=`
+
+<a
+href="${esc(o.location.mapsUrl)}"
+target="_blank"
+class="mapBtn"
+style="
+display:inline-block;
+padding:8px 12px;
+border-radius:7px;
+text-decoration:none;
+margin-top:8px;
+background:#0d6efd;
+color:white;
+"
+>
+📍 View Location
+</a>
+
+`;
+
+}
+
+
+return `
+
+<div class="order">
+
+<b>
+${esc(o.customerName||"")}
+</b>
+
+• ${esc(o.customerPhone||"")}
+
+<br><br>
+
+<strong>
+Order ID:
+</strong>
+
+${esc(o.orderId||doc.id)}
+
+<br>
+
+${esc(o.address||"")}
+
+<br><br>
+
+<b>
+₹${Number(o.total||0)
+.toLocaleString("en-IN")}
+</b>
+
+<br>
+
+<span class="statusBadge">
+Status: ${esc(status)}
+</span>
+
+<br><br>
+
+<small>
+${items}
+</small>
+
+<br>
+
+${locationButton}
+
+
+<div class="orderButtons">
+
+${
+status!=="delivered"
+
+?
+
+`<button
+class="deliveredBtn"
+onclick="markDelivered('${doc.id}')"
+>
+✅ Mark Delivered
+</button>`
+
+:
+
+`<button
+class="deleteOrderBtn"
+onclick="deleteOrder('${doc.id}')"
+>
+🗑️ Delete Order
+</button>`
+
+}
+
+</div>
+
+</div>
+
+`;
+
+}).join("")
+
+||"<p>No orders.</p>";
+
+}catch(e){
+
+$("orders").innerHTML=
+"<p>Orders load nahi hue: "
++esc(e.message)
++"</p>";
+
+}
+
+}
+
+
+/* =========================
+   MARK DELIVERED
+========================= */
+
+window.markDelivered=
+async id=>{
+
+if(!confirm(
+"Is order ko Delivered mark karein?"
+))return;
+
+
+try{
+
+await db
+.collection("orders")
+.doc(id)
+.update({
+
+status:"delivered",
+
+deliveredAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp()
+
+});
+
+
+await loadOrders();
+
+}catch(e){
+
+alert(
+"Status update failed: "
++e.message
+);
+
+}
+
+};
+
+
+/* =========================
+   DELETE DELIVERED ORDER
+========================= */
+
+window.deleteOrder=
+async id=>{
+
+if(!confirm(
+"Delivered order ko permanently delete karein?"
+))return;
+
+
+try{
+
+await db
+.collection("orders")
+.doc(id)
+.delete();
+
+
+await loadOrders();
+
+}catch(e){
+
+alert(
+"Order delete failed: "
++e.message
+);
+
+}
+
+};
+
+
+/* =========================
+   LOAD COMPLAINTS
+========================= */
+
+async function loadComplaints(){
+
+try{
+
+const snapshot=
+await db
+.collection("supportTickets")
+.orderBy(
+"createdAt",
+"desc"
+)
+.get();
+
+
+$("cCount").textContent=
+snapshot.size;
+
+
+$("complaints").innerHTML=
+
+snapshot.docs.map(doc=>{
+
+const c=doc.data();
+
+return `
+
+<div class="complaint">
+
+<b>
+🆘 ${esc(c.problemType||"Problem")}
+</b>
+
+<br><br>
+
+<strong>
+Order ID:
+</strong>
+
+${esc(c.orderId||"")}
+
+<br>
+
+<strong>
+Mobile:
+</strong>
+
+${esc(c.customerPhone||"")}
+
+<br><br>
+
+<strong>
+Problem:
+</strong>
+
+<br>
+
+${esc(c.details||"")}
+
+<br><br>
+
+<span class="statusBadge">
+Status:
+${esc(c.status||"pending")}
+</span>
+
+
+<div class="complaintActions">
+
+<button
+class="pendingBtn"
+onclick="updateComplaint('${doc.id}','pending')"
+>
+Pending
+</button>
+
+
+<button
+class="progressBtn"
+onclick="updateComplaint('${doc.id}','in_progress')"
+>
+In Progress
+</button>
+
+
+<button
+class="resolvedBtn"
+onclick="updateComplaint('${doc.id}','resolved')"
+>
+Resolved
+</button>
+
+
+<button
+class="deleteComplaintBtn"
+onclick="deleteComplaint('${doc.id}')"
+>
+Delete
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}).join("")
+
+||"<p>No complaints.</p>";
+
+}catch(e){
+
+$("complaints").innerHTML=
+"<p>Complaints load nahi hue: "
++esc(e.message)
++"</p>";
+
+}
+
+}
+
+
+/* =========================
+   UPDATE COMPLAINT
+========================= */
+
+window.updateComplaint=
+async(id,status)=>{
+
+try{
+
+await db
+.collection("supportTickets")
+.doc(id)
+.update({
+
+status:status,
+
+updatedAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp()
+
+});
+
+
+await loadComplaints();
+
+}catch(e){
+
+alert(e.message);
+
+}
+
+};
+
+
+/* =========================
+   DELETE COMPLAINT
+========================= */
+
+window.deleteComplaint=
+async id=>{
+
+if(!confirm(
+"Complaint delete karein?"
+))return;
+
+
+try{
+
+await db
+.collection("supportTickets")
+.doc(id)
+.delete();
+
+
+await loadComplaints();
+
+}catch(e){
+
+alert(e.message);
+
+}
+
+};
+
+
+/* =========================
+   LOAD REVIEWS
+========================= */
+
+async function loadReviews(){
+
+try{
+
+const snapshot=
+await db
+.collection("reviews")
+.orderBy(
+"createdAt",
+"desc"
+)
+.get();
+
+
+$("rCount").textContent=
+snapshot.size;
+
+
+$("reviews").innerHTML=
+
+snapshot.docs.map(doc=>{
+
+const r=doc.data();
+
+const stars=
+"★".repeat(
+Math.max(
+0,
+Math.min(
+5,
+Number(r.rating||0)
+)
+)
+)
++
+"☆".repeat(
+5-Math.max(
+0,
+Math.min(
+5,
+Number(r.rating||0)
+)
+)
+);
+
+
+return `
+
+<div class="review">
+
+<b>
+${esc(r.productName||"Product")}
+</b>
+
+<div class="starRating">
+${stars}
+</div>
+
+<p>
+${esc(r.review||r.comment||"")}
+</p>
+
+<small>
+Order: ${esc(r.orderId||"")}
+</small>
+
+<br>
+
+<button
+class="deleteComplaintBtn"
+style="margin-top:10px"
+onclick="deleteReview('${doc.id}')"
+>
+Delete Review
+</button>
+
+</div>
+
+`;
+
+}).join("")
+
+||"<p>No reviews yet.</p>";
+
+}catch(e){
+
+$("reviews").innerHTML=
+"<p>No reviews yet.</p>";
+
+}
+
+}
+
+
+/* =========================
+   DELETE REVIEW
+========================= */
+
+window.deleteReview=
+async id=>{
+
+if(!confirm(
+"Review delete karein?"
+))return;
+
+
+try{
+
+await db
+.collection("reviews")
+.doc(id)
+.delete();
+
+
+await loadReviews();
+
+}catch(e){
+
+alert(e.message);
+
+}
 
 };
 
@@ -577,21 +1766,23 @@ window.deleteProduct = async id => {
    SECURITY ESCAPE
 ========================= */
 
-function esc(s) {
+function esc(s){
 
-  return String(s ?? "")
-    .replace(
-      /[&<>"']/g,
-      c => ({
+return String(s??"")
+.replace(
+/[&<>"']/g,
 
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
+c=>({
 
-      }[c])
-    );
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+
+}[c])
+
+);
 
 }
 
