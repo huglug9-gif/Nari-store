@@ -1,11 +1,1245 @@
-<!doctype html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NARI FASHION</title><link rel="stylesheet" href="style.css"><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script></head><body><header><div class="logo">NARI FASHION</div><a href="admin.html" class="admin">Admin</a></header><main><section class="hero"><h1>Fashion for Every Style</h1><p>Latest products • Easy ordering • Fast support</p></section><div class="tools"><input id="search" placeholder="Product search..."><button id="cartBtn">Cart (<span id="cartCount">0</span>)</button></div><section id="products" class="grid"><p>Loading products...</p></section></main><div id="cart" class="drawer hidden"><div class="drawerHead"><h2>Your Cart</h2><button id="closeCart">×</button></div><div id="cartItems"></div><div class="checkout"><input id="custName" placeholder="Your name"><input id="custPhone" placeholder="Mobile number"><input id="custAddress" placeholder="Address"><button id="placeOrder">Place Order</button><div id="orderMsg"></div></div></div><script>
-const firebaseConfig={apiKey:"AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",authDomain:"nari-fashion-947a7.firebaseapp.com",projectId:"nari-fashion-947a7",storageBucket:"nari-fashion-947a7.firebasestorage.app",messagingSenderId:"529668256601",appId:"1:529668256601:web:b3cc39c8ea7c783133d248"};
-firebase.initializeApp(firebaseConfig); const db=firebase.firestore(); let products=[],cart=[]; const $=id=>document.getElementById(id);
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-async function load(){try{const s=await db.collection('products').get();products=s.docs.map(d=>({id:d.id,...d.data()}));render(products)}catch(e){console.error(e);$('products').innerHTML='<p>Products load nahi hue. Firebase connection/rules check karein.</p>'}}
-function render(list){$('products').innerHTML=list.length?list.map(p=>`<article class="card"><img src="${p.image||'https://placehold.co/600x600?text=NARI+FASHION'}"><div class="cardBody"><h3>${esc(p.name||'Product')}</h3><div class="price">₹${Number(p.price||0).toLocaleString('en-IN')}</div><div class="stock">${Number(p.stock||0)>0?'In stock':'Out of stock'}</div><button class="add" ${Number(p.stock||0)<=0?'disabled':''} data-id="${p.id}">Add to Cart</button></div></article>`).join(''):'<p>No products added yet.</p>';document.querySelectorAll('.add').forEach(b=>b.onclick=()=>add(b.dataset.id))}
-function add(id){const p=products.find(x=>x.id===id);if(!p||Number(p.stock||0)<=0)return;const x=cart.find(i=>i.id===id);if(x)x.qty++;else cart.push({id,name:p.name,price:Number(p.price||0),qty:1});updateCart()}
-function updateCart(){$('cartCount').textContent=cart.reduce((a,b)=>a+b.qty,0);$('cartItems').innerHTML=cart.map(i=>`<div>${esc(i.name)} × ${i.qty} — ₹${(i.price*i.qty).toLocaleString('en-IN')}</div>`).join('')||'<p>Cart empty.</p>'}
-$('cartBtn').onclick=()=>$('cart').classList.remove('hidden');$('closeCart').onclick=()=>$('cart').classList.add('hidden');$('search').oninput=e=>render(products.filter(p=>String(p.name||'').toLowerCase().includes(e.target.value.toLowerCase())));
-$('placeOrder').onclick=async()=>{const name=$('custName').value.trim(),phone=$('custPhone').value.trim(),address=$('custAddress').value.trim();if(!name||!phone||!address||!cart.length)return $('orderMsg').textContent='Name, mobile, address aur cart zaroori hai.';const total=cart.reduce((a,b)=>a+b.price*b.qty,0);try{await db.collection('orders').add({customerName:name,customerPhone:phone,address,items:cart,total,status:'pending',createdAt:firebase.firestore.FieldValue.serverTimestamp()});$('orderMsg').textContent='Order placed successfully!';cart=[];updateCart()}catch(e){console.error(e);$('orderMsg').textContent='Order place nahi hua: '+e.message}};load();
-</script></body></html>
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NARI FASHION</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+<style>
+.hidden{display:none!important}
+
+.productDetail{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.65);
+z-index:9999;
+overflow:auto;
+padding:20px;
+}
+
+.detailBox{
+background:#fff;
+max-width:900px;
+margin:20px auto;
+border-radius:18px;
+overflow:hidden;
+position:relative;
+padding:20px;
+}
+
+.detailClose{
+position:absolute;
+right:15px;
+top:10px;
+border:0;
+background:#111;
+color:#fff;
+width:40px;
+height:40px;
+border-radius:50%;
+font-size:25px;
+cursor:pointer;
+z-index:2;
+}
+
+.detailGrid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+}
+
+.detailImage{
+width:100%;
+max-height:500px;
+object-fit:contain;
+border-radius:12px;
+background:#f5f5f5;
+}
+
+.detailPrice{
+font-size:26px;
+font-weight:bold;
+margin:10px 0;
+}
+
+.sizeGroup{
+margin:18px 0;
+}
+
+.sizeTitle{
+font-weight:bold;
+margin-bottom:8px;
+}
+
+.sizeButtons{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+}
+
+.sizeBtn{
+padding:10px 15px;
+border:1px solid #ccc;
+background:#fff;
+border-radius:8px;
+cursor:pointer;
+}
+
+.sizeBtn.selected{
+background:#111;
+color:#fff;
+border-color:#111;
+}
+
+.qtyBox{
+display:flex;
+align-items:center;
+gap:12px;
+margin:18px 0;
+}
+
+.qtyBox button{
+width:38px;
+height:38px;
+border:1px solid #ccc;
+background:#fff;
+border-radius:7px;
+font-size:20px;
+cursor:pointer;
+}
+
+.qtyBox span{
+font-size:18px;
+font-weight:bold;
+min-width:25px;
+text-align:center;
+}
+
+.detailAdd{
+width:100%;
+padding:14px;
+border:0;
+border-radius:10px;
+background:#111;
+color:#fff;
+font-size:17px;
+cursor:pointer;
+}
+
+.detailAdd:disabled{
+opacity:.5;
+cursor:not-allowed;
+}
+
+.cartItem{
+border-bottom:1px solid #ddd;
+padding:12px 0;
+}
+
+.cartInfo{
+font-weight:bold;
+}
+
+.cartSize{
+font-size:13px;
+color:#666;
+margin-top:4px;
+}
+
+.cartControls{
+display:flex;
+align-items:center;
+gap:8px;
+margin-top:8px;
+}
+
+.cartControls button{
+width:32px;
+height:32px;
+border:1px solid #ccc;
+background:#fff;
+border-radius:6px;
+cursor:pointer;
+}
+
+.removeBtn{
+width:auto!important;
+padding:0 10px;
+color:#b00020;
+}
+
+.cartTotal{
+font-size:19px;
+font-weight:bold;
+padding:15px 0;
+}
+
+.addressBox{
+display:flex;
+flex-direction:column;
+gap:9px;
+}
+
+.addressBox input,
+.addressBox textarea{
+width:100%;
+box-sizing:border-box;
+padding:11px;
+border:1px solid #ccc;
+border-radius:7px;
+font:inherit;
+}
+
+.addressBox textarea{
+min-height:80px;
+resize:vertical;
+}
+
+.locationBtn{
+padding:11px;
+border:1px solid #111;
+background:#fff;
+border-radius:8px;
+cursor:pointer;
+}
+
+.locationStatus{
+font-size:13px;
+color:#555;
+}
+
+.placeBtn{
+width:100%;
+padding:13px;
+border:0;
+border-radius:9px;
+background:#111;
+color:#fff;
+font-size:16px;
+cursor:pointer;
+}
+
+@media(max-width:700px){
+.detailGrid{
+grid-template-columns:1fr;
+}
+
+.detailBox{
+margin:5px auto;
+padding:15px;
+}
+
+.detailImage{
+max-height:350px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">NARI FASHION</div>
+<a href="admin.html" class="admin">Admin</a>
+</header>
+
+<main>
+
+<section class="hero">
+<h1>Fashion for Every Style</h1>
+<p>Latest products • Easy ordering • Fast support</p>
+</section>
+
+<div class="tools">
+<input id="search" placeholder="Product search...">
+<button id="cartBtn">
+Cart (<span id="cartCount">0</span>)
+</button>
+</div>
+
+<section id="products" class="grid">
+<p>Loading products...</p>
+</section>
+
+</main>
+
+
+<!-- PRODUCT DETAIL -->
+
+<div id="productDetail" class="productDetail hidden">
+
+<div class="detailBox">
+
+<button id="detailClose" class="detailClose">×</button>
+
+<div class="detailGrid">
+
+<div>
+<img id="detailImage" class="detailImage">
+</div>
+
+<div>
+
+<h2 id="detailName"></h2>
+
+<div id="detailPrice" class="detailPrice"></div>
+
+<div id="detailStock"></div>
+
+<div id="sizeArea" class="sizeGroup"></div>
+
+<div class="qtyBox">
+<button id="detailMinus">−</button>
+<span id="detailQty">1</span>
+<button id="detailPlus">+</button>
+</div>
+
+<button id="detailAdd" class="detailAdd">
+Add to Cart
+</button>
+
+<p id="detailMsg"></p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- CART -->
+
+<div id="cart" class="drawer hidden">
+
+<div class="drawerHead">
+<h2>Your Cart</h2>
+<button id="closeCart">×</button>
+</div>
+
+<div id="cartItems"></div>
+
+<div id="cartTotal" class="cartTotal"></div>
+
+
+<!-- ADDRESS -->
+
+<div class="checkout">
+
+<h3>Delivery Address</h3>
+
+<div class="addressBox">
+
+<input id="custName" placeholder="Full name">
+
+<input id="custPhone"
+placeholder="Mobile number"
+type="tel">
+
+<input id="house"
+placeholder="House / Flat / Building">
+
+<input id="street"
+placeholder="Street / Area">
+
+<input id="landmark"
+placeholder="Landmark">
+
+<input id="city"
+placeholder="City">
+
+<input id="state"
+placeholder="State">
+
+<input id="pincode"
+placeholder="PIN code"
+inputmode="numeric">
+
+<textarea
+id="addressNote"
+placeholder="Any additional address details"></textarea>
+
+<button id="locationBtn" class="locationBtn">
+📍 Use Current Location
+</button>
+
+<div id="locationStatus" class="locationStatus">
+Current location not selected
+</div>
+
+</div>
+
+<br>
+
+<button id="placeOrder" class="placeBtn">
+Place Order
+</button>
+
+<div id="orderMsg"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const firebaseConfig = {
+apiKey:"AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
+authDomain:"nari-fashion-947a7.firebaseapp.com",
+projectId:"nari-fashion-947a7",
+storageBucket:"nari-fashion-947a7.firebasestorage.app",
+messagingSenderId:"529668256601",
+appId:"1:529668256601:web:b3cc39c8ea7c783133d248"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db=firebase.firestore();
+
+let products=[];
+let cart=[];
+
+let selectedProduct=null;
+let selectedSize="";
+let detailQty=1;
+
+let currentLocation=null;
+
+const $=id=>document.getElementById(id);
+
+
+/* =========================
+   ESCAPE
+========================= */
+
+function esc(s){
+
+return String(s??"").replace(
+/[&<>"']/g,
+c=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+}[c])
+);
+
+}
+
+
+/* =========================
+   LOAD PRODUCTS
+========================= */
+
+async function load(){
+
+try{
+
+const s=await db.collection("products").get();
+
+products=s.docs.map(d=>({
+id:d.id,
+...d.data()
+}));
+
+render(products);
+
+}catch(e){
+
+console.error(e);
+
+$("products").innerHTML=
+"<p>Products load nahi hue. Firebase connection/rules check karein.</p>";
+
+}
+
+}
+
+
+/* =========================
+   PRODUCT SIZES
+========================= */
+
+function getSizes(p){
+
+let sizes=[];
+
+if(Array.isArray(p.sizes)){
+sizes=sizes.concat(p.sizes);
+}
+
+if(typeof p.sizes==="string"){
+sizes=sizes.concat(
+p.sizes.split(",").map(x=>x.trim()).filter(Boolean)
+);
+}
+
+if(Array.isArray(p.inchSizes)){
+sizes=sizes.concat(
+p.inchSizes.map(x=>x + " inch")
+);
+}
+
+if(typeof p.inchSizes==="string"){
+sizes=sizes.concat(
+p.inchSizes
+.split(",")
+.map(x=>x.trim())
+.filter(Boolean)
+.map(x=>x+" inch")
+);
+}
+
+return [...new Set(sizes)];
+
+}
+
+
+/* =========================
+   RENDER PRODUCTS
+========================= */
+
+function render(list){
+
+$("products").innerHTML=
+
+list.length ?
+
+list.map(p=>`
+
+<article class="card productCard"
+data-id="${p.id}">
+
+<img
+src="${p.image||"https://placehold.co/600x600?text=NARI+FASHION"}"
+alt="${esc(p.name||"Product")}"
+>
+
+<div class="cardBody">
+
+<h3>
+${esc(p.name||"Product")}
+</h3>
+
+<div class="price">
+₹${Number(p.price||0).toLocaleString("en-IN")}
+</div>
+
+<div class="stock">
+${
+Number(p.stock||0)>0
+?"In stock • "+Number(p.stock)+" available"
+:"Out of stock"
+}
+</div>
+
+<button
+class="add"
+${Number(p.stock||0)<=0?"disabled":""}
+data-id="${p.id}">
+Add to Cart
+</button>
+
+</div>
+
+</article>
+
+`).join("")
+
+:
+
+"<p>No products added yet.</p>";
+
+
+document.querySelectorAll(".productCard").forEach(card=>{
+
+card.addEventListener("click",e=>{
+
+if(e.target.closest(".add"))return;
+
+openProduct(card.dataset.id);
+
+});
+
+});
+
+
+document.querySelectorAll(".add").forEach(button=>{
+
+button.onclick=e=>{
+
+e.stopPropagation();
+
+openProduct(button.dataset.id);
+
+};
+
+});
+
+}
+
+
+/* =========================
+   OPEN PRODUCT
+========================= */
+
+function openProduct(id){
+
+const p=products.find(x=>x.id===id);
+
+if(!p)return;
+
+selectedProduct=p;
+selectedSize="";
+detailQty=1;
+
+$("detailName").textContent=p.name||"Product";
+
+$("detailPrice").textContent=
+"₹"+Number(p.price||0).toLocaleString("en-IN");
+
+$("detailImage").src=
+p.image||"https://placehold.co/600x600?text=NARI+FASHION";
+
+$("detailStock").textContent=
+Number(p.stock||0)>0
+?"Stock available: "+Number(p.stock)
+:"Out of stock";
+
+$("detailQty").textContent="1";
+
+const sizes=getSizes(p);
+
+if(sizes.length){
+
+$("sizeArea").innerHTML=`
+
+<div class="sizeTitle">
+Select Size
+</div>
+
+<div class="sizeButtons">
+
+${sizes.map(size=>`
+
+<button
+class="sizeBtn"
+data-size="${esc(size)}">
+${esc(size)}
+</button>
+
+`).join("")}
+
+</div>
+
+`;
+
+document.querySelectorAll(".sizeBtn").forEach(btn=>{
+
+btn.onclick=()=>{
+
+document.querySelectorAll(".sizeBtn")
+.forEach(x=>x.classList.remove("selected"));
+
+btn.classList.add("selected");
+
+selectedSize=btn.dataset.size;
+
+};
+
+});
+
+}else{
+
+$("sizeArea").innerHTML=`
+<div class="sizeTitle">
+Size: Not specified
+</div>
+`;
+
+}
+
+$("detailAdd").disabled=
+Number(p.stock||0)<=0;
+
+$("detailMsg").textContent="";
+
+$("productDetail").classList.remove("hidden");
+
+}
+
+
+/* =========================
+   CLOSE PRODUCT
+========================= */
+
+$("detailClose").onclick=()=>{
+
+$("productDetail").classList.add("hidden");
+
+};
+
+
+/* =========================
+   DETAIL QUANTITY
+========================= */
+
+$("detailMinus").onclick=()=>{
+
+if(detailQty>1){
+
+detailQty--;
+
+$("detailQty").textContent=detailQty;
+
+}
+
+};
+
+
+$("detailPlus").onclick=()=>{
+
+if(!selectedProduct)return;
+
+const stock=Number(selectedProduct.stock||0);
+
+if(detailQty<stock){
+
+detailQty++;
+
+$("detailQty").textContent=detailQty;
+
+}else{
+
+$("detailMsg").textContent=
+"Stock se zyada quantity nahi le sakte.";
+
+}
+
+};
+
+
+/* =========================
+   ADD TO CART
+========================= */
+
+$("detailAdd").onclick=()=>{
+
+if(!selectedProduct)return;
+
+const p=selectedProduct;
+
+const stock=Number(p.stock||0);
+
+if(stock<=0)return;
+
+const sizes=getSizes(p);
+
+if(sizes.length && !selectedSize){
+
+$("detailMsg").textContent=
+"Please select a size.";
+
+return;
+
+}
+
+
+const existing=cart.find(i=>
+i.id===p.id &&
+i.size===selectedSize
+);
+
+if(existing){
+
+if(existing.qty+detailQty>stock){
+
+$("detailMsg").textContent=
+"Stock se zyada quantity nahi le sakte.";
+
+return;
+
+}
+
+existing.qty+=detailQty;
+
+}else{
+
+cart.push({
+
+id:p.id,
+
+name:p.name,
+
+price:Number(p.price||0),
+
+qty:detailQty,
+
+size:selectedSize,
+
+stock:stock
+
+});
+
+}
+
+updateCart();
+
+$("productDetail").classList.add("hidden");
+
+};
+
+
+/* =========================
+   CART UPDATE
+========================= */
+
+function updateCart(){
+
+$("cartCount").textContent=
+cart.reduce((a,b)=>a+b.qty,0);
+
+
+$("cartItems").innerHTML=
+
+cart.length ?
+
+cart.map((i,index)=>`
+
+<div class="cartItem">
+
+<div class="cartInfo">
+${esc(i.name)}
+</div>
+
+<div class="cartSize">
+${i.size ? "Size: "+esc(i.size) : "Size: Not specified"}
+</div>
+
+<div>
+₹${(i.price*i.qty).toLocaleString("en-IN")}
+</div>
+
+<div class="cartControls">
+
+<button
+onclick="cartMinus(${index})">
+−
+</button>
+
+<span>${i.qty}</span>
+
+<button
+onclick="cartPlus(${index})">
++
+</button>
+
+<button
+class="removeBtn"
+onclick="cartRemove(${index})">
+Remove
+</button>
+
+</div>
+
+</div>
+
+`).join("")
+
+:
+
+"<p>Cart empty.</p>";
+
+
+const total=cart.reduce(
+(a,b)=>a+b.price*b.qty,
+0
+);
+
+$("cartTotal").textContent=
+"Total: ₹"+total.toLocaleString("en-IN");
+
+}
+
+
+/* =========================
+   CART PLUS
+========================= */
+
+window.cartPlus=index=>{
+
+const item=cart[index];
+
+if(!item)return;
+
+if(item.qty>=item.stock){
+
+alert("Stock se zyada quantity nahi le sakte.");
+
+return;
+
+}
+
+item.qty++;
+
+updateCart();
+
+};
+
+
+/* =========================
+   CART MINUS
+========================= */
+
+window.cartMinus=index=>{
+
+const item=cart[index];
+
+if(!item)return;
+
+item.qty--;
+
+if(item.qty<=0){
+
+cart.splice(index,1);
+
+}
+
+updateCart();
+
+};
+
+
+/* =========================
+   CART REMOVE
+========================= */
+
+window.cartRemove=index=>{
+
+cart.splice(index,1);
+
+updateCart();
+
+};
+
+
+/* =========================
+   CART OPEN/CLOSE
+========================= */
+
+$("cartBtn").onclick=()=>{
+
+$("cart").classList.remove("hidden");
+
+};
+
+$("closeCart").onclick=()=>{
+
+$("cart").classList.add("hidden");
+
+};
+
+
+/* =========================
+   SEARCH
+========================= */
+
+$("search").oninput=e=>{
+
+const q=e.target.value
+.toLowerCase()
+.trim();
+
+render(
+
+products.filter(p=>
+String(p.name||"")
+.toLowerCase()
+.includes(q)
+)
+
+);
+
+};
+
+
+/* =========================
+   CURRENT LOCATION
+========================= */
+
+$("locationBtn").onclick=()=>{
+
+if(!navigator.geolocation){
+
+$("locationStatus").textContent=
+"Is device/browser me location available nahi hai.";
+
+return;
+
+}
+
+$("locationStatus").textContent=
+"Location le rahe hain...";
+
+navigator.geolocation.getCurrentPosition(
+
+position=>{
+
+const lat=position.coords.latitude;
+const lng=position.coords.longitude;
+
+currentLocation={
+latitude:lat,
+longitude:lng,
+mapsUrl:
+"https://www.google.com/maps?q="
++lat+","+lng
+};
+
+$("locationStatus").innerHTML=
+"✅ Location selected. " +
+`<a href="${currentLocation.mapsUrl}" target="_blank">View on Map</a>`;
+
+},
+
+error=>{
+
+console.error(error);
+
+if(error.code===1){
+
+$("locationStatus").textContent=
+"Location permission denied. Browser me location Allow karein.";
+
+}else{
+
+$("locationStatus").textContent=
+"Location nahi mil payi. Dobara try karein.";
+
+}
+
+},
+
+{
+enableHighAccuracy:true,
+timeout:15000,
+maximumAge:0
+}
+
+);
+
+};
+
+
+/* =========================
+   PLACE ORDER
+========================= */
+
+$("placeOrder").onclick=async()=>{
+
+if(!cart.length){
+
+$("orderMsg").textContent=
+"Cart empty hai.";
+
+return;
+
+}
+
+
+const name=$("custName").value.trim();
+const phone=$("custPhone").value.trim();
+const house=$("house").value.trim();
+const street=$("street").value.trim();
+const landmark=$("landmark").value.trim();
+const city=$("city").value.trim();
+const state=$("state").value.trim();
+const pincode=$("pincode").value.trim();
+const note=$("addressNote").value.trim();
+
+
+if(
+!name ||
+!phone ||
+!house ||
+!street ||
+!city ||
+!state ||
+!pincode
+){
+
+$("orderMsg").textContent=
+"Name, mobile aur complete address bharna zaroori hai.";
+
+return;
+
+}
+
+
+if(!/^[0-9]{10}$/.test(phone)){
+
+$("orderMsg").textContent=
+"Valid 10 digit mobile number daalein.";
+
+return;
+
+}
+
+
+if(!/^[0-9]{6}$/.test(pincode)){
+
+$("orderMsg").textContent=
+"Valid 6 digit PIN code daalein.";
+
+return;
+
+}
+
+
+const addressParts=[
+house,
+street,
+landmark,
+city,
+state,
+pincode,
+note
+].filter(Boolean);
+
+
+const address=addressParts.join(", ");
+
+
+const total=cart.reduce(
+(a,b)=>a+b.price*b.qty,
+0
+);
+
+
+const orderItems=cart.map(i=>({
+
+productId:i.id,
+
+name:i.name,
+
+price:i.price,
+
+qty:i.qty,
+
+size:i.size||"Not specified"
+
+}));
+
+
+const orderData={
+
+customerName:name,
+
+customerPhone:phone,
+
+address:address,
+
+house:house,
+
+street:street,
+
+landmark:landmark,
+
+city:city,
+
+state:state,
+
+pincode:pincode,
+
+items:orderItems,
+
+total:total,
+
+status:"pending",
+
+createdAt:
+firebase.firestore.FieldValue.serverTimestamp()
+
+};
+
+
+if(currentLocation){
+
+orderData.location={
+latitude:currentLocation.latitude,
+longitude:currentLocation.longitude,
+mapsUrl:currentLocation.mapsUrl
+};
+
+}
+
+
+$("placeOrder").disabled=true;
+$("placeOrder").textContent="Placing Order...";
+
+
+try{
+
+await db
+.collection("orders")
+.add(orderData);
+
+
+$("orderMsg").textContent=
+"✅ Order placed successfully!";
+
+cart=[];
+
+updateCart();
+
+
+$("custName").value="";
+$("custPhone").value="";
+$("house").value="";
+$("street").value="";
+$("landmark").value="";
+$("city").value="";
+$("state").value="";
+$("pincode").value="";
+$("addressNote").value="";
+
+currentLocation=null;
+
+$("locationStatus").textContent=
+"Current location not selected";
+
+
+}catch(e){
+
+console.error(e);
+
+$("orderMsg").textContent=
+"Order place nahi hua: "+e.message;
+
+}finally{
+
+$("placeOrder").disabled=false;
+$("placeOrder").textContent="Place Order";
+
+}
+
+};
+
+
+/* =========================
+   START
+========================= */
+
+load();
+
+</script>
+
+</body>
+</html>
