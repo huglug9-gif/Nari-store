@@ -1,5 +1,5 @@
 import {auth,db} from './firebase.js';import {signInWithEmailAndPassword,onAuthStateChanged,signOut} from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';import {collection,getDocs,addDoc,updateDoc,deleteDoc,doc,serverTimestamp,query,orderBy} from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
-const $=id=>document.getElementById(id);let products=[];const adminUid='PqFCkDzqkAYxORwigvBpjY5vwex1';
+const $=id=>document.getElementById(id);let products=[];const adminUid='GJXt6XRE6hgPtAKeNyNjcnBbjsZ2';
 $('loginBtn').onclick=async()=>{try{await signInWithEmailAndPassword(auth,$('email').value,$('password').value);$('loginMsg').textContent='';}catch(e){$('loginMsg').textContent='Login failed: '+e.message}};$('logout').onclick=()=>signOut(auth);
 onAuthStateChanged(auth,user=>{if(user&&user.uid===adminUid){$('login').classList.add('hidden');$('panel').classList.remove('hidden');load()}else if(user){$('loginMsg').textContent='This account is not the admin account.';signOut(auth)}else{$('login').classList.remove('hidden');$('panel').classList.add('hidden')}});
 async function load(){await loadProducts();await loadOrders()}
