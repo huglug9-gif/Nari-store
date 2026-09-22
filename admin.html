@@ -1,452 +1,794 @@
-<!doctype html>
-<html lang="hi">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>NARI FASHION Admin</title>
-
-<link rel="stylesheet" href="admin.css">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NARI FASHION — Admin Panel</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 <style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  background:#f5f5f5;
+  color:#222;
+}
+
+header{
+  background:#111;
+  color:white;
+  padding:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.logo{
+  font-size:22px;
+  font-weight:bold;
+  letter-spacing:1px;
+}
+
+button{
+  border:0;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.logout{
+  background:#e53935;
+  color:white;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+.loginBox{
+  max-width:420px;
+  margin:80px auto;
+  background:white;
+  padding:25px;
+  border-radius:15px;
+  box-shadow:0 5px 25px #0001;
+}
+
+.loginBox h2{
+  margin-bottom:20px;
+  text-align:center;
+}
+
+input,textarea,select{
+  width:100%;
+  padding:12px;
+  border:1px solid #ddd;
+  border-radius:8px;
+  margin:6px 0 12px;
+  font-size:15px;
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.loginBtn{
+  width:100%;
+  background:#111;
+  color:white;
+}
+
 .hidden{
-display:none!important;
+  display:none!important;
 }
 
-.imagePreview{
-width:120px;
-height:120px;
-object-fit:cover;
-border-radius:12px;
-border:1px solid #ddd;
-margin-top:10px;
-display:none;
+.tabs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  margin-bottom:20px;
 }
 
-.uploadBox{
-border:2px dashed #ccc;
-padding:15px;
-border-radius:12px;
-margin:10px 0;
-background:#fafafa;
+.tabs button{
+  background:white;
+  border:1px solid #ddd;
+  white-space:nowrap;
 }
 
-.uploadBox input{
-width:100%;
+.tabs button.active{
+  background:#111;
+  color:white;
 }
 
-.uploadStatus{
-font-size:14px;
-margin-top:8px;
-font-weight:600;
+.section{
+  display:none;
+}
+
+.section.active{
+  display:block;
+}
+
+.card{
+  background:white;
+  padding:18px;
+  border-radius:14px;
+  margin-bottom:18px;
+  box-shadow:0 3px 15px #0000000d;
+}
+
+.card h2{
+  margin-bottom:15px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.stat{
+  background:white;
+  border-radius:14px;
+  padding:18px;
+  box-shadow:0 3px 15px #0001;
+}
+
+.stat b{
+  font-size:28px;
+  display:block;
+  margin-top:8px;
+}
+
+.formGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.full{
+  grid-column:1/-1;
+}
+
+.primary{
+  background:#111;
+  color:white;
+}
+
+.green{
+  background:#16a34a;
+  color:white;
+}
+
+.orange{
+  background:#f59e0b;
+  color:white;
+}
+
+.red{
+  background:#dc2626;
+  color:white;
+}
+
+.blue{
+  background:#2563eb;
+  color:white;
+}
+
+.gray{
+  background:#e5e7eb;
+  color:#111;
+}
+
+.productGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:15px;
+}
+
+.product{
+  background:white;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 3px 15px #0001;
+}
+
+.product img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  background:#eee;
+}
+
+.productInfo{
+  padding:15px;
+}
+
+.productInfo h3{
+  margin-bottom:8px;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:12px;
+}
+
+.actions button{
+  flex:1;
+  min-width:90px;
+}
+
+.order{
+  border:1px solid #ddd;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:12px;
+}
+
+.orderHead{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.status{
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+  display:inline-block;
+}
+
+.pending{
+  background:#fff3cd;
+  color:#856404;
+}
+
+.processing{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.delivered{
+  background:#dcfce7;
+  color:#166534;
+}
+
+.cancelled{
+  background:#fee2e2;
+  color:#991b1b;
+}
+
+.orderItems{
+  margin:12px 0;
+  background:#f8f8f8;
+  padding:12px;
+  border-radius:8px;
+}
+
+.itemLine{
+  display:flex;
+  justify-content:space-between;
+  border-bottom:1px solid #ddd;
+  padding:7px 0;
+}
+
+.itemLine:last-child{
+  border-bottom:0;
+}
+
+.complaint,.review{
+  border:1px solid #ddd;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:12px;
+}
+
+.preview{
+  width:150px;
+  height:150px;
+  object-fit:cover;
+  border-radius:10px;
+  display:none;
+  margin:10px 0;
 }
 
 .progressBox{
-width:100%;
-height:10px;
-background:#eee;
-border-radius:20px;
-overflow:hidden;
-margin-top:8px;
-display:none;
+  background:#ddd;
+  height:10px;
+  border-radius:20px;
+  overflow:hidden;
+  display:none;
+  margin:10px 0;
 }
 
 .progressBar{
-height:100%;
-width:0%;
-background:#198754;
-transition:width .2s;
+  height:100%;
+  width:0%;
+  background:#111;
+  transition:.3s;
 }
 
-.sizeHelp{
-font-size:13px;
-color:#666;
-margin-top:-5px;
-margin-bottom:8px;
+.message{
+  padding:10px;
+  border-radius:8px;
+  margin:10px 0;
+  display:none;
 }
 
-.order,
-.complaint,
-.review{
-border:1px solid #ddd;
-border-radius:12px;
-padding:15px;
-margin-bottom:12px;
-background:#fff;
+.success{
+  background:#dcfce7;
+  color:#166534;
 }
 
-.orderButtons,
-.complaintActions{
-display:flex;
-flex-wrap:wrap;
-gap:8px;
-margin-top:12px;
+.error{
+  background:#fee2e2;
+  color:#991b1b;
 }
 
-.orderButtons button,
-.complaintActions button{
-padding:8px 12px;
-border:0;
-border-radius:7px;
-cursor:pointer;
+.small{
+  color:#666;
+  font-size:13px;
+  line-height:1.6;
 }
 
-.deliveredBtn{
-background:#198754;
-color:#fff;
-}
+@media(max-width:700px){
+  .stats{
+    grid-template-columns:1fr 1fr;
+  }
 
-.deleteOrderBtn,
-.deleteComplaintBtn{
-background:#dc3545;
-color:#fff;
-}
+  .formGrid{
+    grid-template-columns:1fr;
+  }
 
-.mapBtn{
-background:#0d6efd;
-color:#fff;
-}
+  .full{
+    grid-column:auto;
+  }
 
-.statusBadge{
-display:inline-block;
-padding:4px 9px;
-border-radius:20px;
-font-size:12px;
-margin-top:5px;
-background:#eee;
-}
+  header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
 
-.pendingBtn{
-background:#ffc107;
-}
-
-.progressBtn{
-background:#0d6efd;
-color:#fff;
-}
-
-.resolvedBtn{
-background:#198754;
-color:#fff;
-}
-
-.starRating{
-font-size:20px;
-}
-
-.productSizes{
-font-size:13px;
-color:#666;
-margin-top:5px;
-}
-
-.reviewStars{
-font-size:22px;
-color:#f5a623;
-}
-
-@media(max-width:600px){
-
-.orderButtons,
-.complaintActions{
-flex-direction:column;
-}
-
-.orderButtons button,
-.complaintActions button{
-width:100%;
-}
-
+  .orderHead{
+    flex-direction:column;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= LOGIN ================= -->
+<!-- LOGIN -->
+<div id="loginScreen">
 
-<div id="login" class="box">
+  <div class="loginBox">
 
-<h1>NARI FASHION</h1>
+    <h2>👗 NARI FASHION</h2>
+    <p style="text-align:center;margin-bottom:20px;color:#666;">
+      Admin Panel Login
+    </p>
 
-<h2>Admin Login</h2>
+    <input
+      type="email"
+      id="loginEmail"
+      placeholder="Admin Email"
+    >
 
-<input
-id="email"
-type="email"
-placeholder="Admin email"
-autocomplete="username"
->
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="Password"
+    >
 
-<input
-id="password"
-type="password"
-placeholder="Password"
-autocomplete="current-password"
->
+    <button
+      class="loginBtn"
+      onclick="login()"
+    >
+      Login
+    </button>
 
-<button id="loginBtn" type="button">
-Login
-</button>
+    <div id="loginMessage" class="message"></div>
 
-<p id="loginMsg"></p>
+  </div>
 
 </div>
 
 
-<!-- ================= ADMIN PANEL ================= -->
-
-<div id="panel" class="hidden">
+<!-- ADMIN -->
+<div id="adminScreen" class="hidden">
 
 <header>
 
-<b>Admin Dashboard</b>
+  <div class="logo">
+    👗 NARI FASHION
+  </div>
 
-<button id="logout" type="button">
-Logout
-</button>
+  <button
+    class="logout"
+    onclick="logout()"
+  >
+    Logout
+  </button>
 
 </header>
 
 
-<main>
+<div class="container">
 
-<!-- ================= STATS ================= -->
+<!-- STATS -->
 
-<section class="stats">
+<div class="stats">
 
-<div>
-Products
-<b id="pCount">0</b>
+  <div class="stat">
+    <div>Products</div>
+    <b id="statProducts">0</b>
+  </div>
+
+  <div class="stat">
+    <div>Total Orders</div>
+    <b id="statOrders">0</b>
+  </div>
+
+  <div class="stat">
+    <div>Pending Orders</div>
+    <b id="statPending">0</b>
+  </div>
+
+  <div class="stat">
+    <div>Cancelled</div>
+    <b id="statCancelled">0</b>
+  </div>
+
 </div>
 
-<div>
-Orders
-<b id="oCount">0</b>
+
+<!-- TABS -->
+
+<div class="tabs">
+
+  <button
+    class="active"
+    onclick="showTab('products',this)"
+  >
+    🛍️ Products
+  </button>
+
+  <button
+    onclick="showTab('orders',this)"
+  >
+    📦 Orders
+  </button>
+
+  <button
+    onclick="showTab('complaints',this)"
+  >
+    💬 Complaints
+  </button>
+
+  <button
+    onclick="showTab('reviews',this)"
+  >
+    ⭐ Reviews
+  </button>
+
 </div>
 
-<div>
-Complaints
-<b id="cCount">0</b>
-</div>
 
-<div>
-Reviews
-<b id="rCount">0</b>
-</div>
+<!-- PRODUCTS -->
 
-</section>
-
-
-<!-- ================= PRODUCT FORM ================= -->
-
-<section class="form">
-
-<h2>Add / Edit Product</h2>
-
-<input id="pid" type="hidden">
-
-<input
-id="name"
-placeholder="Product name"
+<section
+  id="products"
+  class="section active"
 >
 
+<div class="card">
+
+<h2 id="formTitle">
+➕ Add Product
+</h2>
+
 <input
-id="price"
-type="number"
-placeholder="Price"
+  type="hidden"
+  id="editProductId"
 >
 
+<div class="formGrid">
+
+<div>
+
+<label>Product Name</label>
+
 <input
-id="stock"
-type="number"
-placeholder="Stock"
-min="0"
+  id="productName"
+  placeholder="Example: Women's Kurti"
 >
 
+</div>
 
-<!-- CLOUDINARY IMAGE UPLOAD -->
 
-<div class="uploadBox">
+<div>
 
-<b>📷 Product Image</b>
-
-<p class="sizeHelp">
-Phone/Gallery se image select karein. Maximum 5MB.
-</p>
+<label>Price ₹</label>
 
 <input
-id="imageFile"
-type="file"
-accept="image/*"
+  id="productPrice"
+  type="number"
+  placeholder="999"
+>
+
+</div>
+
+
+<div>
+
+<label>Stock</label>
+
+<input
+  id="productStock"
+  type="number"
+  placeholder="10"
+>
+
+</div>
+
+
+<div>
+
+<label>Sizes</label>
+
+<input
+  id="productSizes"
+  placeholder="S,M,L,XL,XXL"
+>
+
+</div>
+
+
+<div>
+
+<label>Inch Sizes</label>
+
+<input
+  id="productInchSizes"
+  placeholder="28,30,32,34,36"
+>
+
+</div>
+
+
+<div>
+
+<label>Image URL</label>
+
+<input
+  id="productImageUrl"
+  placeholder="https://..."
+>
+
+</div>
+
+
+<div class="full">
+
+<label>
+Upload Image from Gallery
+</label>
+
+<input
+  type="file"
+  id="productImage"
+  accept="image/*"
 >
 
 <img
-id="imagePreview"
-class="imagePreview"
+  id="imagePreview"
+  class="preview"
 >
 
-<div id="progressBox" class="progressBox">
-<div id="progressBar" class="progressBar"></div>
+<div
+  id="progressBox"
+  class="progressBox"
+>
+  <div
+    id="progressBar"
+    class="progressBar"
+  ></div>
 </div>
 
-<div id="uploadStatus" class="uploadStatus"></div>
+<div
+  id="uploadStatus"
+  class="small"
+></div>
 
-</div>
-
-
-<!-- IMAGE URL -->
-
-<input
-id="image"
-placeholder="Image URL (optional)"
->
-
-
-<!-- STANDARD SIZES -->
-
-<label>
-<b>Standard Sizes</b>
-</label>
-
-<input
-id="sizes"
-placeholder="Example: S,M,L,XL,XXL"
->
-
-<div class="sizeHelp">
-Example: S,M,L,XL,XXL
 </div>
 
 
-<!-- INCH SIZES -->
+<div class="full">
 
-<label>
-<b>Inch Sizes</b>
-</label>
-
-<input
-id="inchSizes"
-placeholder="Example: 28,30,32,34,36,38,40,42"
+<button
+  class="primary"
+  onclick="saveProduct()"
 >
-
-<div class="sizeHelp">
-Example: 28,30,32,34,36,38,40,42
-</div>
-
-
-<button id="save" type="button">
-Save Product
+💾 Save Product
 </button>
 
 <button
-id="clear"
-class="secondary"
-type="button"
+  class="gray"
+  onclick="resetProductForm()"
+  style="margin-left:5px"
 >
 Clear
 </button>
 
-<p id="msg"></p>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>🛍️ All Products</h2>
+
+<div
+  id="productList"
+  class="productGrid"
+>
+Loading...
+</div>
+
+</div>
 
 </section>
 
 
-<!-- ================= PRODUCTS ================= -->
+<!-- ORDERS -->
 
-<section>
+<section
+  id="orders"
+  class="section"
+>
 
-<h2>Products</h2>
+<div class="card">
 
-<div id="productList"></div>
+<h2>📦 Customer Orders</h2>
 
-</section>
+<button
+  class="gray"
+  onclick="loadOrders()"
+>
+🔄 Refresh
+</button>
 
+<div
+  id="orderList"
+  style="margin-top:15px"
+>
+Loading...
+</div>
 
-<!-- ================= ORDERS ================= -->
-
-<section>
-
-<h2>📦 Orders</h2>
-
-<div id="orders"></div>
-
-</section>
-
-
-<!-- ================= COMPLAINTS ================= -->
-
-<section>
-
-<h2>🆘 Customer Complaints</h2>
-
-<div id="complaints"></div>
+</div>
 
 </section>
 
 
-<!-- ================= REVIEWS ================= -->
+<!-- COMPLAINTS -->
 
-<section>
+<section
+  id="complaints"
+  class="section"
+>
+
+<div class="card">
+
+<h2>💬 Customer Complaints</h2>
+
+<button
+  class="gray"
+  onclick="loadComplaints()"
+>
+🔄 Refresh
+</button>
+
+<div
+  id="complaintList"
+  style="margin-top:15px"
+>
+Loading...
+</div>
+
+</div>
+
+</section>
+
+
+<!-- REVIEWS -->
+
+<section
+  id="reviews"
+  class="section"
+>
+
+<div class="card">
 
 <h2>⭐ Customer Reviews</h2>
 
-<div id="reviews"></div>
+<button
+  class="gray"
+  onclick="loadReviews()"
+>
+🔄 Refresh
+</button>
+
+<div
+  id="reviewList"
+  style="margin-top:15px"
+>
+Loading...
+</div>
+
+</div>
 
 </section>
 
-</main>
-
+</div>
 </div>
 
 
 <script>
 
-/* =====================================================
-   FIREBASE CONFIG
-===================================================== */
+/* ================================
+   FIREBASE
+================================ */
 
 const firebaseConfig = {
-
-apiKey:
-"AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
-
-authDomain:
-"nari-fashion-947a7.firebaseapp.com",
-
-projectId:
-"nari-fashion-947a7",
-
-storageBucket:
-"nari-fashion-947a7.firebasestorage.app",
-
-messagingSenderId:
-"529668256601",
-
-appId:
-"1:529668256601:web:b3cc39c8ea7c783133d248",
-
-measurementId:
-"G-6QLMB312CM"
-
+  apiKey: "AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
+  authDomain: "nari-fashion-947a7.firebaseapp.com",
+  projectId: "nari-fashion-947a7",
+  storageBucket: "nari-fashion-947a7.firebasestorage.app",
+  messagingSenderId: "529668256601",
+  appId: "1:529668256601:web:b3cc39c8ea7c783133d248",
+  measurementId: "G-6QLMB312CM"
 };
 
+firebase.initializeApp(firebaseConfig);
 
-/* =====================================================
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+
+/* ================================
    ADMIN UID
-===================================================== */
+================================ */
 
 const ADMIN_UID =
 "GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
 
 
-/* =====================================================
+/* ================================
    CLOUDINARY
-===================================================== */
+================================ */
 
 const CLOUDINARY_CLOUD_NAME =
 "ctw8rkyn";
@@ -455,1647 +797,1639 @@ const CLOUDINARY_UPLOAD_PRESET =
 "nari_fashion";
 
 const CLOUDINARY_UPLOAD_URL =
-"https://api.cloudinary.com/v1_1/"
-+ CLOUDINARY_CLOUD_NAME
-+ "/image/upload";
+"https://api.cloudinary.com/v1_1/" +
+CLOUDINARY_CLOUD_NAME +
+"/image/upload";
 
 
-/* =====================================================
-   FIREBASE INIT
-===================================================== */
-
-firebase.initializeApp(firebaseConfig);
-
-const auth =
-firebase.auth();
-
-const db =
-firebase.firestore();
-
-
-/* =====================================================
+/* ================================
    HELPERS
-===================================================== */
+================================ */
 
-const $ = id =>
-document.getElementById(id);
-
-let products = [];
-
-let selectedImageFile = null;
-
-
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
-
-function esc(value){
-
-if(value === null || value === undefined){
-return "";
-}
-
-return String(value)
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
+function $(id){
+  return document.getElementById(id);
 }
 
 
-/* =====================================================
+function showMessage(id,text,type){
+
+  const el=$(id);
+
+  el.textContent=text;
+
+  el.className=
+    "message "+
+    (type==="error"?"error":"success");
+
+  el.style.display="block";
+
+  setTimeout(()=>{
+    el.style.display="none";
+  },5000);
+}
+
+
+/* ================================
    LOGIN
-===================================================== */
+================================ */
 
-$("loginBtn").addEventListener(
-"click",
-async()=>{
+async function login(){
 
-const email =
-$("email").value.trim();
+  const email=$("loginEmail").value.trim();
+  const password=$("loginPassword").value;
 
-const password =
-$("password").value;
+  if(!email || !password){
+
+    showMessage(
+      "loginMessage",
+      "Email aur password enter karo.",
+      "error"
+    );
+
+    return;
+  }
+
+  try{
+
+    const result=
+      await auth.signInWithEmailAndPassword(
+        email,
+        password
+      );
+
+    if(result.user.uid!==ADMIN_UID){
+
+      await auth.signOut();
+
+      throw new Error(
+        "Ye account admin nahi hai."
+      );
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    showMessage(
+      "loginMessage",
+      error.message,
+      "error"
+    );
+  }
+}
 
 
-if(!email || !password){
+async function logout(){
 
-$("loginMsg").textContent =
-"Email aur password bharo.";
-
-return;
+  await auth.signOut();
 
 }
 
 
-$("loginBtn").disabled = true;
+/* ================================
+   AUTH STATE
+================================ */
 
-$("loginBtn").textContent =
-"Logging in...";
+auth.onAuthStateChanged(async user=>{
 
-$("loginMsg").textContent = "";
+  if(user && user.uid===ADMIN_UID){
 
+    $("loginScreen")
+      .classList.add("hidden");
 
-try{
+    $("adminScreen")
+      .classList.remove("hidden");
 
-await auth.signInWithEmailAndPassword(
-email,
-password
-);
+    await loadProducts();
+    await loadOrders();
+    await loadComplaints();
+    await loadReviews();
 
-}catch(e){
+  }else{
 
-console.error(e);
+    $("loginScreen")
+      .classList.remove("hidden");
 
-$("loginMsg").textContent =
-"Login failed: "
-+ (e.code || e.message);
-
-}finally{
-
-$("loginBtn").disabled = false;
-
-$("loginBtn").textContent =
-"Login";
-
-}
+    $("adminScreen")
+      .classList.add("hidden");
+  }
 
 });
 
 
-/* =====================================================
-   LOGOUT
-===================================================== */
+/* ================================
+   TABS
+================================ */
 
-$("logout").onclick = ()=>{
+function showTab(id,button){
 
-auth.signOut();
+  document
+    .querySelectorAll(".section")
+    .forEach(x=>{
+      x.classList.remove("active");
+    });
 
-};
+  document
+    .querySelectorAll(".tabs button")
+    .forEach(x=>{
+      x.classList.remove("active");
+    });
 
+  $(id).classList.add("active");
 
-/* =====================================================
-   AUTH CHECK
-===================================================== */
-
-auth.onAuthStateChanged(
-async user=>{
-
-if(
-user &&
-user.uid === ADMIN_UID
-){
-
-$("login")
-.classList.add("hidden");
-
-$("panel")
-.classList.remove("hidden");
-
-await load();
-
-}
-
-else if(user){
-
-$("loginMsg").textContent =
-"This account is not the admin account.";
-
-await auth.signOut();
-
-}
-
-else{
-
-$("login")
-.classList.remove("hidden");
-
-$("panel")
-.classList.add("hidden");
-
-}
-
-});
-
-
-/* =====================================================
-   LOAD EVERYTHING
-===================================================== */
-
-async function load(){
-
-await Promise.all([
-loadProducts(),
-loadOrders(),
-loadComplaints(),
-loadReviews()
-]);
+  button.classList.add("active");
 
 }
 
 
-/* =====================================================
-   IMAGE SELECT
-===================================================== */
-
-$("imageFile").addEventListener(
-"change",
-event=>{
-
-const file =
-event.target.files[0];
-
-selectedImageFile =
-file || null;
-
-
-$("progressBox").style.display =
-"none";
-
-$("progressBar").style.width =
-"0%";
-
-
-if(!file){
-
-$("imagePreview").style.display =
-"none";
-
-$("uploadStatus").textContent =
-"";
-
-return;
-
-}
-
-
-/* IMAGE TYPE */
-
-if(!file.type.startsWith("image/")){
-
-$("uploadStatus").textContent =
-"❌ Please image file select karein.";
-
-selectedImageFile = null;
-
-return;
-
-}
-
-
-/* 5MB LIMIT */
-
-if(file.size > 5 * 1024 * 1024){
-
-$("uploadStatus").textContent =
-"❌ Image 5MB se chhoti honi chahiye.";
-
-selectedImageFile = null;
-
-return;
-
-}
-
-
-/* PREVIEW */
-
-const reader =
-new FileReader();
-
-reader.onload = e=>{
-
-$("imagePreview").src =
-e.target.result;
-
-$("imagePreview").style.display =
-"block";
-
-};
-
-reader.readAsDataURL(file);
-
-
-$("uploadStatus").textContent =
-"✅ Image selected: "
-+ file.name
-+ " ("
-+ (file.size/1024/1024).toFixed(2)
-+ " MB)";
-
-});
-
-
-/* =====================================================
+/* ================================
    IMAGE COMPRESSION
-===================================================== */
+================================ */
 
 function compressImage(file){
 
-return new Promise(
-(resolve,reject)=>{
+  return new Promise((resolve,reject)=>{
 
-const reader =
-new FileReader();
+    const reader=new FileReader();
 
-reader.onload =
-event=>{
+    reader.onload=e=>{
 
-const img =
-new Image();
+      const img=new Image();
 
-img.onload = ()=>{
+      img.onload=()=>{
 
-const MAX_SIZE = 1600;
+        const maxSize=1600;
 
-let width =
-img.width;
+        let width=img.width;
+        let height=img.height;
 
-let height =
-img.height;
+        if(width>height){
 
+          if(width>maxSize){
 
-/* RESIZE */
+            height=
+              height*maxSize/width;
 
-if(width > MAX_SIZE){
+            width=maxSize;
+          }
 
-height =
-Math.round(
-height * MAX_SIZE / width
-);
+        }else{
 
-width =
-MAX_SIZE;
+          if(height>maxSize){
 
-}
+            width=
+              width*maxSize/height;
 
-if(height > MAX_SIZE){
+            height=maxSize;
+          }
+        }
 
-width =
-Math.round(
-width * MAX_SIZE / height
-);
+        const canvas=
+          document.createElement("canvas");
 
-height =
-MAX_SIZE;
+        canvas.width=width;
+        canvas.height=height;
 
-}
+        const ctx=
+          canvas.getContext("2d");
 
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          width,
+          height
+        );
 
-/* CANVAS */
+        canvas.toBlob(
+          blob=>{
+            resolve(
+              new File(
+                [blob],
+                "product.jpg",
+                {
+                  type:"image/jpeg"
+                }
+              )
+            );
+          },
+          "image/jpeg",
+          0.82
+        );
 
-const canvas =
-document.createElement("canvas");
+      };
 
-canvas.width =
-width;
+      img.onerror=reject;
 
-canvas.height =
-height;
+      img.src=e.target.result;
+    };
 
-const ctx =
-canvas.getContext("2d");
+    reader.onerror=reject;
 
-ctx.drawImage(
-img,
-0,
-0,
-width,
-height
-);
+    reader.readAsDataURL(file);
 
-
-/* JPEG */
-
-canvas.toBlob(
-blob=>{
-
-if(!blob){
-
-reject(
-new Error(
-"Image compression failed."
-)
-);
-
-return;
+  });
 
 }
 
 
-const newFile =
-new File(
-[blob],
-"product_"+Date.now()+".jpg",
-{
-type:"image/jpeg",
-lastModified:Date.now()
-}
-);
-
-
-resolve(newFile);
-
-},
-"image/jpeg",
-0.82
-);
-
-};
-
-
-img.onerror = ()=>{
-
-reject(
-new Error(
-"Image read nahi ho pa rahi."
-)
-);
-
-};
-
-img.src =
-event.target.result;
-
-};
-
-
-reader.onerror = ()=>{
-
-reject(
-new Error(
-"Image file read nahi ho pa rahi."
-)
-);
-
-};
-
-reader.readAsDataURL(file);
-
-});
-
-}
-
-
-/* =====================================================
+/* ================================
    CLOUDINARY UPLOAD
-===================================================== */
+================================ */
 
 async function uploadImage(file){
 
-if(!file){
-return null;
-}
+  if(!file){
+    return null;
+  }
+
+  try{
+
+    $("uploadStatus").textContent=
+      "⏳ Image compress ho rahi hai...";
+
+    const compressedFile=
+      await compressImage(file);
+
+    $("uploadStatus").textContent=
+      "⏳ Cloudinary par image upload ho rahi hai...";
+
+    $("progressBox")
+      .style.display="block";
+
+    $("progressBar")
+      .style.width="20%";
 
 
-try{
+    const formData=new FormData();
 
-$("uploadStatus").textContent =
-"⏳ Image compress ho rahi hai...";
+    formData.append(
+      "file",
+      compressedFile
+    );
 
-
-const compressedFile =
-await compressImage(file);
-
-
-$("uploadStatus").textContent =
-"⏳ Cloudinary par image upload ho rahi hai...";
-
-
-$("progressBox").style.display =
-"block";
-
-$("progressBar").style.width =
-"20%";
+    formData.append(
+      "upload_preset",
+      CLOUDINARY_UPLOAD_PRESET
+    );
 
 
-const formData =
-new FormData();
-
-formData.append(
-"file",
-compressedFile
-);
-
-formData.append(
-"upload_preset",
-CLOUDINARY_UPLOAD_PRESET
-);
+    $("progressBar")
+      .style.width="40%";
 
 
-$("progressBar").style.width =
-"40%";
+    const response=
+      await fetch(
+        CLOUDINARY_UPLOAD_URL,
+        {
+          method:"POST",
+          body:formData
+        }
+      );
 
 
-const response =
-await fetch(
-CLOUDINARY_UPLOAD_URL,
-{
-method:"POST",
-body:formData
-}
-);
+    $("progressBar")
+      .style.width="80%";
 
 
-$("progressBar").style.width =
-"80%";
+    if(!response.ok){
+
+      const errorText=
+        await response.text();
+
+      throw new Error(
+        "Cloudinary upload failed: "+
+        errorText
+      );
+    }
 
 
-if(!response.ok){
-
-const errorText =
-await response.text();
-
-throw new Error(
-"Cloudinary upload failed: "
-+ errorText
-);
-
-}
+    const result=
+      await response.json();
 
 
-const result =
-await response.json();
+    if(!result.secure_url){
+
+      throw new Error(
+        "Cloudinary URL nahi mila."
+      );
+    }
 
 
-if(!result.secure_url){
+    $("progressBar")
+      .style.width="100%";
 
-throw new Error(
-"Cloudinary URL nahi mila."
-);
-
-}
+    $("uploadStatus").textContent=
+      "✅ Image uploaded successfully";
 
 
-$("progressBar").style.width =
-"100%";
-
-$("uploadStatus").textContent =
-"✅ Image uploaded successfully";
+    return result.secure_url;
 
 
-return result.secure_url;
+  }catch(error){
 
+    console.error(
+      "CLOUDINARY ERROR:",
+      error
+    );
 
-}catch(error){
+    $("uploadStatus").textContent=
+      "❌ Image upload failed: "+
+      error.message;
 
-console.error(
-"CLOUDINARY ERROR:",
-error
-);
-
-$("uploadStatus").textContent =
-"❌ Image upload failed: "
-+ (error.message || "Unknown error");
-
-throw error;
-
-}
+    throw error;
+  }
 
 }
 
 
-/* =====================================================
+/* ================================
+   IMAGE PREVIEW
+================================ */
+
+$("productImage")
+.addEventListener(
+  "change",
+  function(){
+
+    const file=this.files[0];
+
+    if(!file){
+      return;
+    }
+
+    const preview=
+      $("imagePreview");
+
+    preview.src=
+      URL.createObjectURL(file);
+
+    preview.style.display="block";
+
+  }
+);
+
+
+/* ================================
+   SAVE PRODUCT
+================================ */
+
+async function saveProduct(){
+
+  const name=
+    $("productName").value.trim();
+
+  const price=
+    Number($("productPrice").value);
+
+  const stock=
+    Number($("productStock").value);
+
+  const sizes=
+    $("productSizes").value.trim();
+
+  const inchSizes=
+    $("productInchSizes").value.trim();
+
+  let imageUrl=
+    $("productImageUrl").value.trim();
+
+  const file=
+    $("productImage").files[0];
+
+  const editId=
+    $("editProductId").value;
+
+
+  if(!name){
+
+    alert("Product name enter karo.");
+    return;
+  }
+
+  if(!price){
+
+    alert("Price enter karo.");
+    return;
+  }
+
+
+  try{
+
+    /* Upload image if selected */
+
+    if(file){
+
+      imageUrl=
+        await uploadImage(file);
+    }
+
+
+    if(!imageUrl){
+
+      alert(
+        "Image URL ya image file do."
+      );
+
+      return;
+    }
+
+
+    const productData={
+
+      name:name,
+
+      price:price,
+
+      stock:stock,
+
+      image:imageUrl,
+
+      sizes:sizes,
+
+      inchSizes:inchSizes,
+
+      updatedAt:
+        firebase.firestore
+        .FieldValue
+        .serverTimestamp()
+
+    };
+
+
+    if(editId){
+
+      await db
+        .collection("products")
+        .doc(editId)
+        .update(productData);
+
+      alert(
+        "✅ Product updated successfully!"
+      );
+
+    }else{
+
+      productData.createdAt=
+        firebase.firestore
+        .FieldValue
+        .serverTimestamp();
+
+      await db
+        .collection("products")
+        .add(productData);
+
+      alert(
+        "✅ Product added successfully!"
+      );
+    }
+
+
+    resetProductForm();
+
+    await loadProducts();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "❌ Product save failed:\n"+
+      error.message
+    );
+  }
+
+}
+
+
+/* ================================
    LOAD PRODUCTS
-===================================================== */
+================================ */
 
 async function loadProducts(){
 
-try{
+  const box=
+    $("productList");
 
-const snapshot =
-await db
-.collection("products")
-.get();
-
-
-products =
-snapshot.docs.map(doc=>({
-
-id:doc.id,
-...doc.data()
-
-}));
+  box.innerHTML=
+    "⏳ Loading products...";
 
 
-$("pCount").textContent =
-products.length;
+  try{
+
+    const snapshot=
+      await db
+        .collection("products")
+        .orderBy(
+          "createdAt",
+          "desc"
+        )
+        .get();
 
 
-$("productList").innerHTML =
-
-products.map(p=>{
-
-const sizes =
-Array.isArray(p.sizes)
-? p.sizes.join(", ")
-: (p.sizes || "");
+    $("statProducts").textContent=
+      snapshot.size;
 
 
-const inchSizes =
-Array.isArray(p.inchSizes)
-? p.inchSizes.join(", ")
-: (p.inchSizes || "");
+    if(snapshot.empty){
+
+      box.innerHTML=
+        "<p>No products added yet.</p>";
+
+      return;
+    }
 
 
-return `
-
-<div class="item">
-
-<div>
-
-<img
-src="${esc(
-p.image ||
-"https://placehold.co/100"
-)}"
-style="
-width:80px;
-height:80px;
-object-fit:cover;
-border-radius:8px;
-"
-onerror="this.src='https://placehold.co/100'"
->
-
-<b>
-${esc(p.name)}
-</b>
-
-<div>
-₹${Number(p.price||0)
-.toLocaleString("en-IN")}
-•
-Stock ${Number(p.stock||0)}
-</div>
-
-<div class="productSizes">
-
-${sizes
-? "Sizes: "+esc(sizes)
-: ""}
-
-${inchSizes
-? " | Inch: "+esc(inchSizes)
-: ""}
-
-</div>
-
-</div>
+    box.innerHTML="";
 
 
-<div class="actions">
+    snapshot.forEach(doc=>{
 
-<button
-onclick="editProduct('${p.id}')"
->
-Edit
-</button>
+      const p=doc.data();
 
-<button
-class="danger"
-onclick="deleteProduct('${p.id}')"
->
-Delete
-</button>
+      const div=
+        document.createElement("div");
 
-</div>
-
-</div>
-
-`;
-
-}).join("")
-
-|| "<p>No products.</p>";
+      div.className="product";
 
 
-}catch(e){
+      div.innerHTML=`
 
-console.error(e);
+        <img
+          src="${p.image || ""}"
+          onerror="this.style.display='none'"
+        >
 
-$("productList").innerHTML =
-"<p>Products load nahi hue: "
-+ esc(e.message)
-+ "</p>";
+        <div class="productInfo">
 
-}
+          <h3>
+            ${escapeHtml(p.name || "Unnamed")}
+          </h3>
+
+          <p>
+            ₹${Number(p.price || 0)}
+          </p>
+
+          <p class="small">
+            Stock: ${p.stock ?? 0}
+          </p>
+
+          <p class="small">
+            Sizes:
+            ${escapeHtml(p.sizes || "-")}
+          </p>
+
+          <div class="actions">
+
+            <button
+              class="blue"
+              onclick="editProduct('${doc.id}')"
+            >
+              ✏️ Edit
+            </button>
+
+            <button
+              class="red"
+              onclick="deleteProduct('${doc.id}')"
+            >
+              🗑️ Delete
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+
+      box.appendChild(div);
+
+    });
+
+
+  }catch(error){
+
+    console.error(error);
+
+    box.innerHTML=
+      "❌ Products load nahi hue.";
+
+  }
 
 }
 
 
-/* =====================================================
-   SAVE PRODUCT
-===================================================== */
-
-$("save").onclick =
-async()=>{
-
-const name =
-$("name").value.trim();
-
-const price =
-Number($("price").value);
-
-const stock =
-Number($("stock").value);
-
-
-if(!name){
-
-$("msg").textContent =
-"Product name required.";
-
-return;
-
-}
-
-
-if(stock < 0){
-
-$("msg").textContent =
-"Stock 0 se kam nahi ho sakta.";
-
-return;
-
-}
-
-
-let imageUrl =
-$("image").value.trim();
-
-
-$("save").disabled = true;
-
-$("save").textContent =
-"Saving...";
-
-$("msg").textContent = "";
-
-
-try{
-
-/* IMAGE */
-
-if(selectedImageFile){
-
-$("msg").textContent =
-"⏳ Image Cloudinary par upload ho rahi hai...";
-
-
-const uploaded =
-await uploadImage(
-selectedImageFile
-);
-
-
-if(!uploaded){
-
-throw new Error(
-"Image upload se URL nahi mila."
-);
-
-}
-
-
-imageUrl =
-uploaded;
-
-}
-
-
-/* SIZES */
-
-const sizes =
-$("sizes").value
-.split(",")
-.map(x=>x.trim())
-.filter(Boolean);
-
-
-/* INCH SIZES */
-
-const inchSizes =
-$("inchSizes").value
-.split(",")
-.map(x=>x.trim())
-.filter(Boolean);
-
-
-/* DATA */
-
-const data = {
-
-name:name,
-
-price:price,
-
-stock:stock,
-
-image:imageUrl,
-
-sizes:sizes,
-
-inchSizes:inchSizes,
-
-updatedAt:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-};
-
-
-/* UPDATE */
-
-if($("pid").value){
-
-$("msg").textContent =
-"⏳ Product update ho raha hai...";
-
-
-await db
-.collection("products")
-.doc($("pid").value)
-.update(data);
-
-}
-
-
-/* ADD */
-
-else{
-
-$("msg").textContent =
-"⏳ Product save ho raha hai...";
-
-
-await db
-.collection("products")
-.add({
-
-...data,
-
-createdAt:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-});
-
-}
-
-
-$("msg").textContent =
-"✅ Product saved successfully!";
-
-
-clearForm();
-
-await loadProducts();
-
-
-}catch(e){
-
-console.error(
-"SAVE PRODUCT ERROR:",
-e
-);
-
-$("msg").textContent =
-"❌ Save failed: "
-+ (e.message || e.code || "Unknown error");
-
-
-}finally{
-
-$("save").disabled = false;
-
-$("save").textContent =
-"Save Product";
-
-}
-
-};
-
-
-/* =====================================================
-   CLEAR FORM
-===================================================== */
-
-$("clear").onclick =
-clearForm;
-
-
-function clearForm(){
-
-$("pid").value = "";
-
-$("name").value = "";
-
-$("price").value = "";
-
-$("stock").value = "";
-
-$("image").value = "";
-
-$("sizes").value = "";
-
-$("inchSizes").value = "";
-
-$("imageFile").value = "";
-
-$("imagePreview").src = "";
-
-$("imagePreview").style.display =
-"none";
-
-$("uploadStatus").textContent = "";
-
-$("progressBox").style.display =
-"none";
-
-$("progressBar").style.width =
-"0%";
-
-$("msg").textContent = "";
-
-selectedImageFile = null;
-
-}
-
-
-/* =====================================================
+/* ================================
    EDIT PRODUCT
-===================================================== */
+================================ */
 
-window.editProduct =
-id=>{
+async function editProduct(id){
 
-const p =
-products.find(x=>x.id===id);
+  try{
 
-if(!p)return;
+    const doc=
+      await db
+        .collection("products")
+        .doc(id)
+        .get();
 
+    if(!doc.exists){
 
-$("pid").value =
-id;
+      alert("Product nahi mila.");
 
-$("name").value =
-p.name || "";
+      return;
+    }
 
-$("price").value =
-p.price || 0;
-
-$("stock").value =
-p.stock || 0;
-
-$("image").value =
-p.image || "";
+    const p=doc.data();
 
 
-$("sizes").value =
-Array.isArray(p.sizes)
-? p.sizes.join(",")
-: (p.sizes || "");
+    $("editProductId").value=id;
+
+    $("productName").value=
+      p.name || "";
+
+    $("productPrice").value=
+      p.price || "";
+
+    $("productStock").value=
+      p.stock || "";
+
+    $("productSizes").value=
+      p.sizes || "";
+
+    $("productInchSizes").value=
+      p.inchSizes || "";
+
+    $("productImageUrl").value=
+      p.image || "";
 
 
-$("inchSizes").value =
-Array.isArray(p.inchSizes)
-? p.inchSizes.join(",")
-: (p.inchSizes || "");
+    $("formTitle").textContent=
+      "✏️ Edit Product";
 
 
-if(p.image){
+    window.scrollTo({
+      top:0,
+      behavior:"smooth"
+    });
 
-$("imagePreview").src =
-p.image;
 
-$("imagePreview").style.display =
-"block";
+  }catch(error){
+
+    alert(error.message);
+
+  }
 
 }
 
 
-selectedImageFile = null;
-
-window.scrollTo({
-top:0,
-behavior:"smooth"
-});
-
-};
-
-
-/* =====================================================
+/* ================================
    DELETE PRODUCT
-===================================================== */
+================================ */
 
-window.deleteProduct =
-async id=>{
+async function deleteProduct(id){
 
-if(!confirm(
-"Delete product?"
-))return;
-
-
-try{
-
-await db
-.collection("products")
-.doc(id)
-.delete();
+  if(!confirm(
+    "Kya tum ye product delete karna chahte ho?"
+  )){
+    return;
+  }
 
 
-await loadProducts();
+  try{
 
-}catch(e){
+    await db
+      .collection("products")
+      .doc(id)
+      .delete();
 
-alert(
-"Delete failed: "
-+ e.message
-);
+
+    alert(
+      "✅ Product deleted."
+    );
+
+    await loadProducts();
+
+
+  }catch(error){
+
+    alert(
+      "❌ Delete failed:\n"+
+      error.message
+    );
+
+  }
 
 }
 
-};
+
+/* ================================
+   RESET PRODUCT FORM
+================================ */
+
+function resetProductForm(){
+
+  $("editProductId").value="";
+
+  $("productName").value="";
+
+  $("productPrice").value="";
+
+  $("productStock").value="";
+
+  $("productSizes").value="";
+
+  $("productInchSizes").value="";
+
+  $("productImageUrl").value="";
+
+  $("productImage").value="";
+
+  $("imagePreview").style.display="none";
+
+  $("uploadStatus").textContent="";
+
+  $("progressBox").style.display="none";
+
+  $("progressBar").style.width="0%";
+
+  $("formTitle").textContent=
+    "➕ Add Product";
+
+}
 
 
-/* =====================================================
+/* ================================
    LOAD ORDERS
-===================================================== */
+================================ */
 
 async function loadOrders(){
 
-try{
+  const box=
+    $("orderList");
 
-const snapshot =
-await db
-.collection("orders")
-.orderBy(
-"createdAt",
-"desc"
-)
-.get();
+  box.innerHTML=
+    "⏳ Loading orders...";
 
 
-$("oCount").textContent =
-snapshot.size;
+  try{
+
+    const snapshot=
+      await db
+        .collection("orders")
+        .orderBy(
+          "createdAt",
+          "desc"
+        )
+        .get();
 
 
-$("orders").innerHTML =
-
-snapshot.docs.map(doc=>{
-
-const o =
-doc.data();
-
-const status =
-(o.status || "pending")
-.toLowerCase();
+    $("statOrders").textContent=
+      snapshot.size;
 
 
-const items =
-(o.items || [])
-.map(i=>
-esc(i.name)
-+ " × "
-+ i.qty
-+ (i.size
-? " ("+esc(i.size)+")"
-: "")
-)
-.join(", ");
+    let pending=0;
+    let cancelled=0;
 
 
-let locationButton = "";
+    snapshot.forEach(doc=>{
+
+      const o=doc.data();
+
+      if(o.status==="pending"){
+        pending++;
+      }
+
+      if(o.status==="cancelled"){
+        cancelled++;
+      }
+
+    });
 
 
-if(
-o.location &&
-o.location.mapsUrl
-){
+    $("statPending").textContent=
+      pending;
 
-locationButton = `
+    $("statCancelled").textContent=
+      cancelled;
 
-<a
-href="${esc(o.location.mapsUrl)}"
-target="_blank"
-class="mapBtn"
-style="
-display:inline-block;
-padding:8px 12px;
-border-radius:7px;
-text-decoration:none;
-margin-top:8px;
-background:#0d6efd;
-color:white;
-"
->
-📍 View Location
-</a>
 
-`;
+    if(snapshot.empty){
+
+      box.innerHTML=
+        "<p>No orders yet.</p>";
+
+      return;
+    }
+
+
+    box.innerHTML="";
+
+
+    snapshot.forEach(doc=>{
+
+      const o=doc.data();
+
+      const status=
+        o.status || "pending";
+
+
+      let created="";
+
+      if(o.createdAt){
+
+        try{
+
+          created=
+            o.createdAt
+              .toDate()
+              .toLocaleString(
+                "en-IN"
+              );
+
+        }catch(e){}
+
+      }
+
+
+      let itemsHTML="";
+
+
+      if(Array.isArray(o.items)){
+
+        o.items.forEach(item=>{
+
+          itemsHTML+=`
+
+            <div class="itemLine">
+
+              <span>
+                ${escapeHtml(
+                  item.name || "Product"
+                )}
+
+                × ${item.qty || 1}
+
+                ${
+                  item.size
+                    ? " — Size: "+
+                      escapeHtml(item.size)
+                    : ""
+                }
+
+              </span>
+
+              <b>
+                ₹${
+                  Number(item.price || 0) *
+                  Number(item.qty || 1)
+                }
+              </b>
+
+            </div>
+
+          `;
+
+        });
+
+      }
+
+
+      const address=`
+
+        ${escapeHtml(
+          o.house || ""
+        )}<br>
+
+        ${escapeHtml(
+          o.street || ""
+        )}<br>
+
+        ${
+          o.landmark
+            ? escapeHtml(o.landmark)+"<br>"
+            : ""
+        }
+
+        ${escapeHtml(
+          o.city || ""
+        )},
+
+        ${escapeHtml(
+          o.state || ""
+        )}
+
+        -
+
+        ${escapeHtml(
+          o.pin || ""
+        )}
+
+      `;
+
+
+      let cancelInfo="";
+
+      if(status==="cancelled"){
+
+        cancelInfo=`
+
+          <p style="
+            color:#b91c1c;
+            font-weight:bold;
+            margin-top:8px;
+          ">
+            ❌ Cancelled
+            ${
+              o.cancelledBy
+                ? "by "+
+                  escapeHtml(
+                    o.cancelledBy
+                  )
+                : ""
+            }
+          </p>
+
+        `;
+
+      }
+
+
+      const div=
+        document.createElement("div");
+
+      div.className="order";
+
+
+      div.innerHTML=`
+
+        <div class="orderHead">
+
+          <div>
+
+            <b>
+              Order ID:
+              ${escapeHtml(
+                o.orderId || doc.id
+              )}
+            </b>
+
+            <p class="small">
+              ${created}
+            </p>
+
+          </div>
+
+          <span class="
+            status
+            ${status}
+          ">
+            ${status.toUpperCase()}
+          </span>
+
+        </div>
+
+
+        ${cancelInfo}
+
+
+        <hr style="
+          margin:12px 0;
+          border:0;
+          border-top:1px solid #ddd;
+        ">
+
+
+        <p>
+          <b>Customer:</b>
+          ${escapeHtml(
+            o.customerName || "-"
+          )}
+        </p>
+
+        <p>
+          <b>Mobile:</b>
+          ${escapeHtml(
+            o.customerPhone || "-"
+          )}
+        </p>
+
+
+        <div
+          class="orderItems"
+        >
+
+          <b>Items</b>
+
+          ${itemsHTML}
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            margin-top:12px;
+            font-size:18px;
+          ">
+
+            <b>Total</b>
+
+            <b>
+              ₹${Number(o.total || 0)}
+            </b>
+
+          </div>
+
+        </div>
+
+
+        <p>
+          <b>Delivery Address:</b>
+        </p>
+
+        <p class="small">
+          ${address}
+        </p>
+
+
+        ${
+          o.note
+            ? `
+              <p class="small">
+                <b>Note:</b>
+                ${escapeHtml(o.note)}
+              </p>
+            `
+            : ""
+        }
+
+
+        <div class="actions">
+
+          ${
+            status==="pending"
+              ? `
+                <button
+                  class="blue"
+                  onclick="
+                    updateOrderStatus(
+                      '${doc.id}',
+                      'processing'
+                    )
+                  "
+                >
+                  ⚙️ Processing
+                </button>
+              `
+              : ""
+          }
+
+
+          ${
+            status==="processing"
+              ? `
+                <button
+                  class="green"
+                  onclick="
+                    updateOrderStatus(
+                      '${doc.id}',
+                      'delivered'
+                    )
+                  "
+                >
+                  🚚 Mark Delivered
+                </button>
+              `
+              : ""
+          }
+
+
+          ${
+            status==="cancelled"
+              ? `
+                <button
+                  class="gray"
+                  disabled
+                >
+                  ❌ Cancelled
+                </button>
+              `
+              : ""
+          }
+
+
+          <button
+            class="red"
+            onclick="
+              deleteOrder(
+                '${doc.id}'
+              )
+            "
+          >
+            🗑️ Delete
+          </button>
+
+        </div>
+
+      `;
+
+
+      box.appendChild(div);
+
+    });
+
+
+  }catch(error){
+
+    console.error(error);
+
+    box.innerHTML=
+      `
+        <p style="color:red">
+          ❌ Orders load failed:<br>
+          ${escapeHtml(error.message)}
+        </p>
+      `;
+
+  }
 
 }
 
 
-return `
+/* ================================
+   UPDATE ORDER STATUS
+================================ */
 
-<div class="order">
+window.updateOrderStatus=
+async function(id,status){
 
-<b>
-${esc(o.customerName || "")}
-</b>
+  try{
 
-• ${esc(o.customerPhone || "")}
+    await db
+      .collection("orders")
+      .doc(id)
+      .update({
 
-<br><br>
+        status:status,
 
-<strong>
-Order ID:
-</strong>
+        updatedAt:
+          firebase.firestore
+          .FieldValue
+          .serverTimestamp()
 
-${esc(o.orderId || doc.id)}
-
-<br><br>
-
-<strong>
-Address:
-</strong>
-
-<br>
-
-${esc(
-o.address ||
-[
-o.house,
-o.street,
-o.landmark,
-o.city,
-o.state,
-o.pincode
-].filter(Boolean).join(", ")
-)}
-
-<br><br>
-
-<b>
-₹${Number(o.total || 0)
-.toLocaleString("en-IN")}
-</b>
-
-<br>
-
-<span class="statusBadge">
-Status: ${esc(status)}
-</span>
-
-<br><br>
-
-<small>
-${items}
-</small>
-
-<br>
-
-${locationButton}
+      });
 
 
-<div class="orderButtons">
-
-${
-status !== "delivered"
-
-?
-
-`<button
-class="deliveredBtn"
-onclick="markDelivered('${doc.id}')"
->
-✅ Mark Delivered
-</button>`
-
-:
-
-`<button
-class="deleteOrderBtn"
-onclick="deleteOrder('${doc.id}')"
->
-🗑️ Delete Order
-</button>`
-
-}
-
-</div>
-
-</div>
-
-`;
-
-}).join("")
-
-|| "<p>No orders.</p>";
+    alert(
+      "✅ Order status updated."
+    );
 
 
-}catch(e){
-
-console.error(e);
-
-$("orders").innerHTML =
-"<p>Orders load nahi hue: "
-+ esc(e.message)
-+ "</p>";
-
-}
-
-}
+    await loadOrders();
 
 
-/* =====================================================
-   MARK DELIVERED
-===================================================== */
+  }catch(error){
 
-window.markDelivered =
-async id=>{
+    alert(
+      "❌ Status update failed:\n"+
+      error.message
+    );
 
-if(!confirm(
-"Is order ko Delivered mark karein?"
-))return;
-
-
-try{
-
-await db
-.collection("orders")
-.doc(id)
-.update({
-
-status:"delivered",
-
-deliveredAt:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-});
-
-
-await loadOrders();
-
-}catch(e){
-
-alert(
-"Status update failed: "
-+ e.message
-);
-
-}
+  }
 
 };
 
 
-/* =====================================================
+/* ================================
    DELETE ORDER
-===================================================== */
+================================ */
 
-window.deleteOrder =
-async id=>{
+async function deleteOrder(id){
 
-if(!confirm(
-"Delivered order ko permanently delete karein?"
-))return;
-
-
-try{
-
-await db
-.collection("orders")
-.doc(id)
-.delete();
+  if(!confirm(
+    "Kya tum ye order permanently delete karna chahte ho?"
+  )){
+    return;
+  }
 
 
-await loadOrders();
+  try{
 
-}catch(e){
+    await db
+      .collection("orders")
+      .doc(id)
+      .delete();
 
-alert(
-"Order delete failed: "
-+ e.message
-);
+
+    alert(
+      "✅ Order deleted."
+    );
+
+
+    await loadOrders();
+
+
+  }catch(error){
+
+    alert(
+      "❌ Order delete failed:\n"+
+      error.message
+    );
+
+  }
 
 }
 
-};
 
-
-/* =====================================================
-   LOAD COMPLAINTS
-===================================================== */
+/* ================================
+   COMPLAINTS
+================================ */
 
 async function loadComplaints(){
 
-try{
+  const box=
+    $("complaintList");
 
-const snapshot =
-await db
-.collection("supportTickets")
-.orderBy(
-"createdAt",
-"desc"
-)
-.get();
+  box.innerHTML=
+    "⏳ Loading complaints...";
 
 
-$("cCount").textContent =
-snapshot.size;
+  try{
+
+    const snapshot=
+      await db
+        .collection("supportTickets")
+        .orderBy(
+          "createdAt",
+          "desc"
+        )
+        .get();
 
 
-$("complaints").innerHTML =
+    if(snapshot.empty){
 
-snapshot.docs.map(doc=>{
+      box.innerHTML=
+        "<p>No complaints yet.</p>";
 
-const c =
-doc.data();
-
-
-return `
-
-<div class="complaint">
-
-<b>
-🆘 ${esc(
-c.problemType || "Problem"
-)}
-</b>
-
-<br><br>
-
-<strong>
-Order ID:
-</strong>
-
-${esc(c.orderId || "")}
-
-<br>
-
-<strong>
-Mobile:
-</strong>
-
-${esc(c.customerPhone || "")}
-
-<br><br>
-
-<strong>
-Problem:
-</strong>
-
-<br>
-
-${esc(c.details || "")}
-
-<br><br>
-
-<span class="statusBadge">
-Status:
-${esc(c.status || "pending")}
-</span>
+      return;
+    }
 
 
-<div class="complaintActions">
-
-<button
-class="pendingBtn"
-onclick="updateComplaint('${doc.id}','pending')"
->
-Pending
-</button>
+    box.innerHTML="";
 
 
-<button
-class="progressBtn"
-onclick="updateComplaint('${doc.id}','in_progress')"
->
-In Progress
-</button>
+    snapshot.forEach(doc=>{
+
+      const c=doc.data();
+
+      const div=
+        document.createElement("div");
+
+      div.className="complaint";
 
 
-<button
-class="resolvedBtn"
-onclick="updateComplaint('${doc.id}','resolved')"
->
-Resolved
-</button>
+      let created="";
+
+      if(c.createdAt){
+
+        try{
+
+          created=
+            c.createdAt
+              .toDate()
+              .toLocaleString(
+                "en-IN"
+              );
+
+        }catch(e){}
+
+      }
 
 
-<button
-class="deleteComplaintBtn"
-onclick="deleteComplaint('${doc.id}')"
->
-Delete
-</button>
+      div.innerHTML=`
 
-</div>
+        <h3>
+          💬
+          ${escapeHtml(
+            c.problemType ||
+            "Support Request"
+          )}
+        </h3>
 
-</div>
+        <p class="small">
+          ${created}
+        </p>
 
-`;
+        <p>
+          <b>Order ID:</b>
+          ${escapeHtml(
+            c.orderId || "-"
+          )}
+        </p>
 
-}).join("")
+        <p>
+          <b>Mobile:</b>
+          ${escapeHtml(
+            c.mobile || "-"
+          )}
+        </p>
 
-|| "<p>No complaints.</p>";
+        <p style="
+          margin-top:10px;
+        ">
+          ${escapeHtml(
+            c.details || "-"
+          )}
+        </p>
+
+        <p style="
+          margin-top:10px;
+        ">
+          <b>Status:</b>
+          ${escapeHtml(
+            c.status || "pending"
+          )}
+        </p>
 
 
-}catch(e){
+        <div class="actions">
 
-console.error(e);
+          <button
+            class="orange"
+            onclick="
+              updateComplaint(
+                '${doc.id}',
+                'in progress'
+              )
+            "
+          >
+            ⚙️ In Progress
+          </button>
 
-$("complaints").innerHTML =
-"<p>Complaints load nahi hue: "
-+ esc(e.message)
-+ "</p>";
+          <button
+            class="green"
+            onclick="
+              updateComplaint(
+                '${doc.id}',
+                'resolved'
+              )
+            "
+          >
+            ✅ Resolved
+          </button>
+
+          <button
+            class="red"
+            onclick="
+              deleteComplaint(
+                '${doc.id}'
+              )
+            "
+          >
+            🗑️ Delete
+          </button>
+
+        </div>
+
+      `;
+
+
+      box.appendChild(div);
+
+    });
+
+
+  }catch(error){
+
+    console.error(error);
+
+    box.innerHTML=
+      "❌ Complaints load failed.";
+
+  }
 
 }
 
-}
+
+window.updateComplaint=
+async function(id,status){
+
+  try{
+
+    await db
+      .collection("supportTickets")
+      .doc(id)
+      .update({
+
+        status:status,
+
+        updatedAt:
+          firebase.firestore
+          .FieldValue
+          .serverTimestamp()
+
+      });
 
 
-/* =====================================================
-   UPDATE COMPLAINT
-===================================================== */
-
-window.updateComplaint =
-async(id,status)=>{
-
-try{
-
-await db
-.collection("supportTickets")
-.doc(id)
-.update({
-
-status:status,
-
-updatedAt:
-firebase.firestore.FieldValue
-.serverTimestamp()
-
-});
+    await loadComplaints();
 
 
-await loadComplaints();
+  }catch(error){
 
-}catch(e){
+    alert(error.message);
 
-alert(
-"Complaint update failed: "
-+ e.message
-);
-
-}
+  }
 
 };
 
 
-/* =====================================================
-   DELETE COMPLAINT
-===================================================== */
+async function deleteComplaint(id){
 
-window.deleteComplaint =
-async id=>{
-
-if(!confirm(
-"Is complaint ko delete karein?"
-))return;
+  if(!confirm(
+    "Complaint delete karna hai?"
+  )){
+    return;
+  }
 
 
-try{
+  try{
 
-await db
-.collection("supportTickets")
-.doc(id)
-.delete();
+    await db
+      .collection("supportTickets")
+      .doc(id)
+      .delete();
 
 
-await loadComplaints();
+    await loadComplaints();
 
-}catch(e){
 
-alert(
-"Complaint delete failed: "
-+ e.message
-);
+  }catch(error){
+
+    alert(error.message);
+
+  }
 
 }
 
-};
 
-
-/* =====================================================
-   LOAD REVIEWS
-===================================================== */
+/* ================================
+   REVIEWS
+================================ */
 
 async function loadReviews(){
 
-try{
+  const box=
+    $("reviewList");
 
-const snapshot =
-await db
-.collection("reviews")
-.orderBy(
-"createdAt",
-"desc"
-)
-.get();
+  box.innerHTML=
+    "⏳ Loading reviews...";
 
 
-$("rCount").textContent =
-snapshot.size;
+  try{
+
+    const snapshot=
+      await db
+        .collection("reviews")
+        .orderBy(
+          "createdAt",
+          "desc"
+        )
+        .get();
 
 
-$("reviews").innerHTML =
+    if(snapshot.empty){
 
-snapshot.docs.map(doc=>{
+      box.innerHTML=
+        "<p>No reviews yet.</p>";
 
-const r =
-doc.data();
-
-
-const rating =
-Number(r.rating || 0);
+      return;
+    }
 
 
-let stars = "";
-
-for(
-let i=1;
-i<=5;
-i++
-){
-
-stars +=
-i <= rating
-? "★"
-: "☆";
-
-}
+    box.innerHTML="";
 
 
-return `
+    snapshot.forEach(doc=>{
 
-<div class="review">
+      const r=doc.data();
 
-<b>
-${esc(
-r.customerName ||
-r.name ||
-"Customer"
-)}
-</b>
+      const div=
+        document.createElement("div");
 
-<br>
-
-<div class="reviewStars">
-${stars}
-</div>
-
-<strong>
-${rating}/5
-</strong>
-
-<br><br>
-
-${
-r.productName
-? "<b>Product:</b> "
-+ esc(r.productName)
-+ "<br><br>"
-: ""
-}
-
-${
-r.comment ||
-r.review ||
-r.text
-? esc(
-r.comment ||
-r.review ||
-r.text
-)
-: "<i>No review text</i>"
-}
-
-<br><br>
-
-<small>
-Order ID:
-${esc(r.orderId || "")}
-</small>
-
-<br>
-
-<button
-class="deleteComplaintBtn"
-style="margin-top:10px"
-onclick="deleteReview('${doc.id}')"
->
-🗑️ Delete Review
-</button>
-
-</div>
-
-`;
-
-}).join("")
-
-|| "<p>No reviews.</p>";
+      div.className="review";
 
 
-}catch(e){
+      let stars=
+        "⭐".repeat(
+          Number(r.rating || 0)
+        );
 
-console.error(e);
 
-$("reviews").innerHTML =
-"<p>Reviews load nahi hue: "
-+ esc(e.message)
-+ "</p>";
+      div.innerHTML=`
 
-}
+        <h3>
+          ${stars || "⭐"}
+        </h3>
+
+        <p>
+          <b>
+            ${escapeHtml(
+              r.name || "Customer"
+            )}
+          </b>
+        </p>
+
+        <p style="
+          margin-top:8px;
+        ">
+          ${escapeHtml(
+            r.review ||
+            r.comment ||
+            "-"
+          )}
+        </p>
+
+        <div class="actions">
+
+          <button
+            class="red"
+            onclick="
+              deleteReview(
+                '${doc.id}'
+              )
+            "
+          >
+            🗑️ Delete
+          </button>
+
+        </div>
+
+      `;
+
+
+      box.appendChild(div);
+
+    });
+
+
+  }catch(error){
+
+    console.error(error);
+
+    box.innerHTML=
+      "❌ Reviews load failed.";
+
+  }
 
 }
 
 
-/* =====================================================
-   DELETE REVIEW
-===================================================== */
+async function deleteReview(id){
 
-window.deleteReview =
-async id=>{
-
-if(!confirm(
-"Is review ko delete karein?"
-))return;
+  if(!confirm(
+    "Review delete karna hai?"
+  )){
+    return;
+  }
 
 
-try{
+  try{
 
-await db
-.collection("reviews")
-.doc(id)
-.delete();
+    await db
+      .collection("reviews")
+      .doc(id)
+      .delete();
 
 
-await loadReviews();
+    await loadReviews();
 
-}catch(e){
 
-alert(
-"Review delete failed: "
-+ e.message
-);
+  }catch(error){
+
+    alert(error.message);
+
+  }
 
 }
 
-};
+
+/* ================================
+   HTML ESCAPE
+================================ */
+
+function escapeHtml(value){
+
+  if(value===null ||
+     value===undefined){
+
+    return "";
+  }
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
 
 </script>
 
