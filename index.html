@@ -164,6 +164,11 @@ button{
   font-weight:bold;
 }
 
+.card-btn:disabled{
+  background:#999;
+  cursor:not-allowed;
+}
+
 .no-products{
   text-align:center;
   padding:50px 10px;
@@ -342,10 +347,30 @@ button{
 
 .location-btn{
   width:100%;
-  padding:11px;
+  padding:12px;
   background:#eee;
   border-radius:8px;
+  margin-bottom:8px;
+  font-weight:bold;
+}
+
+.location-btn.success{
+  background:#d1e7dd;
+  color:#0f5132;
+}
+
+.location-btn.loading{
+  background:#fff3cd;
+  color:#856404;
+}
+
+.location-info{
+  padding:10px;
+  background:#f1f1f1;
+  border-radius:8px;
   margin-bottom:12px;
+  font-size:13px;
+  line-height:1.5;
 }
 
 .order-card{
@@ -393,10 +418,12 @@ button{
   display:flex;
   gap:8px;
   margin-top:12px;
+  flex-wrap:wrap;
 }
 
 .order-actions button{
   flex:1;
+  min-width:100px;
   padding:9px;
   border-radius:7px;
   font-weight:bold;
@@ -417,11 +444,33 @@ button{
   color:white;
 }
 
+.map-btn{
+  display:inline-block;
+  margin-top:10px;
+  padding:9px 12px;
+  border-radius:7px;
+  background:#198754;
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+}
+
 .info{
   padding:12px;
   background:#f1f1f1;
   border-radius:8px;
   margin:10px 0;
+  font-size:14px;
+}
+
+.order-items{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid #ddd;
+}
+
+.order-item-line{
+  padding:5px 0;
   font-size:14px;
 }
 
@@ -435,13 +484,25 @@ footer{
 
 @media(max-width:600px){
 
+  .navbar{
+    padding:12px 10px;
+  }
+
   .logo{
     font-size:19px;
   }
 
+  .nav-right{
+    gap:4px;
+  }
+
   .nav-btn{
-    padding:7px 9px;
-    font-size:12px;
+    padding:7px 8px;
+    font-size:11px;
+  }
+
+  .admin-btn{
+    display:none;
   }
 
   .hero h1{
@@ -463,6 +524,15 @@ footer{
 
   .price{
     font-size:17px;
+  }
+
+  .modal{
+    padding:10px;
+  }
+
+  .modal-box{
+    margin:20px auto;
+    padding:15px;
   }
 }
 </style>
@@ -641,15 +711,16 @@ footer{
 
 
   <button
+    id="locationBtn"
     class="location-btn"
     onclick="getLocation()"
   >
-    📍 Use Current Location
+    📍 Share Current Location
   </button>
 
   <div
     id="locationInfo"
-    class="info"
+    class="location-info"
     style="display:none;"
   ></div>
 
@@ -799,11 +870,8 @@ footer{
 <!-- FIREBASE -->
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-
 
 <script>
 
@@ -832,36 +900,23 @@ const firebaseConfig = {
 
 };
 
-
 firebase.initializeApp(firebaseConfig);
 
-
-const db =
-  firebase.firestore();
-
-const auth =
-  firebase.auth();
-
+const db = firebase.firestore();
+const auth = firebase.auth();
 
 let currentUser = null;
-
 let products = [];
-
 let cart = [];
-
 let selectedProduct = null;
-
 let selectedSize = "";
-
 let detailQty = 1;
-
 let currentLocation = null;
-
 let selectedOrderId = null;
 
 
 /* =========================================
-   CUSTOMER ANONYMOUS AUTH
+   AUTH
 ========================================= */
 
 auth.onAuthStateChanged(function(user){
@@ -940,31 +995,25 @@ function getSizes(product){
 
   if(Array.isArray(product.sizes)){
 
-    result =
-      result.concat(product.sizes);
+    result = result.concat(product.sizes);
 
   }else if(product.sizes){
 
-    result =
-      result.concat(
-        String(product.sizes)
-        .split(",")
-      );
+    result = result.concat(
+      String(product.sizes).split(",")
+    );
 
   }
 
   if(Array.isArray(product.inchSizes)){
 
-    result =
-      result.concat(product.inchSizes);
+    result = result.concat(product.inchSizes);
 
   }else if(product.inchSizes){
 
-    result =
-      result.concat(
-        String(product.inchSizes)
-        .split(",")
-      );
+    result = result.concat(
+      String(product.inchSizes).split(",")
+    );
 
   }
 
@@ -989,46 +1038,35 @@ function render(list){
   const noProducts =
     document.getElementById("noProducts");
 
-
   container.innerHTML = "";
-
 
   if(!list.length){
 
-    noProducts.style.display =
-      "block";
+    noProducts.style.display = "block";
 
     return;
 
   }
 
-
-  noProducts.style.display =
-    "none";
-
+  noProducts.style.display = "none";
 
   list.forEach(function(product){
 
     const card =
       document.createElement("div");
 
-    card.className =
-      "product-card";
-
+    card.className = "product-card";
 
     const image =
       product.image ||
       product.imageUrl ||
       "https://via.placeholder.com/500x600?text=NARI+FASHION";
 
-
     const price =
       Number(product.price || 0);
 
-
     const stock =
       Number(product.stock ?? 0);
-
 
     card.innerHTML = `
 
@@ -1068,7 +1106,6 @@ function render(list){
       </div>
     `;
 
-
     container.appendChild(card);
 
   });
@@ -1089,7 +1126,6 @@ document
     .trim()
     .toLowerCase();
 
-
   if(!query){
 
     render(products);
@@ -1097,7 +1133,6 @@ document
     return;
 
   }
-
 
   const filtered =
     products.filter(function(product){
@@ -1119,7 +1154,6 @@ document
         .join(" ")
         .toLowerCase();
 
-
       return (
         name.includes(query) ||
         category.includes(query) ||
@@ -1128,7 +1162,6 @@ document
       );
 
     });
-
 
   render(filtered);
 
@@ -1146,49 +1179,37 @@ function openProduct(id){
       return p.id === id;
     });
 
-
   if(!selectedProduct)
     return;
 
-
   detailQty = 1;
-
   selectedSize = "";
-
 
   document.getElementById("detailImg").src =
     selectedProduct.image ||
     selectedProduct.imageUrl ||
     "https://via.placeholder.com/500x600";
 
-
   document.getElementById("detailName").innerText =
     selectedProduct.name || "";
 
-
   document.getElementById("detailPrice").innerText =
     "₹" + Number(selectedProduct.price || 0);
-
 
   document.getElementById("detailStock").innerText =
     "Stock: " +
     Number(selectedProduct.stock || 0);
 
-
   document.getElementById("detailQty").innerText =
     detailQty;
-
 
   const sizes =
     document.getElementById("sizes");
 
-
   sizes.innerHTML = "";
-
 
   const sizeList =
     getSizes(selectedProduct);
-
 
   if(!sizeList.length){
 
@@ -1204,34 +1225,29 @@ function openProduct(id){
       const button =
         document.createElement("button");
 
-      button.className =
-        "size-btn";
+      button.className = "size-btn";
 
-      button.innerText =
-        size;
+      button.innerText = size;
 
-      button.onclick =
-        function(){
+      button.onclick = function(){
 
-          document
-          .querySelectorAll(".size-btn")
-          .forEach(function(btn){
-            btn.classList.remove("active");
-          });
+        document
+        .querySelectorAll(".size-btn")
+        .forEach(function(btn){
+          btn.classList.remove("active");
+        });
 
-          button.classList.add("active");
+        button.classList.add("active");
 
-          selectedSize = size;
+        selectedSize = size;
 
-        };
-
+      };
 
       sizes.appendChild(button);
 
     });
 
   }
-
 
   document.getElementById("productModal")
   .style.display = "block";
@@ -1244,21 +1260,16 @@ function changeDetailQty(amount){
   if(!selectedProduct)
     return;
 
-
   const stock =
     Number(selectedProduct.stock || 0);
 
-
   detailQty += amount;
-
 
   if(detailQty < 1)
     detailQty = 1;
 
-
   if(detailQty > stock)
     detailQty = stock;
-
 
   document.getElementById("detailQty")
   .innerText = detailQty;
@@ -1271,10 +1282,8 @@ function addToCart(){
   if(!selectedProduct)
     return;
 
-
   const stock =
     Number(selectedProduct.stock || 0);
-
 
   if(stock <= 0){
 
@@ -1283,7 +1292,6 @@ function addToCart(){
     return;
 
   }
-
 
   if(!selectedSize){
 
@@ -1297,7 +1305,6 @@ function addToCart(){
 
   }
 
-
   const existing =
     cart.find(function(item){
 
@@ -1308,8 +1315,17 @@ function addToCart(){
 
     });
 
-
   if(existing){
+
+    if(existing.qty + detailQty > stock){
+
+      alert(
+        "Itni quantity stock me available nahi hai."
+      );
+
+      return;
+
+    }
 
     existing.qty += detailQty;
 
@@ -1341,7 +1357,6 @@ function addToCart(){
 
   }
 
-
   saveCart();
 
   closeModal("productModal");
@@ -1352,6 +1367,10 @@ function addToCart(){
 
 }
 
+
+/* =========================================
+   CART
+========================================= */
 
 function saveCart(){
 
@@ -1392,16 +1411,11 @@ function updateCartCount(){
 
     },0);
 
-
   document.getElementById("cartCount")
   .innerText = count;
 
 }
 
-
-/* =========================================
-   CART
-========================================= */
 
 document
 .getElementById("cartBtn")
@@ -1433,7 +1447,6 @@ function renderCart(){
 
   box.innerHTML = "";
 
-
   if(!cart.length){
 
     box.innerHTML =
@@ -1446,31 +1459,26 @@ function renderCart(){
 
   }
 
-
   let total = 0;
-
 
   cart.forEach(function(item,index){
 
     const itemTotal =
-      Number(item.price) *
-      Number(item.qty);
-
+      Number(item.price || 0) *
+      Number(item.qty || 0);
 
     total += itemTotal;
-
 
     const div =
       document.createElement("div");
 
-    div.className =
-      "cart-item";
-
+    div.className = "cart-item";
 
     div.innerHTML = `
 
       <img
         src="${escapeHtml(item.image || "https://via.placeholder.com/100")}"
+        onerror="this.src='https://via.placeholder.com/100'"
       >
 
       <div class="cart-item-info">
@@ -1479,42 +1487,100 @@ function renderCart(){
           ${escapeHtml(item.name)}
         </strong>
 
-        <div>
-          ₹${item.price}
-        </div>
-
-        <div>
+        <div style="margin-top:4px;">
           Size: ${escapeHtml(item.size)}
         </div>
 
-        <div>
-          Qty: ${item.qty}
+        <div style="margin-top:4px;">
+          ₹${Number(item.price || 0)}
         </div>
 
-        <button
-          onclick="removeCartItem(${index})"
-          style="
-            margin-top:6px;
-            background:#dc3545;
-            color:white;
-            padding:6px 9px;
-            border-radius:6px;
-          "
-        >
-          Remove
-        </button>
+        <div style="margin-top:7px;display:flex;align-items:center;gap:7px;">
+
+          <button
+            onclick="changeCartQty(${index},-1)"
+            style="width:28px;height:28px;border-radius:5px;background:#111;color:white;"
+          >
+            −
+          </button>
+
+          <strong>
+            ${Number(item.qty || 0)}
+          </strong>
+
+          <button
+            onclick="changeCartQty(${index},1)"
+            style="width:28px;height:28px;border-radius:5px;background:#111;color:white;"
+          >
+            +
+          </button>
+
+          <button
+            onclick="removeCartItem(${index})"
+            style="margin-left:auto;background:#dc3545;color:white;padding:6px 9px;border-radius:5px;"
+          >
+            Remove
+          </button>
+
+        </div>
 
       </div>
-    `;
 
+    `;
 
     box.appendChild(div);
 
   });
 
-
   document.getElementById("cartTotal")
   .innerText = total;
+
+}
+
+
+function changeCartQty(index,amount){
+
+  if(!cart[index])
+    return;
+
+  const product =
+    products.find(function(p){
+      return p.id === cart[index].productId;
+    });
+
+  const stock =
+    product
+    ? Number(product.stock || 0)
+    : 999999;
+
+  const newQty =
+    Number(cart[index].qty || 0) + amount;
+
+  if(newQty < 1){
+
+    removeCartItem(index);
+
+    return;
+
+  }
+
+  if(newQty > stock){
+
+    alert(
+      "Itni quantity stock me available nahi hai."
+    );
+
+    return;
+
+  }
+
+  cart[index].qty = newQty;
+
+  saveCart();
+
+  renderCart();
+
+  updateCartCount();
 
 }
 
@@ -1525,9 +1591,9 @@ function removeCartItem(index){
 
   saveCart();
 
-  updateCartCount();
-
   renderCart();
+
+  updateCartCount();
 
 }
 
@@ -1538,51 +1604,150 @@ function removeCartItem(index){
 
 function getLocation(){
 
+  const button =
+    document.getElementById("locationBtn");
+
+  const info =
+    document.getElementById("locationInfo");
+
   if(!navigator.geolocation){
 
-    alert("Location support available nahi hai.");
+    alert(
+      "Is device/browser me location support nahi hai."
+    );
 
     return;
 
   }
 
+  button.disabled = true;
+
+  button.classList.remove("success");
+
+  button.classList.add("loading");
+
+  button.innerText =
+    "📍 Getting Location...";
+
+  info.style.display = "block";
+
+  info.innerText =
+    "Please location permission me Allow dabao...";
 
   navigator.geolocation.getCurrentPosition(
 
     function(position){
 
+      const latitude =
+        Number(position.coords.latitude);
+
+      const longitude =
+        Number(position.coords.longitude);
+
+      if(
+        !Number.isFinite(latitude) ||
+        !Number.isFinite(longitude)
+      ){
+
+        currentLocation = null;
+
+        button.disabled = false;
+
+        button.classList.remove("loading");
+
+        button.innerText =
+          "📍 Share Current Location";
+
+        info.innerText =
+          "❌ Valid location nahi mili.";
+
+        return;
+
+      }
+
+      /*
+        IMPORTANT:
+        Firestore me plain object save hoga.
+        Admin isi format ko read karega.
+      */
+
       currentLocation = {
 
-        latitude:
-          position.coords.latitude,
+        latitude: latitude,
 
-        longitude:
-          position.coords.longitude
+        longitude: longitude
 
       };
 
+      button.disabled = false;
 
-      const info =
-        document.getElementById("locationInfo");
+      button.classList.remove("loading");
 
+      button.classList.add("success");
 
-      info.style.display =
-        "block";
-
+      button.innerText =
+        "✅ Location Shared";
 
       info.innerHTML =
-        "📍 Location captured successfully.";
+
+        "📍 <strong>Location successfully shared</strong><br>" +
+
+        "Latitude: " +
+        latitude.toFixed(6) +
+        "<br>" +
+
+        "Longitude: " +
+        longitude.toFixed(6);
 
     },
 
     function(error){
 
-      console.error(error);
-
-      alert(
-        "Location nahi mil paayi. Browser me location permission allow karo."
+      console.error(
+        "Location error:",
+        error
       );
 
+      currentLocation = null;
+
+      button.disabled = false;
+
+      button.classList.remove("loading");
+      button.classList.remove("success");
+
+      button.innerText =
+        "📍 Share Current Location";
+
+      info.style.display = "block";
+
+      if(error.code === 1){
+
+        info.innerText =
+          "❌ Location permission denied. Browser settings me location permission Allow karo.";
+
+      }else if(error.code === 2){
+
+        info.innerText =
+          "❌ Location available nahi hai. GPS/Location ON karo.";
+
+      }else if(error.code === 3){
+
+        info.innerText =
+          "❌ Location lene me time lag gaya. Dobara try karo.";
+
+      }else{
+
+        info.innerText =
+          "❌ Location nahi mil payi. Dobara try karo.";
+
+      }
+
+    },
+
+    {
+      enableHighAccuracy:true,
+      timeout:15000,
+      maximumAge:0
     }
 
   );
@@ -1599,13 +1764,12 @@ async function placeOrder(){
   if(!currentUser){
 
     alert(
-      "Customer account ready nahi hua. Thoda wait karke try karo."
+      "Customer login abhi ready nahi hai. Thoda wait karke dobara try karo."
     );
 
     return;
 
   }
-
 
   if(!cart.length){
 
@@ -1615,46 +1779,47 @@ async function placeOrder(){
 
   }
 
-
   const name =
-    document.getElementById("customerName")
-    .value.trim();
-
+    document
+    .getElementById("customerName")
+    .value
+    .trim();
 
   const phone =
-    document.getElementById("customerPhone")
-    .value.trim();
-
+    document
+    .getElementById("customerPhone")
+    .value
+    .trim();
 
   const address =
-    document.getElementById("customerAddress")
-    .value.trim();
-
+    document
+    .getElementById("customerAddress")
+    .value
+    .trim();
 
   const paymentMethod =
-    document.getElementById("paymentMethod")
+    document
+    .getElementById("paymentMethod")
     .value;
 
 
   if(!name){
 
-    alert("Name enter karo.");
+    alert("Apna naam enter karo.");
 
     return;
 
   }
 
-
   if(!/^[0-9]{10}$/.test(phone)){
 
     alert(
-      "Valid 10 digit mobile number enter karo."
+      "10 digit valid mobile number enter karo."
     );
 
     return;
 
   }
-
 
   if(!address){
 
@@ -1665,83 +1830,148 @@ async function placeOrder(){
   }
 
 
-  const total =
-    cart.reduce(function(sum,item){
+  /*
+    IMPORTANT LOCATION CHECK
+    Location ke bina order nahi banega.
+  */
 
-      return (
-        sum +
-        Number(item.price || 0) *
-        Number(item.qty || 0)
-      );
+  if(!currentLocation){
 
-    },0);
+    alert(
+      "📍 Pehle apni current location share karo.\n\n" +
+      "Location button dabao aur browser me Allow karo."
+    );
+
+    return;
+
+  }
 
 
-  const order = {
+  const button =
+    document.querySelector(".place-order");
 
-    customerUid:
-      currentUser.uid,
+  button.disabled = true;
 
-    customerName:
-      name,
+  button.innerText =
+    "⏳ Placing Order...";
 
-    customerPhone:
-      phone,
 
-    customerAddress:
-      address,
+  try{
 
-    location:
-      currentLocation || null,
+    /*
+      Order items ko clean plain data me convert kar rahe hain.
+    */
 
-    paymentMethod:
-      paymentMethod,
-
-    items:
+    const orderItems =
       cart.map(function(item){
 
         return {
 
           productId:
-            item.productId,
+            String(item.productId || ""),
 
           name:
-            item.name,
+            String(item.name || ""),
 
           price:
-            Number(item.price),
-
-          size:
-            item.size,
-
-          qty:
-            Number(item.qty),
+            Number(item.price || 0),
 
           image:
-            item.image || ""
+            String(item.image || ""),
+
+          size:
+            String(item.size || "Standard"),
+
+          qty:
+            Number(item.qty || 0)
 
         };
 
-      }),
-
-    total:
-      total,
-
-    status:
-      "pending",
-
-    createdAt:
-      firebase.firestore.FieldValue.serverTimestamp()
-
-  };
+      });
 
 
-  try{
+    const total =
+      orderItems.reduce(function(sum,item){
 
-    const ref =
+        return sum +
+          (
+            Number(item.price || 0) *
+            Number(item.qty || 0)
+          );
+
+      },0);
+
+
+    /*
+      IMPORTANT:
+      location EXACTLY latitude/longitude object
+      ke form me Firebase me save hogi.
+    */
+
+    const locationToSave = {
+
+      latitude:
+        Number(currentLocation.latitude),
+
+      longitude:
+        Number(currentLocation.longitude)
+
+    };
+
+
+    const orderData = {
+
+      customerUid:
+        currentUser.uid,
+
+      customerName:
+        name,
+
+      customerPhone:
+        phone,
+
+      customerAddress:
+        address,
+
+      location:
+        locationToSave,
+
+      paymentMethod:
+        paymentMethod,
+
+      items:
+        orderItems,
+
+      total:
+        total,
+
+      status:
+        "pending",
+
+      createdAt:
+        firebase.firestore
+        .FieldValue
+        .serverTimestamp()
+
+    };
+
+
+    const docRef =
       await db
       .collection("orders")
-      .add(order);
+      .add(orderData);
+
+
+    console.log(
+      "Order created:",
+      docRef.id,
+      orderData
+    );
+
+
+    alert(
+      "✅ Order successfully place ho gaya!"
+    );
 
 
     cart = [];
@@ -1750,8 +1980,7 @@ async function placeOrder(){
 
     updateCartCount();
 
-    renderCart();
-
+    currentLocation = null;
 
     document.getElementById("customerName")
     .value = "";
@@ -1762,26 +1991,39 @@ async function placeOrder(){
     document.getElementById("customerAddress")
     .value = "";
 
+    document.getElementById("locationInfo")
+    .style.display = "none";
 
-    currentLocation = null;
+    const locationBtn =
+      document.getElementById("locationBtn");
 
+    locationBtn.classList.remove("success");
+    locationBtn.classList.remove("loading");
 
-    alert(
-      "✅ Order successfully placed!\n\nOrder ID: " +
-      ref.id
-    );
-
+    locationBtn.innerText =
+      "📍 Share Current Location";
 
     closeCart();
 
+
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Order error:",
+      error
+    );
 
     alert(
       "❌ Order place nahi hua.\n\n" +
       error.message
     );
+
+  }finally{
+
+    button.disabled = false;
+
+    button.innerText =
+      "🛍️ Place Order";
 
   }
 
@@ -1794,7 +2036,7 @@ async function placeOrder(){
 
 document
 .getElementById("myOrdersBtn")
-.addEventListener("click", function(){
+.addEventListener("click",function(){
 
   document.getElementById("ordersModal")
   .style.display = "block";
@@ -1809,29 +2051,20 @@ async function loadMyOrders(){
   const box =
     document.getElementById("myOrdersList");
 
-
-  box.innerHTML =
-    "<p>Loading orders...</p>";
-
-
   if(!currentUser){
 
     box.innerHTML =
-      "<p>Customer account ready nahi hua.</p>";
+      "<p>Customer login ready nahi hai.</p>";
 
     return;
 
   }
 
+  box.innerHTML =
+    "<p>⏳ Orders loading...</p>";
+
 
   try{
-
-    /*
-      IMPORTANT:
-      Phone number se search nahi kar rahe.
-      Sirf current Firebase anonymous UID ke
-      orders fetch honge.
-    */
 
     const snap =
       await db
@@ -1844,22 +2077,15 @@ async function loadMyOrders(){
       .get();
 
 
-    if(snap.empty){
-
-      box.innerHTML =
-        "<div class='info'>Abhi koi order nahi mila.</div>";
-
-      return;
-
-    }
-
-
     const orders =
       snap.docs.map(function(doc){
 
         return {
+
           id:doc.id,
+
           ...doc.data()
+
         };
 
       });
@@ -1867,21 +2093,29 @@ async function loadMyOrders(){
 
     orders.sort(function(a,b){
 
-      const at =
-        a.createdAt &&
-        a.createdAt.toMillis
+      const aTime =
+        a.createdAt && a.createdAt.toMillis
         ? a.createdAt.toMillis()
         : 0;
 
-      const bt =
-        b.createdAt &&
-        b.createdAt.toMillis
+      const bTime =
+        b.createdAt && b.createdAt.toMillis
         ? b.createdAt.toMillis()
         : 0;
 
-      return bt - at;
+      return bTime - aTime;
 
     });
+
+
+    if(!orders.length){
+
+      box.innerHTML =
+        "<p>No orders found.</p>";
+
+      return;
+
+    }
 
 
     box.innerHTML = "";
@@ -1896,18 +2130,50 @@ async function loadMyOrders(){
         "order-card";
 
 
-      const status =
-        order.status || "pending";
-
-
       const statusClass =
-        "status" +
-        status.charAt(0).toUpperCase() +
-        status.slice(1);
+        getStatusClass(order.status);
 
 
-      const date =
-        formatDate(order.createdAt);
+      const location =
+        getCustomerLocation(order);
+
+
+      let locationHtml = "";
+
+
+      if(location){
+
+        const mapUrl =
+          "https://www.google.com/maps/search/?api=1&query=" +
+          encodeURIComponent(
+            location.latitude +
+            "," +
+            location.longitude
+          );
+
+
+        locationHtml = `
+
+          <a
+            class="map-btn"
+            href="${mapUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            📍 View Order Location
+          </a>
+
+        `;
+
+      }
+
+
+      const itemsCount =
+        Array.isArray(order.items)
+        ? order.items.reduce(function(sum,item){
+            return sum + Number(item.qty || 0);
+          },0)
+        : 0;
 
 
       card.innerHTML = `
@@ -1917,36 +2183,31 @@ async function loadMyOrders(){
           <div>
 
             <strong>
-              Order #${escapeHtml(order.id.slice(-8))}
+              Order #${escapeHtml(order.id.slice(-6).toUpperCase())}
             </strong>
 
-            <div style="margin-top:5px;">
-              ${date}
+            <div style="font-size:12px;color:#777;margin-top:4px;">
+              ${formatDate(order.createdAt)}
             </div>
 
           </div>
 
           <span class="status ${statusClass}">
-            ${escapeHtml(status.toUpperCase())}
+            ${escapeHtml(order.status || "pending")}
           </span>
 
         </div>
 
 
         <div style="margin-top:10px;">
-          Total:
-          <strong>
-            ₹${Number(order.total || 0)}
-          </strong>
+          Items: ${itemsCount}
         </div>
-
 
         <div style="margin-top:5px;">
-          Items:
-          ${Array.isArray(order.items)
-            ? order.items.length
-            : 0}
+          Total: <strong>₹${Number(order.total || 0)}</strong>
         </div>
+
+        ${locationHtml}
 
 
         <div class="order-actions">
@@ -1959,18 +2220,17 @@ async function loadMyOrders(){
           </button>
 
           ${
-            canCancelOrder(order)
-            ?
+            order.status !== "cancelled" &&
+            order.status !== "delivered"
+            ? `
+              <button
+                class="cancel-btn"
+                onclick="cancelOrder('${order.id}')"
+              >
+                Cancel
+              </button>
             `
-            <button
-              class="cancel-btn"
-              onclick="cancelOrder('${order.id}')"
-            >
-              Cancel
-            </button>
-            `
-            :
-            ""
+            : ""
           }
 
           <button
@@ -1989,23 +2249,15 @@ async function loadMyOrders(){
 
     });
 
+
   }catch(error){
 
     console.error(error);
 
-    box.innerHTML = `
-
-      <div class="info">
-
-        ❌ Orders load nahi ho paaye.
-
-        <br><br>
-
-        ${escapeHtml(error.message)}
-
-      </div>
-
-    `;
+    box.innerHTML =
+      "<p>❌ Orders load nahi ho paaye.<br>" +
+      escapeHtml(error.message) +
+      "</p>";
 
   }
 
@@ -2013,76 +2265,277 @@ async function loadMyOrders(){
 
 
 /* =========================================
-   ORDER CANCEL
+   ORDER DETAIL
 ========================================= */
 
-function canCancelOrder(order){
+async function viewOrder(orderId){
 
-  if(!order)
-    return false;
+  if(!currentUser)
+    return;
 
 
-  if(
-    order.status === "delivered" ||
-    order.status === "cancelled"
-  ){
+  selectedOrderId =
+    orderId;
 
-    return false;
+
+  const content =
+    document.getElementById("orderDetailContent");
+
+  content.innerHTML =
+    "<p>⏳ Loading...</p>";
+
+
+  document.getElementById("orderDetailModal")
+  .style.display = "block";
+
+
+  try{
+
+    const doc =
+      await db
+      .collection("orders")
+      .doc(orderId)
+      .get();
+
+
+    if(!doc.exists){
+
+      content.innerHTML =
+        "<p>Order nahi mila.</p>";
+
+      return;
+
+    }
+
+
+    const order =
+      {
+        id:doc.id,
+        ...doc.data()
+      };
+
+
+    if(
+      order.customerUid !==
+      currentUser.uid
+    ){
+
+      content.innerHTML =
+        "<p>Access denied.</p>";
+
+      return;
+
+    }
+
+
+    let itemsHtml = "";
+
+
+    if(Array.isArray(order.items)){
+
+      itemsHtml =
+        order.items.map(function(item){
+
+          return `
+
+            <div class="order-item-line">
+
+              <strong>
+                ${escapeHtml(item.name || "Product")}
+              </strong>
+
+              <br>
+
+              Size:
+              ${escapeHtml(item.size || "Standard")}
+
+              |
+
+              Qty:
+              ${Number(item.qty || 0)}
+
+              |
+
+              ₹${Number(item.price || 0)}
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+
+
+    const location =
+      getCustomerLocation(order);
+
+
+    let locationHtml = "";
+
+
+    if(location){
+
+      const mapUrl =
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(
+          location.latitude +
+          "," +
+          location.longitude
+        );
+
+
+      locationHtml = `
+
+        <div class="info">
+
+          📍 Delivery Location
+
+          <br>
+
+          Latitude:
+          ${location.latitude.toFixed(6)}
+
+          <br>
+
+          Longitude:
+          ${location.longitude.toFixed(6)}
+
+          <br>
+
+          <a
+            class="map-btn"
+            href="${mapUrl}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            🗺️ Open Google Maps
+          </a>
+
+        </div>
+
+      `;
+
+    }
+
+
+    content.innerHTML = `
+
+      <div class="info">
+
+        <strong>
+          Order ID:
+        </strong>
+
+        ${escapeHtml(order.id)}
+
+        <br><br>
+
+        <strong>
+          Status:
+        </strong>
+
+        ${escapeHtml(order.status || "pending")}
+
+        <br><br>
+
+        <strong>
+          Name:
+        </strong>
+
+        ${escapeHtml(order.customerName || "")}
+
+        <br>
+
+        <strong>
+          Phone:
+        </strong>
+
+        ${escapeHtml(order.customerPhone || "")}
+
+        <br>
+
+        <strong>
+          Address:
+        </strong>
+
+        ${escapeHtml(order.customerAddress || "")}
+
+        <br><br>
+
+        <strong>
+          Payment:
+        </strong>
+
+        ${escapeHtml(order.paymentMethod || "COD")}
+
+      </div>
+
+
+      <h3 style="margin-top:15px;">
+        Items
+      </h3>
+
+      <div class="order-items">
+        ${itemsHtml || "No items"}
+      </div>
+
+
+      <div
+        style="
+          font-size:20px;
+          font-weight:bold;
+          margin-top:15px;
+        "
+      >
+        Total: ₹${Number(order.total || 0)}
+      </div>
+
+      ${locationHtml}
+
+    `;
+
+
+  }catch(error){
+
+    console.error(error);
+
+    content.innerHTML =
+      "<p>❌ Order load nahi hua.<br>" +
+      escapeHtml(error.message) +
+      "</p>";
 
   }
-
-
-  if(!order.createdAt)
-    return true;
-
-
-  const created =
-    order.createdAt.toMillis
-    ? order.createdAt.toMillis()
-    : 0;
-
-
-  if(!created)
-    return true;
-
-
-  const age =
-    Date.now() - created;
-
-
-  return (
-    age <=
-    48 * 60 * 60 * 1000
-  );
 
 }
 
 
-async function cancelOrder(id){
+/* =========================================
+   CANCEL ORDER
+========================================= */
 
-  if(!currentUser){
+async function cancelOrder(orderId){
 
-    alert("Customer account ready nahi hai.");
-
+  if(!currentUser)
     return;
 
-  }
 
-
-  const ok =
+  const confirmed =
     confirm(
       "Kya aap is order ko cancel karna chahte ho?"
     );
 
 
-  if(!ok)
+  if(!confirmed)
     return;
 
 
   try{
 
     const ref =
-      db.collection("orders").doc(id);
+      db
+      .collection("orders")
+      .doc(orderId);
 
 
     const snap =
@@ -2107,16 +2560,17 @@ async function cancelOrder(id){
       currentUser.uid
     ){
 
-      alert(
-        "Aap is order ko cancel nahi kar sakte."
-      );
+      alert("Aap is order ko cancel nahi kar sakte.");
 
       return;
 
     }
 
 
-    if(!canCancelOrder(order)){
+    if(
+      order.status === "delivered" ||
+      order.status === "cancelled"
+    ){
 
       alert(
         "Ye order ab cancel nahi kiya ja sakta."
@@ -2133,7 +2587,8 @@ async function cancelOrder(id){
         "cancelled",
 
       cancelledAt:
-        firebase.firestore.FieldValue
+        firebase.firestore
+        .FieldValue
         .serverTimestamp(),
 
       cancelledBy:
@@ -2148,6 +2603,7 @@ async function cancelOrder(id){
 
 
     loadMyOrders();
+
 
   }catch(error){
 
@@ -2164,165 +2620,6 @@ async function cancelOrder(id){
 
 
 /* =========================================
-   VIEW ORDER
-========================================= */
-
-async function viewOrder(id){
-
-  try{
-
-    const snap =
-      await db
-      .collection("orders")
-      .doc(id)
-      .get();
-
-
-    if(!snap.exists){
-
-      alert("Order nahi mila.");
-
-      return;
-
-    }
-
-
-    const order =
-      snap.data();
-
-
-    if(
-      !currentUser ||
-      order.customerUid !== currentUser.uid
-    ){
-
-      alert(
-        "Aap is order ko nahi dekh sakte."
-      );
-
-      return;
-
-    }
-
-
-    selectedOrderId = id;
-
-
-    let html = `
-
-      <div class="info">
-
-        <strong>Order ID:</strong>
-        ${escapeHtml(id)}
-
-        <br><br>
-
-        <strong>Status:</strong>
-        ${escapeHtml(order.status || "pending")}
-
-        <br><br>
-
-        <strong>Total:</strong>
-        ₹${Number(order.total || 0)}
-
-        <br><br>
-
-        <strong>Payment:</strong>
-        ${escapeHtml(order.paymentMethod || "COD")}
-
-      </div>
-
-
-      <h3 style="margin:15px 0 8px;">
-        Items
-      </h3>
-
-    `;
-
-
-    if(Array.isArray(order.items)){
-
-      order.items.forEach(function(item){
-
-        html += `
-
-          <div class="order-card">
-
-            <strong>
-              ${escapeHtml(item.name || "Product")}
-            </strong>
-
-            <br>
-
-            Size:
-            ${escapeHtml(item.size || "Standard")}
-
-            <br>
-
-            Quantity:
-            ${Number(item.qty || 0)}
-
-            <br>
-
-            Price:
-            ₹${Number(item.price || 0)}
-
-          </div>
-
-        `;
-
-      });
-
-    }
-
-
-    html += `
-
-      <h3 style="margin:15px 0 8px;">
-        Delivery
-      </h3>
-
-      <div class="info">
-
-        <strong>Name:</strong>
-        ${escapeHtml(order.customerName || "")}
-
-        <br><br>
-
-        <strong>Phone:</strong>
-        ${escapeHtml(order.customerPhone || "")}
-
-        <br><br>
-
-        <strong>Address:</strong>
-        ${escapeHtml(order.customerAddress || "")}
-
-      </div>
-
-    `;
-
-
-    document.getElementById("orderDetailContent")
-    .innerHTML = html;
-
-
-    document.getElementById("orderDetailModal")
-    .style.display = "block";
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "Order details load nahi ho paaye."
-    );
-
-  }
-
-}
-
-
-/* =========================================
    SUPPORT
 ========================================= */
 
@@ -2331,17 +2628,11 @@ function openSupport(orderId){
   selectedOrderId =
     orderId || null;
 
-
   document.getElementById("supportSubject")
-  .value =
-    orderId
-    ? "Support for Order " + orderId
-    : "";
-
+  .value = "";
 
   document.getElementById("supportMessage")
   .value = "";
-
 
   document.getElementById("supportModal")
   .style.display = "block";
@@ -2353,7 +2644,9 @@ async function submitSupport(){
 
   if(!currentUser){
 
-    alert("Customer account ready nahi hai.");
+    alert(
+      "Customer login ready nahi hai."
+    );
 
     return;
 
@@ -2361,18 +2654,24 @@ async function submitSupport(){
 
 
   const subject =
-    document.getElementById("supportSubject")
-    .value.trim();
+    document
+    .getElementById("supportSubject")
+    .value
+    .trim();
 
 
   const message =
-    document.getElementById("supportMessage")
-    .value.trim();
+    document
+    .getElementById("supportMessage")
+    .value
+    .trim();
 
 
   if(!subject){
 
-    alert("Subject enter karo.");
+    alert(
+      "Subject enter karo."
+    );
 
     return;
 
@@ -2381,7 +2680,9 @@ async function submitSupport(){
 
   if(!message){
 
-    alert("Message enter karo.");
+    alert(
+      "Message enter karo."
+    );
 
     return;
 
@@ -2424,6 +2725,7 @@ async function submitSupport(){
 
     closeModal("supportModal");
 
+
   }catch(error){
 
     console.error(error);
@@ -2439,13 +2741,152 @@ async function submitSupport(){
 
 
 /* =========================================
+   LOCATION HELPERS
+========================================= */
+
+function getCustomerLocation(order){
+
+  if(!order)
+    return null;
+
+
+  const loc =
+    order.location;
+
+
+  if(!loc)
+    return null;
+
+
+  let latitude = null;
+
+  let longitude = null;
+
+
+  if(
+    typeof loc.latitude === "number" &&
+    typeof loc.longitude === "number"
+  ){
+
+    latitude =
+      loc.latitude;
+
+    longitude =
+      loc.longitude;
+
+  }else if(
+    typeof loc.lat === "number" &&
+    typeof loc.lng === "number"
+  ){
+
+    latitude =
+      loc.lat;
+
+    longitude =
+      loc.lng;
+
+  }else if(
+    typeof loc._lat === "number" &&
+    typeof loc._long === "number"
+  ){
+
+    latitude =
+      loc._lat;
+
+    longitude =
+      loc._long;
+
+  }
+
+
+  if(
+    latitude === null ||
+    longitude === null
+  ){
+
+    return null;
+
+  }
+
+
+  if(
+    !Number.isFinite(latitude) ||
+    !Number.isFinite(longitude)
+  ){
+
+    return null;
+
+  }
+
+
+  if(
+    latitude < -90 ||
+    latitude > 90 ||
+    longitude < -180 ||
+    longitude > 180
+  ){
+
+    return null;
+
+  }
+
+
+  return {
+
+    latitude:
+      latitude,
+
+    longitude:
+      longitude
+
+  };
+
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+function getStatusClass(status){
+
+  switch(
+    String(status || "")
+    .toLowerCase()
+  ){
+
+    case "processing":
+      return "statusProcessing";
+
+    case "delivered":
+      return "statusDelivered";
+
+    case "cancelled":
+      return "statusCancelled";
+
+    default:
+      return "statusPending";
+
+  }
+
+}
+
+
+/* =========================================
    UTILITIES
 ========================================= */
 
 function closeModal(id){
 
-  document.getElementById(id)
-  .style.display = "none";
+  const element =
+    document.getElementById(id);
+
+  if(element){
+
+    element.style.display =
+      "none";
+
+  }
 
 }
 
@@ -2479,6 +2920,33 @@ function escapeHtml(value){
     .replace(/'/g,"&#039;");
 
 }
+
+
+/* =========================================
+   MODAL CLICK OUTSIDE
+========================================= */
+
+window.addEventListener(
+  "click",
+  function(event){
+
+    const modals =
+      document.querySelectorAll(".modal");
+
+
+    modals.forEach(function(modal){
+
+      if(event.target === modal){
+
+        modal.style.display =
+          "none";
+
+      }
+
+    });
+
+  }
+);
 
 
 /* =========================================
