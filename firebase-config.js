@@ -1,0 +1,1 @@
+export const firebaseConfig={apiKey:"AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",authDomain:"nari-fashion-947a7.firebaseapp.com",projectId:"nari-fashion-947a7",storageBucket:"nari-fashion-947a7.firebasestorage.app",messagingSenderId:"529668256601",appId:"1:529668256601:web:b3cc39c8ea7c783133d248",measurementId:"G-6QLMB312CM"};
