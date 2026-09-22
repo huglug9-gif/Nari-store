@@ -11,10 +11,14 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 
 <style>
-.hidden{display:none!important}
+
+.hidden{
+display:none!important;
+}
 
 .productDetail,
-.supportModal{
+.supportModal,
+.ordersModal{
 position:fixed;
 inset:0;
 background:rgba(0,0,0,.65);
@@ -24,7 +28,8 @@ padding:20px;
 }
 
 .detailBox,
-.supportBox{
+.supportBox,
+.ordersBox{
 background:#fff;
 max-width:900px;
 margin:20px auto;
@@ -38,8 +43,13 @@ padding:20px;
 max-width:600px;
 }
 
+.ordersBox{
+max-width:800px;
+}
+
 .detailClose,
-.supportClose{
+.supportClose,
+.ordersClose{
 position:absolute;
 right:15px;
 top:10px;
@@ -197,7 +207,8 @@ gap:9px;
 .addressBox textarea,
 .supportForm input,
 .supportForm select,
-.supportForm textarea{
+.supportForm textarea,
+.orderSearchBox input{
 width:100%;
 box-sizing:border-box;
 padding:11px;
@@ -226,7 +237,8 @@ color:#555;
 }
 
 .placeBtn,
-.supportSubmit{
+.supportSubmit,
+.orderSearchBtn{
 width:100%;
 padding:13px;
 border:0;
@@ -280,6 +292,159 @@ font-weight:bold;
 font-size:18px;
 }
 
+.orderCard{
+border:1px solid #ddd;
+border-radius:12px;
+padding:15px;
+margin:12px 0;
+background:#fff;
+}
+
+.orderCardHead{
+display:flex;
+justify-content:space-between;
+gap:10px;
+flex-wrap:wrap;
+align-items:center;
+}
+
+.orderStatus{
+display:inline-block;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold;
+}
+
+.statusPending{
+background:#fff3cd;
+color:#856404;
+}
+
+.statusProcessing{
+background:#cfe2ff;
+color:#084298;
+}
+
+.statusDelivered{
+background:#d1e7dd;
+color:#0f5132;
+}
+
+.statusCancelled{
+background:#f8d7da;
+color:#842029;
+}
+
+.orderItems{
+margin-top:12px;
+border-top:1px solid #eee;
+padding-top:10px;
+}
+
+.orderItem{
+padding:6px 0;
+font-size:14px;
+}
+
+.orderAddress{
+font-size:14px;
+color:#555;
+margin-top:10px;
+line-height:1.5;
+}
+
+.orderActions{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:12px;
+}
+
+.orderActions button{
+padding:9px 13px;
+border:0;
+border-radius:7px;
+cursor:pointer;
+}
+
+.cancelOrderBtn{
+background:#dc3545;
+color:#fff;
+}
+
+.supportOrderBtn{
+background:#111;
+color:#fff;
+}
+
+.viewOrderBtn{
+background:#0d6efd;
+color:#fff;
+}
+
+.cancelDisabled{
+background:#ddd;
+color:#777;
+cursor:not-allowed!important;
+}
+
+.cancelInfo{
+font-size:12px;
+color:#777;
+margin-top:8px;
+}
+
+.orderSearchBox{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-top:15px;
+}
+
+.orderEmpty{
+text-align:center;
+padding:25px 10px;
+color:#666;
+}
+
+.orderLoading{
+text-align:center;
+padding:25px;
+}
+
+.orderDetailModal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.65);
+z-index:10000;
+overflow:auto;
+padding:15px;
+}
+
+.orderDetailBox{
+max-width:600px;
+background:#fff;
+margin:30px auto;
+padding:20px;
+border-radius:16px;
+position:relative;
+}
+
+.orderDetailClose{
+position:absolute;
+right:12px;
+top:10px;
+width:36px;
+height:36px;
+border:0;
+border-radius:50%;
+background:#111;
+color:#fff;
+font-size:22px;
+cursor:pointer;
+}
+
 @media(max-width:700px){
 
 .detailGrid{
@@ -287,7 +452,8 @@ grid-template-columns:1fr;
 }
 
 .detailBox,
-.supportBox{
+.supportBox,
+.ordersBox{
 margin:5px auto;
 padding:15px;
 }
@@ -297,31 +463,79 @@ max-height:350px;
 }
 
 .productDetail,
-.supportModal{
+.supportModal,
+.ordersModal{
 padding:8px;
 }
 
+.orderActions{
+flex-direction:column;
 }
+
+.orderActions button{
+width:100%;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-<div class="logo">NARI FASHION</div>
-<a href="admin.html" class="admin">Admin</a>
+
+<div class="logo">
+NARI FASHION
+</div>
+
+<div style="display:flex;gap:8px;align-items:center">
+
+<button
+id="myOrdersBtn"
+class="admin"
+style="
+border:0;
+cursor:pointer;
+padding:8px 12px;
+"
+>
+📦 My Orders
+</button>
+
+<a
+href="admin.html"
+class="admin"
+>
+Admin
+</a>
+
+</div>
+
 </header>
+
 
 <main>
 
 <section class="hero">
-<h1>Fashion for Every Style</h1>
-<p>Latest products • Easy ordering • Fast support</p>
+
+<h1>
+Fashion for Every Style
+</h1>
+
+<p>
+Latest products • Easy ordering • Fast support
+</p>
+
 </section>
+
 
 <div class="tools">
 
-<input id="search" placeholder="Product search...">
+<input
+id="search"
+placeholder="Product search..."
+>
 
 <button id="cartBtn">
 Cart (<span id="cartCount">0</span>)
@@ -329,50 +543,89 @@ Cart (<span id="cartCount">0</span>)
 
 </div>
 
-<section id="products" class="grid">
-<p>Loading products...</p>
+
+<section
+id="products"
+class="grid"
+>
+
+<p>
+Loading products...
+</p>
+
 </section>
 
 </main>
 
 
-<!-- =========================
+<!-- =====================================================
      PRODUCT DETAIL
-========================= -->
+===================================================== -->
 
-<div id="productDetail" class="productDetail hidden">
+<div
+id="productDetail"
+class="productDetail hidden"
+>
 
 <div class="detailBox">
 
-<button id="detailClose" class="detailClose">×</button>
+<button
+id="detailClose"
+class="detailClose"
+>
+×
+</button>
 
 <div class="detailGrid">
 
 <div>
-<img id="detailImage" class="detailImage">
+
+<img
+id="detailImage"
+class="detailImage"
+>
+
 </div>
+
 
 <div>
 
 <h2 id="detailName"></h2>
 
-<div id="detailPrice" class="detailPrice"></div>
+<div
+id="detailPrice"
+class="detailPrice"
+></div>
 
 <div id="detailStock"></div>
 
-<div id="sizeArea" class="sizeGroup"></div>
+<div
+id="sizeArea"
+class="sizeGroup"
+></div>
+
 
 <div class="qtyBox">
 
-<button id="detailMinus">−</button>
+<button id="detailMinus">
+−
+</button>
 
-<span id="detailQty">1</span>
+<span id="detailQty">
+1
+</span>
 
-<button id="detailPlus">+</button>
+<button id="detailPlus">
++
+</button>
 
 </div>
 
-<button id="detailAdd" class="detailAdd">
+
+<button
+id="detailAdd"
+class="detailAdd"
+>
 Add to Cart
 </button>
 
@@ -383,37 +636,53 @@ Add to Cart
 </div>
 
 </div>
+
 </div>
 
 
-<!-- =========================
+<!-- =====================================================
      CART
-========================= -->
+===================================================== -->
 
-<div id="cart" class="drawer hidden">
+<div
+id="cart"
+class="drawer hidden"
+>
 
 <div class="drawerHead">
 
-<h2>Your Cart</h2>
+<h2>
+Your Cart
+</h2>
 
-<button id="closeCart">×</button>
+<button id="closeCart">
+×
+</button>
 
 </div>
 
+
 <div id="cartItems"></div>
 
-<div id="cartTotal" class="cartTotal"></div>
+<div
+id="cartTotal"
+class="cartTotal"
+></div>
 
-
-<!-- ADDRESS -->
 
 <div class="checkout">
 
-<h3>Delivery Address</h3>
+<h3>
+Delivery Address
+</h3>
+
 
 <div class="addressBox">
 
-<input id="custName" placeholder="Full name">
+<input
+id="custName"
+placeholder="Full name"
+>
 
 <input
 id="custPhone"
@@ -457,12 +726,14 @@ id="addressNote"
 placeholder="Any additional address details"
 ></textarea>
 
+
 <button
 id="locationBtn"
 class="locationBtn"
 >
 📍 Use Current Location
 </button>
+
 
 <div
 id="locationStatus"
@@ -473,7 +744,9 @@ Current location not selected
 
 </div>
 
+
 <br>
+
 
 <button
 id="placeOrder"
@@ -482,9 +755,9 @@ class="placeBtn"
 Place Order
 </button>
 
+
 <div id="orderMsg"></div>
 
-<!-- SUPPORT BUTTON -->
 
 <button
 id="supportOpen"
@@ -498,9 +771,9 @@ class="supportButton"
 </div>
 
 
-<!-- =========================
-     SUPPORT / COMPLAINT
-========================= -->
+<!-- =====================================================
+     SUPPORT
+===================================================== -->
 
 <div
 id="supportModal"
@@ -516,12 +789,19 @@ class="supportClose"
 ×
 </button>
 
-<h2>🆘 Help & Support</h2>
+
+<h2>
+🆘 Help & Support
+</h2>
+
 
 <p class="supportIntro">
+
 Order se related koi problem hai to neeche complaint submit karein.
 Hamari team aapki problem check karegi.
+
 </p>
+
 
 <div class="supportForm">
 
@@ -534,6 +814,7 @@ id="supportOrderId"
 placeholder="Example: NF-ABC123"
 >
 
+
 <label class="formLabel">
 Mobile Number
 </label>
@@ -544,9 +825,11 @@ type="tel"
 placeholder="10 digit mobile number"
 >
 
+
 <label class="formLabel">
 Problem Type
 </label>
+
 
 <select id="supportType">
 
@@ -584,6 +867,7 @@ Other
 
 </select>
 
+
 <label class="formLabel">
 Problem Details
 </label>
@@ -593,12 +877,14 @@ id="supportDetails"
 placeholder="Apni problem yahan detail me likhein..."
 ></textarea>
 
+
 <button
 id="supportSubmit"
 class="supportSubmit"
 >
 Submit Complaint
 </button>
+
 
 <div
 id="supportMsg"
@@ -612,11 +898,97 @@ class="supportMsg"
 </div>
 
 
+<!-- =====================================================
+     MY ORDERS
+===================================================== -->
+
+<div
+id="ordersModal"
+class="ordersModal hidden"
+>
+
+<div class="ordersBox">
+
+<button
+id="ordersClose"
+class="ordersClose"
+>
+×
+</button>
+
+
+<h2>
+📦 My Orders
+</h2>
+
+
+<p class="supportIntro">
+
+Apne orders dekhne ke liye wahi mobile number daalein
+jo order karte waqt use kiya tha.
+
+</p>
+
+
+<div class="orderSearchBox">
+
+<input
+id="orderSearchPhone"
+type="tel"
+inputmode="numeric"
+maxlength="10"
+placeholder="10 digit mobile number"
+>
+
+<button
+id="searchOrders"
+class="orderSearchBtn"
+>
+View My Orders
+</button>
+
+</div>
+
+
+<div id="ordersMsg"></div>
+
+<div id="myOrdersList"></div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     ORDER DETAIL
+===================================================== -->
+
+<div
+id="orderDetailModal"
+class="orderDetailModal hidden"
+>
+
+<div class="orderDetailBox">
+
+<button
+id="orderDetailClose"
+class="orderDetailClose"
+>
+×
+</button>
+
+<div id="orderDetailContent"></div>
+
+</div>
+
+</div>
+
+
 <script>
 
-/* =========================
+/* =====================================================
    FIREBASE
-========================= */
+===================================================== */
 
 const firebaseConfig = {
 
@@ -640,39 +1012,49 @@ appId:
 
 };
 
+
 firebase.initializeApp(firebaseConfig);
 
-const db=firebase.firestore();
+const db =
+firebase.firestore();
 
 
-/* =========================
+/* =====================================================
    VARIABLES
-========================= */
+===================================================== */
 
-let products=[];
-let cart=[];
+let products = [];
 
-let selectedProduct=null;
-let selectedSize="";
-let detailQty=1;
+let cart = [];
 
-let currentLocation=null;
+let selectedProduct = null;
 
-let lastOrderId="";
+let selectedSize = "";
 
-const $=id=>document.getElementById(id);
+let detailQty = 1;
+
+let currentLocation = null;
+
+let lastOrderId = "";
+
+let myOrders = [];
 
 
-/* =========================
+const $ =
+id => document.getElementById(id);
+
+
+/* =====================================================
    ESCAPE
-========================= */
+===================================================== */
 
 function esc(s){
 
-return String(s??"").replace(
+return String(s ?? "")
+.replace(
 /[&<>"']/g,
 
-c=>({
+c => ({
 
 "&":"&amp;",
 "<":"&lt;",
@@ -687,23 +1069,28 @@ c=>({
 }
 
 
-/* =========================
+/* =====================================================
    LOAD PRODUCTS
-========================= */
+===================================================== */
 
 async function load(){
 
 try{
 
-const s=
-await db.collection("products").get();
+const s =
+await db
+.collection("products")
+.get();
 
-products=s.docs.map(d=>({
+
+products =
+s.docs.map(d=>({
 
 id:d.id,
 ...d.data()
 
 }));
+
 
 render(products);
 
@@ -711,7 +1098,7 @@ render(products);
 
 console.error(e);
 
-$("products").innerHTML=
+$("products").innerHTML =
 "<p>Products load nahi hue. Firebase connection/rules check karein.</p>";
 
 }
@@ -719,23 +1106,27 @@ $("products").innerHTML=
 }
 
 
-/* =========================
+/* =====================================================
    PRODUCT SIZES
-========================= */
+===================================================== */
 
 function getSizes(p){
 
 let sizes=[];
 
+
 if(Array.isArray(p.sizes)){
 
-sizes=sizes.concat(p.sizes);
+sizes =
+sizes.concat(p.sizes);
 
 }
 
-if(typeof p.sizes==="string"){
 
-sizes=sizes.concat(
+if(typeof p.sizes === "string"){
+
+sizes =
+sizes.concat(
 
 p.sizes
 .split(",")
@@ -746,19 +1137,25 @@ p.sizes
 
 }
 
+
 if(Array.isArray(p.inchSizes)){
 
-sizes=sizes.concat(
+sizes =
+sizes.concat(
 
-p.inchSizes.map(x=>x+" inch")
+p.inchSizes.map(
+x=>x+" inch"
+)
 
 );
 
 }
 
-if(typeof p.inchSizes==="string"){
 
-sizes=sizes.concat(
+if(typeof p.inchSizes === "string"){
+
+sizes =
+sizes.concat(
 
 p.inchSizes
 .split(",")
@@ -770,20 +1167,25 @@ p.inchSizes
 
 }
 
-return [...new Set(sizes)];
+
+return [
+...new Set(sizes)
+];
 
 }
 
 
-/* =========================
+/* =====================================================
    RENDER PRODUCTS
-========================= */
+===================================================== */
 
 function render(list){
 
-$("products").innerHTML=
+$("products").innerHTML =
 
-list.length ?
+list.length
+
+?
 
 list.map(p=>`
 
@@ -807,7 +1209,10 @@ ${esc(p.name||"Product")}
 </h3>
 
 <div class="price">
-₹${Number(p.price||0).toLocaleString("en-IN")}
+
+₹${Number(p.price||0)
+.toLocaleString("en-IN")}
+
 </div>
 
 <div class="stock">
@@ -829,12 +1234,15 @@ Number(p.stock||0)>0
 
 </div>
 
+
 <button
 class="add"
 ${Number(p.stock||0)<=0?"disabled":""}
 data-id="${p.id}"
 >
+
 Add to Cart
+
 </button>
 
 </div>
@@ -852,11 +1260,17 @@ document
 .querySelectorAll(".productCard")
 .forEach(card=>{
 
-card.addEventListener("click",e=>{
+card.addEventListener(
+"click",
+e=>{
 
-if(e.target.closest(".add"))return;
+if(
+e.target.closest(".add")
+)return;
 
-openProduct(card.dataset.id);
+openProduct(
+card.dataset.id
+);
 
 });
 
@@ -867,11 +1281,14 @@ document
 .querySelectorAll(".add")
 .forEach(button=>{
 
-button.onclick=e=>{
+button.onclick =
+e=>{
 
 e.stopPropagation();
 
-openProduct(button.dataset.id);
+openProduct(
+button.dataset.id
+);
 
 };
 
@@ -880,16 +1297,19 @@ openProduct(button.dataset.id);
 }
 
 
-/* =========================
+/* =====================================================
    OPEN PRODUCT
-========================= */
+===================================================== */
 
 function openProduct(id){
 
-const p=
-products.find(x=>x.id===id);
+const p =
+products.find(
+x=>x.id===id
+);
 
 if(!p)return;
+
 
 selectedProduct=p;
 
@@ -898,22 +1318,22 @@ selectedSize="";
 detailQty=1;
 
 
-$("detailName").textContent=
-p.name||"Product";
+$("detailName").textContent =
+p.name || "Product";
 
 
-$("detailPrice").textContent=
+$("detailPrice").textContent =
 "₹"
 +Number(p.price||0)
 .toLocaleString("en-IN");
 
 
-$("detailImage").src=
+$("detailImage").src =
 p.image ||
 "https://placehold.co/600x600?text=NARI+FASHION";
 
 
-$("detailStock").textContent=
+$("detailStock").textContent =
 
 Number(p.stock||0)>0
 
@@ -927,15 +1347,17 @@ Number(p.stock||0)>0
 "Out of stock";
 
 
-$("detailQty").textContent="1";
+$("detailQty").textContent =
+"1";
 
 
-const sizes=getSizes(p);
+const sizes =
+getSizes(p);
 
 
 if(sizes.length){
 
-$("sizeArea").innerHTML=`
+$("sizeArea").innerHTML = `
 
 <div class="sizeTitle">
 Select Size
@@ -968,12 +1390,16 @@ btn.onclick=()=>{
 document
 .querySelectorAll(".sizeBtn")
 .forEach(x=>
-x.classList.remove("selected")
+x.classList.remove(
+"selected"
+)
 );
 
-btn.classList.add("selected");
+btn.classList.add(
+"selected"
+);
 
-selectedSize=
+selectedSize =
 btn.dataset.size;
 
 };
@@ -982,7 +1408,7 @@ btn.dataset.size;
 
 }else{
 
-$("sizeArea").innerHTML=`
+$("sizeArea").innerHTML = `
 
 <div class="sizeTitle">
 Size: Not specified
@@ -993,32 +1419,38 @@ Size: Not specified
 }
 
 
-$("detailAdd").disabled=
+$("detailAdd").disabled =
 Number(p.stock||0)<=0;
 
-$("detailMsg").textContent="";
+
+$("detailMsg").textContent = "";
+
 
 $("productDetail")
-.classList.remove("hidden");
+.classList.remove(
+"hidden"
+);
 
 }
 
 
-/* =========================
+/* =====================================================
    CLOSE PRODUCT
-========================= */
+===================================================== */
 
 $("detailClose").onclick=()=>{
 
 $("productDetail")
-.classList.add("hidden");
+.classList.add(
+"hidden"
+);
 
 };
 
 
-/* =========================
+/* =====================================================
    DETAIL QUANTITY
-========================= */
+===================================================== */
 
 $("detailMinus").onclick=()=>{
 
@@ -1026,7 +1458,7 @@ if(detailQty>1){
 
 detailQty--;
 
-$("detailQty").textContent=
+$("detailQty").textContent =
 detailQty;
 
 }
@@ -1036,21 +1468,26 @@ detailQty;
 
 $("detailPlus").onclick=()=>{
 
-if(!selectedProduct)return;
+if(!selectedProduct)
+return;
 
-const stock=
-Number(selectedProduct.stock||0);
+
+const stock =
+Number(
+selectedProduct.stock||0
+);
+
 
 if(detailQty<stock){
 
 detailQty++;
 
-$("detailQty").textContent=
+$("detailQty").textContent =
 detailQty;
 
 }else{
 
-$("detailMsg").textContent=
+$("detailMsg").textContent =
 "Stock se zyada quantity nahi le sakte.";
 
 }
@@ -1058,28 +1495,38 @@ $("detailMsg").textContent=
 };
 
 
-/* =========================
+/* =====================================================
    ADD TO CART
-========================= */
+===================================================== */
 
 $("detailAdd").onclick=()=>{
 
-if(!selectedProduct)return;
+if(!selectedProduct)
+return;
 
-const p=selectedProduct;
 
-const stock=
+const p =
+selectedProduct;
+
+
+const stock =
 Number(p.stock||0);
 
-if(stock<=0)return;
+
+if(stock<=0)
+return;
 
 
-const sizes=getSizes(p);
+const sizes =
+getSizes(p);
 
 
-if(sizes.length && !selectedSize){
+if(
+sizes.length &&
+!selectedSize
+){
 
-$("detailMsg").textContent=
+$("detailMsg").textContent =
 "Please select a size.";
 
 return;
@@ -1087,8 +1534,9 @@ return;
 }
 
 
-const existing=
-cart.find(i=>
+const existing =
+cart.find(
+i=>
 i.id===p.id &&
 i.size===selectedSize
 );
@@ -1096,16 +1544,22 @@ i.size===selectedSize
 
 if(existing){
 
-if(existing.qty+detailQty>stock){
+if(
+existing.qty+
+detailQty >
+stock
+){
 
-$("detailMsg").textContent=
+$("detailMsg").textContent =
 "Stock se zyada quantity nahi le sakte.";
 
 return;
 
 }
 
-existing.qty+=detailQty;
+
+existing.qty +=
+detailQty;
 
 }else{
 
@@ -1115,7 +1569,9 @@ id:p.id,
 
 name:p.name,
 
-price:Number(p.price||0),
+price:Number(
+p.price||0
+),
 
 qty:detailQty,
 
@@ -1130,25 +1586,33 @@ stock:stock
 
 updateCart();
 
+
 $("productDetail")
-.classList.add("hidden");
+.classList.add(
+"hidden"
+);
 
 };
 
 
-/* =========================
+/* =====================================================
    CART UPDATE
-========================= */
+===================================================== */
 
 function updateCart(){
 
-$("cartCount").textContent=
-cart.reduce((a,b)=>a+b.qty,0);
+$("cartCount").textContent =
+cart.reduce(
+(a,b)=>a+b.qty,
+0
+);
 
 
-$("cartItems").innerHTML=
+$("cartItems").innerHTML =
 
-cart.length ?
+cart.length
+
+?
 
 cart.map((i,index)=>`
 
@@ -1162,23 +1626,23 @@ ${esc(i.name)}
 
 ${
 i.size
-
 ?
-
-"Size: "+esc(i.size)
-
+"Size: "
++esc(i.size)
 :
-
 "Size: Not specified"
-
 }
 
 </div>
 
 <div>
-₹${(i.price*i.qty)
-.toLocaleString("en-IN")}
+
+₹${(
+i.price*i.qty
+).toLocaleString("en-IN")}
+
 </div>
+
 
 <div class="cartControls">
 
@@ -1216,31 +1680,40 @@ Remove
 "<p>Cart empty.</p>";
 
 
-const total=
+const total =
 cart.reduce(
-(a,b)=>a+b.price*b.qty,
+(a,b)=>
+a+b.price*b.qty,
 0
 );
 
 
-$("cartTotal").textContent=
+$("cartTotal").textContent =
 "Total: ₹"
-+total.toLocaleString("en-IN");
++total.toLocaleString(
+"en-IN"
+);
 
 }
 
 
-/* =========================
+/* =====================================================
    CART PLUS
-========================= */
+===================================================== */
 
-window.cartPlus=index=>{
+window.cartPlus =
+index=>{
 
-const item=cart[index];
+const item =
+cart[index];
 
 if(!item)return;
 
-if(item.qty>=item.stock){
+
+if(
+item.qty >=
+item.stock
+){
 
 alert(
 "Stock se zyada quantity nahi le sakte."
@@ -1250,6 +1723,7 @@ return;
 
 }
 
+
 item.qty++;
 
 updateCart();
@@ -1257,77 +1731,99 @@ updateCart();
 };
 
 
-/* =========================
+/* =====================================================
    CART MINUS
-========================= */
+===================================================== */
 
-window.cartMinus=index=>{
+window.cartMinus =
+index=>{
 
-const item=cart[index];
+const item =
+cart[index];
 
 if(!item)return;
 
+
 item.qty--;
+
 
 if(item.qty<=0){
 
-cart.splice(index,1);
+cart.splice(
+index,
+1
+);
 
 }
 
+
 updateCart();
 
 };
 
 
-/* =========================
+/* =====================================================
    CART REMOVE
-========================= */
+===================================================== */
 
-window.cartRemove=index=>{
+window.cartRemove =
+index=>{
 
-cart.splice(index,1);
+cart.splice(
+index,
+1
+);
 
 updateCart();
 
 };
 
 
-/* =========================
+/* =====================================================
    CART OPEN/CLOSE
-========================= */
+===================================================== */
 
 $("cartBtn").onclick=()=>{
 
 $("cart")
-.classList.remove("hidden");
+.classList.remove(
+"hidden"
+);
 
 };
+
 
 $("closeCart").onclick=()=>{
 
 $("cart")
-.classList.add("hidden");
+.classList.add(
+"hidden"
+);
 
 };
 
 
-/* =========================
+/* =====================================================
    SEARCH
-========================= */
+===================================================== */
 
-$("search").oninput=e=>{
+$("search").oninput =
+e=>{
 
-const q=e.target.value
+const q =
+e.target.value
 .toLowerCase()
 .trim();
 
 
 render(
 
-products.filter(p=>
+products.filter(
+p=>
 
-String(p.name||"")
+String(
+p.name||""
+)
 .toLowerCase()
 .includes(q)
 
@@ -1338,15 +1834,17 @@ String(p.name||"")
 };
 
 
-/* =========================
+/* =====================================================
    CURRENT LOCATION
-========================= */
+===================================================== */
 
 $("locationBtn").onclick=()=>{
 
-if(!navigator.geolocation){
+if(
+!navigator.geolocation
+){
 
-$("locationStatus").textContent=
+$("locationStatus").textContent =
 "Is device/browser me location available nahi hai.";
 
 return;
@@ -1354,7 +1852,7 @@ return;
 }
 
 
-$("locationStatus").textContent=
+$("locationStatus").textContent =
 "Location le rahe hain...";
 
 
@@ -1362,10 +1860,10 @@ navigator.geolocation.getCurrentPosition(
 
 position=>{
 
-const lat=
+const lat =
 position.coords.latitude;
 
-const lng=
+const lng =
 position.coords.longitude;
 
 
@@ -1382,7 +1880,7 @@ mapsUrl:
 };
 
 
-$("locationStatus").innerHTML=
+$("locationStatus").innerHTML =
 
 "✅ Location selected. "
 
@@ -1402,14 +1900,16 @@ error=>{
 console.error(error);
 
 
-if(error.code===1){
+if(
+error.code===1
+){
 
-$("locationStatus").textContent=
+$("locationStatus").textContent =
 "Location permission denied. Browser me location Allow karein.";
 
 }else{
 
-$("locationStatus").textContent=
+$("locationStatus").textContent =
 "Location nahi mil payi. Dobara try karein.";
 
 }
@@ -1431,32 +1931,34 @@ maximumAge:0
 };
 
 
-/* =========================
+/* =====================================================
    GENERATE ORDER ID
-========================= */
+===================================================== */
 
 function generateOrderId(){
 
-const random=
+const random =
 Math.random()
 .toString(36)
 .substring(2,8)
 .toUpperCase();
+
 
 return "NF-"+random;
 
 }
 
 
-/* =========================
+/* =====================================================
    PLACE ORDER
-========================= */
+===================================================== */
 
-$("placeOrder").onclick=async()=>{
+$("placeOrder").onclick =
+async()=>{
 
 if(!cart.length){
 
-$("orderMsg").textContent=
+$("orderMsg").textContent =
 "Cart empty hai.";
 
 return;
@@ -1464,31 +1966,31 @@ return;
 }
 
 
-const name=
+const name =
 $("custName").value.trim();
 
-const phone=
+const phone =
 $("custPhone").value.trim();
 
-const house=
+const house =
 $("house").value.trim();
 
-const street=
+const street =
 $("street").value.trim();
 
-const landmark=
+const landmark =
 $("landmark").value.trim();
 
-const city=
+const city =
 $("city").value.trim();
 
-const state=
+const state =
 $("state").value.trim();
 
-const pincode=
+const pincode =
 $("pincode").value.trim();
 
-const note=
+const note =
 $("addressNote").value.trim();
 
 
@@ -1502,7 +2004,7 @@ if(
 !pincode
 ){
 
-$("orderMsg").textContent=
+$("orderMsg").textContent =
 "Name, mobile aur complete address bharna zaroori hai.";
 
 return;
@@ -1510,9 +2012,11 @@ return;
 }
 
 
-if(!/^[0-9]{10}$/.test(phone)){
+if(
+!/^[0-9]{10}$/.test(phone)
+){
 
-$("orderMsg").textContent=
+$("orderMsg").textContent =
 "Valid 10 digit mobile number daalein.";
 
 return;
@@ -1520,9 +2024,11 @@ return;
 }
 
 
-if(!/^[0-9]{6}$/.test(pincode)){
+if(
+!/^[0-9]{6}$/.test(pincode)
+){
 
-$("orderMsg").textContent=
+$("orderMsg").textContent =
 "Valid 6 digit PIN code daalein.";
 
 return;
@@ -1543,18 +2049,21 @@ note
 ].filter(Boolean);
 
 
-const address=
-addressParts.join(", ");
+const address =
+addressParts.join(
+", "
+);
 
 
-const total=
+const total =
 cart.reduce(
-(a,b)=>a+b.price*b.qty,
+(a,b)=>
+a+b.price*b.qty,
 0
 );
 
 
-const orderItems=
+const orderItems =
 cart.map(i=>({
 
 productId:i.id,
@@ -1565,12 +2074,14 @@ price:i.price,
 
 qty:i.qty,
 
-size:i.size||"Not specified"
+size:
+i.size ||
+"Not specified"
 
 }));
 
 
-const orderId=
+const orderId =
 generateOrderId();
 
 
@@ -1603,7 +2114,9 @@ total:total,
 status:"pending",
 
 createdAt:
-firebase.firestore.FieldValue.serverTimestamp()
+firebase.firestore
+.FieldValue
+.serverTimestamp()
 
 };
 
@@ -1626,9 +2139,10 @@ currentLocation.mapsUrl
 }
 
 
-$("placeOrder").disabled=true;
+$("placeOrder").disabled =
+true;
 
-$("placeOrder").textContent=
+$("placeOrder").textContent =
 "Placing Order...";
 
 
@@ -1639,14 +2153,17 @@ await db
 .add(orderData);
 
 
-lastOrderId=orderId;
+lastOrderId =
+orderId;
 
 
-$("orderMsg").innerHTML=`
+$("orderMsg").innerHTML = `
 
 <div class="orderSuccess">
 
-✅ <strong>Order placed successfully!</strong>
+✅ <strong>
+Order placed successfully!
+</strong>
 
 <br><br>
 
@@ -1658,7 +2175,15 @@ ${esc(orderId)}
 
 <br>
 
+<strong>
+48 hours ke andar order cancel kar sakte hain.
+</strong>
+
+<br><br>
+
 Is Order ID ko future me
+<strong>My Orders</strong>
+ya
 <strong>Help & Support</strong>
 ke liye sambhal kar rakhein.
 
@@ -1672,29 +2197,42 @@ cart=[];
 updateCart();
 
 
-$("custName").value="";
+/*
+   Important:
+   Phone ko clear nahi kar rahe,
+   taki Support me automatically use ho sake.
+*/
 
-$("custPhone").value="";
+$("custName").value =
+"";
 
-$("house").value="";
+$("house").value =
+"";
 
-$("street").value="";
+$("street").value =
+"";
 
-$("landmark").value="";
+$("landmark").value =
+"";
 
-$("city").value="";
+$("city").value =
+"";
 
-$("state").value="";
+$("state").value =
+"";
 
-$("pincode").value="";
+$("pincode").value =
+"";
 
-$("addressNote").value="";
+$("addressNote").value =
+"";
 
 
-currentLocation=null;
+currentLocation =
+null;
 
 
-$("locationStatus").textContent=
+$("locationStatus").textContent =
 "Current location not selected";
 
 
@@ -1702,15 +2240,17 @@ $("locationStatus").textContent=
 
 console.error(e);
 
-$("orderMsg").textContent=
+
+$("orderMsg").textContent =
 "Order place nahi hua: "
 +e.message;
 
 }finally{
 
-$("placeOrder").disabled=false;
+$("placeOrder").disabled =
+false;
 
-$("placeOrder").textContent=
+$("placeOrder").textContent =
 "Place Order";
 
 }
@@ -1718,88 +2258,90 @@ $("placeOrder").textContent=
 };
 
 
-/* =========================
+/* =====================================================
    SUPPORT OPEN
-========================= */
+===================================================== */
 
 $("supportOpen").onclick=()=>{
 
-/*
-   Agar customer ne abhi order place kiya hai
-   to Order ID automatically fill ho jayegi.
-*/
-
-$("supportOrderId").value=
+$("supportOrderId").value =
 lastOrderId;
 
-$("supportPhone").value=
+
+$("supportPhone").value =
 $("custPhone").value.trim();
 
 
-$("supportMsg").textContent="";
+$("supportMsg").textContent =
+"";
 
 
 $("supportModal")
-.classList.remove("hidden");
+.classList.remove(
+"hidden"
+);
 
 };
 
 
-/* =========================
+/* =====================================================
    SUPPORT CLOSE
-========================= */
+===================================================== */
 
 $("supportClose").onclick=()=>{
 
 $("supportModal")
-.classList.add("hidden");
+.classList.add(
+"hidden"
+);
 
 };
 
 
-/* =========================
+/* =====================================================
    SUPPORT SUBMIT
-========================= */
+===================================================== */
 
-$("supportSubmit").onclick=async()=>{
+$("supportSubmit").onclick =
+async()=>{
 
-const orderId=
+const orderId =
 $("supportOrderId")
-.value
-.trim()
-.toUpperCase();
+.value.trim();
 
-
-const phone=
+const phone =
 $("supportPhone")
-.value
-.trim();
+.value.trim();
 
-
-const type=
+const type =
 $("supportType")
 .value;
 
-
-const details=
+const details =
 $("supportDetails")
-.value
-.trim();
+.value.trim();
 
 
-if(!orderId){
+if(
+!orderId ||
+!phone ||
+!type ||
+!details
+){
 
-$("supportMsg").textContent=
-"Order ID daalna zaroori hai.";
+$("supportMsg").textContent =
+"Sabhi details bharna zaroori hai.";
 
 return;
 
 }
 
 
-if(!/^[0-9]{10}$/.test(phone)){
+if(
+!/^[0-9]{10}$/.test(phone)
+){
 
-$("supportMsg").textContent=
+$("supportMsg").textContent =
 "Valid 10 digit mobile number daalein.";
 
 return;
@@ -1807,29 +2349,10 @@ return;
 }
 
 
-if(!type){
+$("supportSubmit").disabled =
+true;
 
-$("supportMsg").textContent=
-"Problem type select karein.";
-
-return;
-
-}
-
-
-if(details.length<5){
-
-$("supportMsg").textContent=
-"Problem thoda detail me likhein.";
-
-return;
-
-}
-
-
-$("supportSubmit").disabled=true;
-
-$("supportSubmit").textContent=
+$("supportSubmit").textContent =
 "Submitting...";
 
 
@@ -1850,37 +2373,40 @@ details:details,
 status:"pending",
 
 createdAt:
-firebase.firestore.FieldValue.serverTimestamp()
+firebase.firestore
+.FieldValue
+.serverTimestamp()
 
 });
 
 
-$("supportMsg").innerHTML=
-"✅ Complaint successfully submit ho gayi. Admin aapki complaint check karega.";
+$("supportMsg").innerHTML =
+"✅ Complaint successfully submit ho gayi.";
 
 
-$("supportOrderId").value="";
+$("supportDetails").value =
+"";
 
-$("supportPhone").value="";
 
-$("supportType").value="";
-
-$("supportDetails").value="";
+$("supportType").value =
+"";
 
 
 }catch(e){
 
 console.error(e);
 
-$("supportMsg").textContent=
+
+$("supportMsg").textContent =
 "Complaint submit nahi hui: "
 +e.message;
 
 }finally{
 
-$("supportSubmit").disabled=false;
+$("supportSubmit").disabled =
+false;
 
-$("supportSubmit").textContent=
+$("supportSubmit").textContent =
 "Submit Complaint";
 
 }
@@ -1888,11 +2414,1019 @@ $("supportSubmit").textContent=
 };
 
 
-/* =========================
-   START
-========================= */
+/* =====================================================
+   MY ORDERS OPEN
+===================================================== */
+
+$("myOrdersBtn").onclick=()=>{
+
+$("ordersModal")
+.classList.remove(
+"hidden"
+);
+
+$("ordersMsg").textContent =
+"";
+
+$("myOrdersList").innerHTML =
+"";
+
+};
+
+
+/* =====================================================
+   MY ORDERS CLOSE
+===================================================== */
+
+$("ordersClose").onclick=()=>{
+
+$("ordersModal")
+.classList.add(
+"hidden"
+);
+
+};
+
+
+/* =====================================================
+   SEARCH ORDERS
+===================================================== */
+
+$("searchOrders").onclick =
+loadMyOrders;
+
+
+/* =====================================================
+   ENTER KEY
+===================================================== */
+
+$("orderSearchPhone")
+.addEventListener(
+"keydown",
+e=>{
+
+if(
+e.key==="Enter"
+){
+
+loadMyOrders();
+
+}
+
+});
+
+
+/* =====================================================
+   LOAD MY ORDERS
+===================================================== */
+
+async function loadMyOrders(){
+
+const phone =
+$("orderSearchPhone")
+.value.trim();
+
+
+if(
+!/^[0-9]{10}$/.test(phone)
+){
+
+$("ordersMsg").innerHTML =
+"<p style='color:#b00020'>Valid 10 digit mobile number daalein.</p>";
+
+return;
+
+}
+
+
+$("searchOrders").disabled =
+true;
+
+$("searchOrders").textContent =
+"Loading...";
+
+
+$("myOrdersList").innerHTML =
+`
+<div class="orderLoading">
+Orders search ho rahe hain...
+</div>
+`;
+
+
+try{
+
+const snapshot =
+await db
+.collection("orders")
+.where(
+"customerPhone",
+"==",
+phone
+)
+.get();
+
+
+myOrders =
+snapshot.docs.map(doc=>({
+
+id:doc.id,
+
+...doc.data()
+
+}));
+
+
+/*
+   Newest order first.
+   createdAt missing ho to bhi error nahi hoga.
+*/
+
+myOrders.sort(
+(a,b)=>{
+
+const aTime =
+a.createdAt &&
+a.createdAt.toMillis
+?
+a.createdAt.toMillis()
+:
+0;
+
+const bTime =
+b.createdAt &&
+b.createdAt.toMillis
+?
+b.createdAt.toMillis()
+:
+0;
+
+return bTime-aTime;
+
+});
+
+
+renderMyOrders();
+
+
+}catch(e){
+
+console.error(e);
+
+
+$("myOrdersList").innerHTML =
+`
+<div class="orderEmpty">
+
+❌ Orders load nahi ho paaye.
+
+<br><br>
+
+${esc(e.message)}
+
+</div>
+`;
+
+}finally{
+
+$("searchOrders").disabled =
+false;
+
+$("searchOrders").textContent =
+"View My Orders";
+
+}
+
+}
+
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+function getStatusClass(status){
+
+status =
+String(
+status||"pending"
+)
+.toLowerCase();
+
+
+if(status==="delivered")
+return "statusDelivered";
+
+
+if(
+status==="cancelled" ||
+status==="canceled"
+)
+return "statusCancelled";
+
+
+if(
+status==="processing" ||
+status==="in_progress"
+)
+return "statusProcessing";
+
+
+return "statusPending";
+
+}
+
+
+/* =====================================================
+   STATUS TEXT
+===================================================== */
+
+function getStatusText(status){
+
+status =
+String(
+status||"pending"
+)
+.toLowerCase();
+
+
+if(status==="delivered")
+return "Delivered";
+
+
+if(
+status==="cancelled" ||
+status==="canceled"
+)
+return "Cancelled";
+
+
+if(
+status==="processing" ||
+status==="in_progress"
+)
+return "Processing";
+
+
+return "Pending";
+
+}
+
+
+/* =====================================================
+   48 HOURS CHECK
+===================================================== */
+
+function canCancelOrder(order){
+
+const status =
+String(
+order.status||"pending"
+)
+.toLowerCase();
+
+
+/*
+   Delivered/cancelled order cannot cancel.
+*/
+
+if(
+status==="delivered" ||
+status==="cancelled" ||
+status==="canceled"
+){
+
+return false;
+
+}
+
+
+/*
+   Firestore timestamp
+*/
+
+if(
+!order.createdAt ||
+!order.createdAt.toMillis
+){
+
+/*
+   Agar old order me createdAt nahi hai,
+   safety ke liye cancel option nahi denge.
+*/
+
+return false;
+
+}
+
+
+const created =
+order.createdAt.toMillis();
+
+
+const now =
+Date.now();
+
+
+const difference =
+now-created;
+
+
+/*
+   48 hours
+*/
+
+return difference <
+48*60*60*1000;
+
+}
+
+
+/* =====================================================
+   REMAINING TIME
+===================================================== */
+
+function getRemainingTime(order){
+
+if(
+!order.createdAt ||
+!order.createdAt.toMillis
+){
+
+return "";
+
+}
+
+
+const end =
+order.createdAt.toMillis()
++
+48*60*60*1000;
+
+
+const remaining =
+end-Date.now();
+
+
+if(
+remaining<=0
+){
+
+return "Cancellation period expired";
+
+}
+
+
+const hours =
+Math.floor(
+remaining/
+(60*60*1000)
+);
+
+
+const minutes =
+Math.floor(
+(
+remaining%
+(60*60*1000)
+)/
+(60*1000)
+);
+
+
+return (
+"Cancel available for "
++hours+
+"h "
++minutes+
+"m"
+);
+
+}
+
+
+/* =====================================================
+   RENDER MY ORDERS
+===================================================== */
+
+function renderMyOrders(){
+
+if(!myOrders.length){
+
+$("myOrdersList").innerHTML = `
+
+<div class="orderEmpty">
+
+📦 Is mobile number se koi order nahi mila.
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+$("myOrdersList").innerHTML =
+
+myOrders.map(
+(order,index)=>{
+
+const status =
+String(
+order.status||"pending"
+)
+.toLowerCase();
+
+
+const items =
+order.items || [];
+
+
+const itemsHTML =
+items.map(item=>`
+
+<div class="orderItem">
+
+<strong>
+${esc(item.name||"Product")}
+</strong>
+
+×
+
+${Number(item.qty||0)}
+
+${
+item.size
+?
+" • Size: "
++esc(item.size)
+:
+""}
+
+<br>
+
+₹${Number(item.price||0)
+.toLocaleString("en-IN")}
+
+</div>
+
+`).join("");
+
+
+const cancelAllowed =
+canCancelOrder(order);
+
+
+const remaining =
+getRemainingTime(order);
+
+
+let cancelButton = "";
+
+
+if(cancelAllowed){
+
+cancelButton = `
+
+<button
+class="cancelOrderBtn"
+onclick="cancelMyOrder('${order.id}')"
+>
+❌ Cancel Order
+</button>
+
+`;
+
+}else if(
+status!=="cancelled" &&
+status!=="delivered"
+){
+
+cancelButton = `
+
+<button
+class="cancelDisabled"
+disabled
+>
+❌ Cancellation Expired
+</button>
+
+`;
+
+}
+
+
+return `
+
+<div class="orderCard">
+
+<div class="orderCardHead">
+
+<div>
+
+<strong>
+Order ID:
+</strong>
+
+${esc(
+order.orderId ||
+order.id
+)}
+
+</div>
+
+
+<span
+class="orderStatus
+${getStatusClass(status)}"
+>
+
+${getStatusText(status)}
+
+</span>
+
+</div>
+
+
+<div style="margin-top:10px">
+
+<strong>
+Total:
+</strong>
+
+₹${Number(
+order.total||0
+)
+.toLocaleString("en-IN")}
+
+</div>
+
+
+<div class="orderItems">
+
+<strong>
+Products
+</strong>
+
+${itemsHTML}
+
+</div>
+
+
+<div class="orderAddress">
+
+<strong>
+Delivery Address
+</strong>
+
+<br>
+
+${esc(
+order.address||""
+)}
+
+</div>
+
+
+<div class="orderActions">
+
+<button
+class="viewOrderBtn"
+onclick="viewOrderDetails(${index})"
+>
+👁️ View Order
+</button>
+
+${cancelButton}
+
+
+<button
+class="supportOrderBtn"
+onclick="openOrderSupport(${index})"
+>
+🆘 Help
+</button>
+
+</div>
+
+
+${
+remaining
+&& cancelAllowed
+
+?
+
+`
+<div class="cancelInfo">
+⏱️ ${esc(remaining)}
+</div>
+`
+
+:
+
+""
+
+}
+
+</div>
+
+`;
+
+}
+).join("");
+
+}
+
+
+/* =====================================================
+   VIEW ORDER DETAILS
+===================================================== */
+
+window.viewOrderDetails =
+index=>{
+
+const order =
+myOrders[index];
+
+
+if(!order)
+return;
+
+
+const status =
+String(
+order.status||"pending"
+)
+.toLowerCase();
+
+
+const items =
+(order.items||[])
+.map(item=>`
+
+<div
+style="
+padding:8px 0;
+border-bottom:1px solid #eee;
+"
+>
+
+<strong>
+${esc(item.name||"Product")}
+</strong>
+
+<br>
+
+Quantity:
+${Number(item.qty||0)}
+
+<br>
+
+${
+item.size
+?
+"Size: "+esc(item.size)
++"<br>"
+:
+""
+}
+
+Price:
+₹${Number(item.price||0)
+.toLocaleString("en-IN")}
+
+</div>
+
+`)
+.join("");
+
+
+$("orderDetailContent").innerHTML = `
+
+<h2>
+📦 Order Details
+</h2>
+
+
+<p>
+
+<strong>
+Order ID:
+</strong>
+
+${esc(
+order.orderId ||
+order.id
+)}
+
+</p>
+
+
+<p>
+
+<strong>
+Status:
+</strong>
+
+<span
+class="orderStatus
+${getStatusClass(status)}"
+>
+
+${getStatusText(status)}
+
+</span>
+
+</p>
+
+
+<hr>
+
+
+<h3>
+Products
+</h3>
+
+${items}
+
+
+<h3>
+Total: ₹${Number(
+order.total||0
+)
+.toLocaleString("en-IN")}
+</h3>
+
+
+<h3>
+Delivery Address
+</h3>
+
+<p>
+${esc(
+order.address||""
+)}
+</p>
+
+
+${
+order.location &&
+order.location.mapsUrl
+
+?
+
+`
+<a
+href="${esc(order.location.mapsUrl)}"
+target="_blank"
+>
+📍 View Delivery Location
+</a>
+`
+
+:
+
+""
+
+}
+
+
+<div
+style="margin-top:20px"
+>
+
+${
+canCancelOrder(order)
+
+?
+
+`
+
+<button
+class="cancelOrderBtn"
+style="
+width:100%;
+padding:12px;
+border:0;
+border-radius:8px;
+cursor:pointer;
+"
+onclick="cancelMyOrder('${order.id}')"
+>
+❌ Cancel Order
+</button>
+
+`
+
+:
+
+status!=="cancelled" &&
+status!=="delivered"
+
+?
+
+`
+<p class="cancelInfo">
+48-hour cancellation period khatam ho gaya hai.
+</p>
+`
+
+:
+
+""
+
+}
+
+</div>
+
+`;
+
+
+$("orderDetailModal")
+.classList.remove(
+"hidden"
+);
+
+};
+
+
+/* =====================================================
+   CLOSE ORDER DETAIL
+===================================================== */
+
+$("orderDetailClose").onclick=()=>{
+
+$("orderDetailModal")
+.classList.add(
+"hidden"
+);
+
+};
+
+
+/* =====================================================
+   CANCEL ORDER
+===================================================== */
+
+window.cancelMyOrder =
+async id=>{
+
+const order =
+myOrders.find(
+o=>o.id===id
+);
+
+
+if(!order){
+
+alert(
+"Order nahi mila."
+);
+
+return;
+
+}
+
+
+if(
+!canCancelOrder(order)
+){
+
+alert(
+"Is order ko ab cancel nahi kiya ja sakta. Cancellation sirf 48 hours ke andar available hai."
+);
+
+return;
+
+}
+
+
+const confirmCancel =
+confirm(
+"⚠️ Kya aap ye order cancel karna chahte hain?"
+);
+
+
+if(!confirmCancel)
+return;
+
+
+try{
+
+await db
+.collection("orders")
+.doc(id)
+.update({
+
+status:"cancelled",
+
+cancelledAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp(),
+
+cancelledBy:
+"customer"
+
+});
+
+
+/*
+   Local data update
+*/
+
+order.status =
+"cancelled";
+
+
+order.cancelledBy =
+"customer";
+
+
+renderMyOrders();
+
+
+/*
+   Detail modal bhi close
+*/
+
+$("orderDetailModal")
+.classList.add(
+"hidden"
+);
+
+
+alert(
+"✅ Order successfully cancelled."
+);
+
+
+}catch(e){
+
+console.error(e);
+
+
+alert(
+"Order cancel nahi hua: "
++e.message
+);
+
+}
+
+};
+
+
+/* =====================================================
+   SUPPORT FROM ORDER
+===================================================== */
+
+window.openOrderSupport =
+index=>{
+
+const order =
+myOrders[index];
+
+
+if(!order)
+return;
+
+
+$("supportOrderId").value =
+order.orderId ||
+order.id;
+
+
+$("supportPhone").value =
+order.customerPhone ||
+$("orderSearchPhone").value;
+
+
+$("supportMsg").textContent =
+"";
+
+
+$("ordersModal")
+.classList.add(
+"hidden"
+);
+
+
+$("supportModal")
+.classList.remove(
+"hidden"
+);
+
+};
+
+
+/* =====================================================
+   INITIAL LOAD
+===================================================== */
 
 load();
+
+updateCart();
 
 </script>
 
