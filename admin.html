@@ -1,9 +1,601 @@
-<!doctype html><html lang="hi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NARI FASHION Admin</title><link rel="stylesheet" href="admin.css"><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script></head><body><div id="login" class="box"><h1>NARI FASHION</h1><h2>Admin Login</h2><input id="email" type="email" placeholder="Admin email" autocomplete="username"><input id="password" type="password" placeholder="Password" autocomplete="current-password"><button id="loginBtn" type="button">Login</button><p id="loginMsg"></p></div><div id="panel" class="hidden"><header><b>Admin Dashboard</b><button id="logout" type="button">Logout</button></header><main><section class="stats"><div>Products <b id="pCount">0</b></div><div>Orders <b id="oCount">0</b></div></section><section class="form"><h2>Add / Edit Product</h2><input id="pid" type="hidden"><input id="name" placeholder="Product name"><input id="price" type="number" placeholder="Price"><input id="stock" type="number" placeholder="Stock"><input id="image" placeholder="Image URL"><button id="save" type="button">Save Product</button><button id="clear" class="secondary" type="button">Clear</button><p id="msg"></p></section><section><h2>Products</h2><div id="productList"></div></section><section><h2>Orders</h2><div id="orders"></div></section></main></div><script>
-const firebaseConfig={apiKey:"AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",authDomain:"nari-fashion-947a7.firebaseapp.com",projectId:"nari-fashion-947a7",storageBucket:"nari-fashion-947a7.firebasestorage.app",messagingSenderId:"529668256601",appId:"1:529668256601:web:b3cc39c8ea7c783133d248"};
-const ADMIN_UID='PqFCkDzqkAYxORwigvBpjY5vwex1'; firebase.initializeApp(firebaseConfig);const auth=firebase.auth(),db=firebase.firestore();const $=id=>document.getElementById(id);let products=[];
-$('loginBtn').addEventListener('click',async()=>{const email=$('email').value.trim(),password=$('password').value;if(!email||!password){$('loginMsg').textContent='Email aur password bharo.';return}$('loginBtn').disabled=true;$('loginBtn').textContent='Logging in...';$('loginMsg').textContent='';try{await auth.signInWithEmailAndPassword(email,password)}catch(e){console.error(e);$('loginMsg').textContent='Login failed: '+(e.code||e.message)}finally{$('loginBtn').disabled=false;$('loginBtn').textContent='Login'}});
-$('logout').onclick=()=>auth.signOut();auth.onAuthStateChanged(async user=>{if(user&&user.uid===ADMIN_UID){$('login').classList.add('hidden');$('panel').classList.remove('hidden');await load()}else if(user){$('loginMsg').textContent='This account is not the admin account.';await auth.signOut()}else{$('login').classList.remove('hidden');$('panel').classList.add('hidden')}});
-async function load(){await loadProducts();await loadOrders()};async function loadProducts(){try{const s=await db.collection('products').get();products=s.docs.map(d=>({id:d.id,...d.data()}));$('pCount').textContent=products.length;$('productList').innerHTML=products.map(p=>`<div class="item"><div><img src="${p.image||'https://placehold.co/100'}"><b>${esc(p.name)}</b><div>₹${Number(p.price||0)} • Stock ${Number(p.stock||0)}</div></div><div class="actions"><button onclick="editProduct('${p.id}')">Edit</button><button class="danger" onclick="deleteProduct('${p.id}')">Delete</button></div></div>`).join('')||'<p>No products.</p>'}catch(e){$('productList').innerHTML='<p>Products load nahi hue: '+esc(e.message)+'</p>'}}
-async function loadOrders(){try{const s=await db.collection('orders').orderBy('createdAt','desc').get();$('oCount').textContent=s.size;$('orders').innerHTML=s.docs.map(d=>{const o=d.data();return `<div class="order"><b>${esc(o.customerName||'')}</b> • ${esc(o.customerPhone||'')}<br>${esc(o.address||'')}<br><b>₹${Number(o.total||0).toLocaleString('en-IN')}</b> • ${esc(o.status||'pending')}<br><small>${(o.items||[]).map(i=>esc(i.name)+' × '+i.qty).join(', ')}</small></div>`}).join('')||'<p>No orders.</p>'}catch(e){$('orders').innerHTML='<p>Orders load nahi hue: '+esc(e.message)+'</p>'}}
-$('save').onclick=async()=>{const data={name:$('name').value.trim(),price:Number($('price').value),stock:Number($('stock').value),image:$('image').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};if(!data.name)return $('msg').textContent='Product name required.';try{if($('pid').value)await db.collection('products').doc($('pid').value).update(data);else await db.collection('products').add({...data,createdAt:firebase.firestore.FieldValue.serverTimestamp()});$('msg').textContent='Saved!';clearForm();await loadProducts()}catch(e){$('msg').textContent='Save failed: '+e.message}};$('clear').onclick=clearForm;function clearForm(){$('pid').value='';$('name').value='';$('price').value='';$('stock').value='';$('image').value='';}window.editProduct=id=>{const p=products.find(x=>x.id===id);if(!p)return;$('pid').value=id;$('name').value=p.name||'';$('price').value=p.price||0;$('stock').value=p.stock||0;$('image').value=p.image||'';scrollTo(0,0)};window.deleteProduct=async id=>{if(!confirm('Delete product?'))return;try{await db.collection('products').doc(id).delete();await loadProducts()}catch(e){alert(e.message)}};function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-</script></body></html>
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NARI FASHION Admin</title>
+
+  <link rel="stylesheet" href="admin.css">
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+
+<div id="login" class="box">
+  <h1>NARI FASHION</h1>
+  <h2>Admin Login</h2>
+
+  <input
+    id="email"
+    type="email"
+    placeholder="Admin email"
+    autocomplete="username"
+  >
+
+  <input
+    id="password"
+    type="password"
+    placeholder="Password"
+    autocomplete="current-password"
+  >
+
+  <button id="loginBtn" type="button">Login</button>
+
+  <p id="loginMsg"></p>
+</div>
+
+
+<div id="panel" class="hidden">
+
+  <header>
+    <b>Admin Dashboard</b>
+    <button id="logout" type="button">Logout</button>
+  </header>
+
+  <main>
+
+    <section class="stats">
+      <div>
+        Products
+        <b id="pCount">0</b>
+      </div>
+
+      <div>
+        Orders
+        <b id="oCount">0</b>
+      </div>
+    </section>
+
+
+    <section class="form">
+
+      <h2>Add / Edit Product</h2>
+
+      <input id="pid" type="hidden">
+
+      <input
+        id="name"
+        placeholder="Product name"
+      >
+
+      <input
+        id="price"
+        type="number"
+        placeholder="Price"
+      >
+
+      <input
+        id="stock"
+        type="number"
+        placeholder="Stock"
+      >
+
+      <input
+        id="image"
+        placeholder="Image URL"
+      >
+
+      <button id="save" type="button">
+        Save Product
+      </button>
+
+      <button
+        id="clear"
+        class="secondary"
+        type="button"
+      >
+        Clear
+      </button>
+
+      <p id="msg"></p>
+
+    </section>
+
+
+    <section>
+
+      <h2>Products</h2>
+
+      <div id="productList"></div>
+
+    </section>
+
+
+    <section>
+
+      <h2>Orders</h2>
+
+      <div id="orders"></div>
+
+    </section>
+
+  </main>
+
+</div>
+
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
+  authDomain: "nari-fashion-947a7.firebaseapp.com",
+  projectId: "nari-fashion-947a7",
+  storageBucket: "nari-fashion-947a7.firebasestorage.app",
+  messagingSenderId: "529668256601",
+  appId: "1:529668256601:web:b3cc39c8ea7c783133d248"
+};
+
+
+/* CURRENT ADMIN UID */
+const ADMIN_UID = "GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
+
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+const $ = id => document.getElementById(id);
+
+let products = [];
+
+
+/* =========================
+   LOGIN
+========================= */
+
+$("loginBtn").addEventListener("click", async () => {
+
+  const email = $("email").value.trim();
+  const password = $("password").value;
+
+  if (!email || !password) {
+    $("loginMsg").textContent =
+      "Email aur password bharo.";
+    return;
+  }
+
+  $("loginBtn").disabled = true;
+  $("loginBtn").textContent = "Logging in...";
+  $("loginMsg").textContent = "";
+
+  try {
+
+    await auth.signInWithEmailAndPassword(
+      email,
+      password
+    );
+
+  } catch (e) {
+
+    console.error(e);
+
+    $("loginMsg").textContent =
+      "Login failed: " + (e.code || e.message);
+
+  } finally {
+
+    $("loginBtn").disabled = false;
+    $("loginBtn").textContent = "Login";
+
+  }
+
+});
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+$("logout").onclick = () => {
+  auth.signOut();
+};
+
+
+/* =========================
+   AUTH CHECK
+========================= */
+
+auth.onAuthStateChanged(async user => {
+
+  if (user && user.uid === ADMIN_UID) {
+
+    $("login").classList.add("hidden");
+
+    $("panel").classList.remove("hidden");
+
+    await load();
+
+  }
+
+  else if (user) {
+
+    $("loginMsg").textContent =
+      "This account is not the admin account.";
+
+    await auth.signOut();
+
+  }
+
+  else {
+
+    $("login").classList.remove("hidden");
+
+    $("panel").classList.add("hidden");
+
+  }
+
+});
+
+
+/* =========================
+   LOAD EVERYTHING
+========================= */
+
+async function load() {
+
+  await loadProducts();
+
+  await loadOrders();
+
+}
+
+
+/* =========================
+   LOAD PRODUCTS
+========================= */
+
+async function loadProducts() {
+
+  try {
+
+    const snapshot =
+      await db.collection("products").get();
+
+    products = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+
+    $("pCount").textContent =
+      products.length;
+
+
+    $("productList").innerHTML =
+      products.map(p => `
+
+        <div class="item">
+
+          <div>
+
+            <img
+              src="${p.image || "https://placehold.co/100"}"
+            >
+
+            <b>${esc(p.name)}</b>
+
+            <div>
+              ₹${Number(p.price || 0)}
+              • Stock ${Number(p.stock || 0)}
+            </div>
+
+          </div>
+
+
+          <div class="actions">
+
+            <button
+              onclick="editProduct('${p.id}')"
+            >
+              Edit
+            </button>
+
+
+            <button
+              class="danger"
+              onclick="deleteProduct('${p.id}')"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      `).join("") || "<p>No products.</p>";
+
+  }
+
+  catch (e) {
+
+    $("productList").innerHTML =
+      "<p>Products load nahi hue: "
+      + esc(e.message)
+      + "</p>";
+
+  }
+
+}
+
+
+/* =========================
+   LOAD ORDERS
+========================= */
+
+async function loadOrders() {
+
+  try {
+
+    const snapshot =
+      await db
+        .collection("orders")
+        .orderBy("createdAt", "desc")
+        .get();
+
+
+    $("oCount").textContent =
+      snapshot.size;
+
+
+    $("orders").innerHTML =
+      snapshot.docs.map(doc => {
+
+        const o = doc.data();
+
+        return `
+
+          <div class="order">
+
+            <b>
+              ${esc(o.customerName || "")}
+            </b>
+
+            • ${esc(o.customerPhone || "")}
+
+            <br>
+
+            ${esc(o.address || "")}
+
+            <br>
+
+            <b>
+              ₹${Number(o.total || 0)
+                .toLocaleString("en-IN")}
+            </b>
+
+            • ${esc(o.status || "pending")}
+
+            <br>
+
+            <small>
+              ${(o.items || [])
+                .map(i =>
+                  esc(i.name) + " × " + i.qty
+                )
+                .join(", ")}
+            </small>
+
+          </div>
+
+        `;
+
+      }).join("") || "<p>No orders.</p>";
+
+  }
+
+  catch (e) {
+
+    $("orders").innerHTML =
+      "<p>Orders load nahi hue: "
+      + esc(e.message)
+      + "</p>";
+
+  }
+
+}
+
+
+/* =========================
+   SAVE PRODUCT
+========================= */
+
+$("save").onclick = async () => {
+
+  const data = {
+
+    name: $("name").value.trim(),
+
+    price: Number(
+      $("price").value
+    ),
+
+    stock: Number(
+      $("stock").value
+    ),
+
+    image: $("image").value.trim(),
+
+    updatedAt:
+      firebase.firestore.FieldValue
+        .serverTimestamp()
+
+  };
+
+
+  if (!data.name) {
+
+    $("msg").textContent =
+      "Product name required.";
+
+    return;
+
+  }
+
+
+  try {
+
+    if ($("pid").value) {
+
+      await db
+        .collection("products")
+        .doc($("pid").value)
+        .update(data);
+
+    }
+
+    else {
+
+      await db
+        .collection("products")
+        .add({
+
+          ...data,
+
+          createdAt:
+            firebase.firestore.FieldValue
+              .serverTimestamp()
+
+        });
+
+    }
+
+
+    $("msg").textContent =
+      "Saved!";
+
+    clearForm();
+
+    await loadProducts();
+
+  }
+
+  catch (e) {
+
+    $("msg").textContent =
+      "Save failed: " + e.message;
+
+  }
+
+};
+
+
+/* =========================
+   CLEAR FORM
+========================= */
+
+$("clear").onclick = clearForm;
+
+
+function clearForm() {
+
+  $("pid").value = "";
+
+  $("name").value = "";
+
+  $("price").value = "";
+
+  $("stock").value = "";
+
+  $("image").value = "";
+
+}
+
+
+/* =========================
+   EDIT PRODUCT
+========================= */
+
+window.editProduct = id => {
+
+  const p =
+    products.find(x => x.id === id);
+
+  if (!p) return;
+
+
+  $("pid").value = id;
+
+  $("name").value = p.name || "";
+
+  $("price").value = p.price || 0;
+
+  $("stock").value = p.stock || 0;
+
+  $("image").value = p.image || "";
+
+
+  scrollTo(0, 0);
+
+};
+
+
+/* =========================
+   DELETE PRODUCT
+========================= */
+
+window.deleteProduct = async id => {
+
+  if (!confirm("Delete product?")) {
+    return;
+  }
+
+
+  try {
+
+    await db
+      .collection("products")
+      .doc(id)
+      .delete();
+
+    await loadProducts();
+
+  }
+
+  catch (e) {
+
+    alert(e.message);
+
+  }
+
+};
+
+
+/* =========================
+   SECURITY ESCAPE
+========================= */
+
+function esc(s) {
+
+  return String(s ?? "")
+    .replace(
+      /[&<>"']/g,
+      c => ({
+
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+
+      }[c])
+    );
+
+}
+
+</script>
+
+</body>
+</html>
