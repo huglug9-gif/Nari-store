@@ -1,15 +1,8 @@
-NARI FASHION - Firebase version
+NARI FASHION - Firebase Website (Fixed)
 
+Files are at the ZIP root so they can be uploaded directly to GitHub/Netlify.
+Admin page: admin.html
 Firebase project: nari-fashion-947a7
-Admin UID is embedded only for UI-side admin check; Firestore rules remain the real security layer.
+Admin UID is built into the admin page for access control.
 
-Files:
-index.html - customer site
-admin.html - admin panel
-firebase-config.js - Firebase web config
-firebase.js - Firebase initialization
-script.js - products/cart/orders
-admin.js - login/product/order management
-style.css/admin.css - styling
-
-Before publishing, make sure Firestore rules are published and Authentication Email/Password is enabled.
+Do not share passwords or OTPs.
