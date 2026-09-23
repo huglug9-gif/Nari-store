@@ -2,7 +2,8 @@
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 <title>NARI FASHION - Admin Panel</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
@@ -46,7 +47,7 @@ input,textarea,select{
   background:#fff;
   padding:35px;
   border-radius:20px;
-  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  box-shadow:0 20px 60px #0005;
 }
 
 .loginLogo{
@@ -83,10 +84,6 @@ input,textarea,select{
   border-radius:10px;
   font-size:16px;
   font-weight:bold;
-}
-
-.loginBtn:disabled{
-  opacity:.6;
 }
 
 #loginError{
@@ -218,7 +215,7 @@ input,textarea,select{
   background:#fff;
   border-radius:16px;
   padding:20px;
-  box-shadow:0 3px 15px rgba(0,0,0,.05);
+  box-shadow:0 3px 15px #0000000d;
 }
 
 .statTop{
@@ -253,7 +250,7 @@ input,textarea,select{
   background:#fff;
   border-radius:17px;
   padding:20px;
-  box-shadow:0 3px 15px rgba(0,0,0,.05);
+  box-shadow:0 3px 15px #0000000d;
   margin-bottom:20px;
 }
 
@@ -306,32 +303,6 @@ input,textarea,select{
   padding:9px 13px;
   border-radius:8px;
   font-weight:700;
-}
-
-/* CUSTOMER LOCATION BUTTON */
-.locationAdminBtn{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  margin-top:10px;
-  padding:10px 14px;
-  background:#198754;
-  color:#fff;
-  border-radius:9px;
-  text-decoration:none;
-  font-weight:700;
-  font-size:13px;
-}
-
-.locationAdminBtn:hover{
-  opacity:.9;
-}
-
-.locationCoords{
-  display:block;
-  margin-top:7px;
-  color:#777;
-  font-size:11px;
 }
 
 .formGrid{
@@ -408,6 +379,34 @@ textarea.input{
 .productSizes{
   font-size:12px;
   margin-bottom:12px;
+}
+
+.stockLine{
+  font-size:14px;
+  font-weight:800;
+  margin:8px 0;
+}
+
+.stockOk{
+  color:#198754;
+}
+
+.stockOut{
+  color:#dc3545;
+}
+
+.stockControls{
+  display:flex;
+  gap:5px;
+  align-items:center;
+  margin:8px 0;
+}
+
+.stockControls input{
+  width:75px;
+  padding:8px;
+  border:1px solid #ddd;
+  border-radius:7px;
 }
 
 .productActions{
@@ -522,6 +521,27 @@ textarea.input{
   margin-top:15px;
 }
 
+.locationAdminBtn{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:10px;
+  padding:10px 14px;
+  background:#198754;
+  color:#fff;
+  border-radius:9px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:13px;
+}
+
+.locationCoords{
+  display:block;
+  margin-top:7px;
+  color:#777;
+  font-size:11px;
+}
+
 .simpleCard{
   border:1px solid #eee;
   border-radius:13px;
@@ -565,109 +585,114 @@ textarea.input{
 }
 
 @media(max-width:1100px){
-  .productGrid{
-    grid-template-columns:repeat(3,1fr);
-  }
 
-  .stats{
-    grid-template-columns:repeat(2,1fr);
-  }
+.productGrid{
+  grid-template-columns:repeat(3,1fr);
+}
+
+.stats{
+  grid-template-columns:repeat(2,1fr);
+}
+
 }
 
 @media(max-width:800px){
-  .sidebar{
-    width:220px;
-  }
 
-  .main{
-    margin-left:220px;
-    width:calc(100% - 220px);
-  }
+.sidebar{
+  width:220px;
+}
 
-  .productGrid{
-    grid-template-columns:repeat(2,1fr);
-  }
+.main{
+  margin-left:220px;
+  width:calc(100% - 220px);
+}
+
+.productGrid{
+  grid-template-columns:repeat(2,1fr);
+}
+
 }
 
 @media(max-width:600px){
 
-  .sidebar{
-    display:none;
-  }
+.sidebar{
+  display:none;
+}
 
-  .main{
-    margin-left:0;
-    width:100%;
-    padding:12px;
-  }
+.main{
+  margin-left:0;
+  width:100%;
+  padding:12px;
+}
 
-  .mobileHeader{
-    display:flex;
-    background:#111;
-    color:#fff;
-    padding:15px;
-    justify-content:space-between;
-    align-items:center;
-    margin:-12px -12px 18px;
-  }
+.mobileHeader{
+  display:flex;
+  background:#111;
+  color:#fff;
+  padding:15px;
+  justify-content:space-between;
+  align-items:center;
+  margin:-12px -12px 18px;
+}
 
-  .stats{
-    grid-template-columns:1fr 1fr;
-    gap:9px;
-  }
+.stats{
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
 
-  .statCard{
-    padding:14px;
-  }
+.statCard{
+  padding:14px;
+}
 
-  .statCard h3{
-    font-size:23px;
-  }
+.statCard h3{
+  font-size:23px;
+}
 
-  .formGrid,
-  .orderInfo{
-    grid-template-columns:1fr;
-  }
+.formGrid,
+.orderInfo{
+  grid-template-columns:1fr;
+}
 
-  .productGrid{
-    grid-template-columns:1fr 1fr;
-    gap:9px;
-  }
+.productGrid{
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+}
 
-  .productImage{
-    height:160px;
-  }
+.productImage{
+  height:160px;
+}
 
-  .card{
-    padding:14px;
-  }
+.card{
+  padding:14px;
+}
 
-  .mobileNav{
-    display:flex;
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    background:#111;
-    z-index:999;
-    padding:7px;
-    justify-content:space-around;
-  }
+.mobileNav{
+  display:flex;
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#111;
+  z-index:999;
+  padding:7px;
+  justify-content:space-around;
+}
 
-  .mobileNav button{
-    background:transparent;
-    color:#aaa;
-    font-size:10px;
-    padding:6px;
-  }
+.mobileNav button{
+  background:transparent;
+  color:#aaa;
+  font-size:10px;
+  padding:6px;
+}
 
-  .mobileNav button.active{
-    color:#fff;
-  }
+.mobileNav button.active{
+  color:#fff;
+}
 
-  body{
-    padding-bottom:65px;
-  }
+body{
+  padding-bottom:65px;
+}
+
 }
 </style>
 </head>
@@ -675,602 +700,648 @@ textarea.input{
 <body>
 
 <!-- LOGIN -->
+
 <div id="loginScreen">
 
-  <div class="loginBox">
+<div class="loginBox">
 
-    <div class="loginLogo">
-      NARI FASHION
-    </div>
+<div class="loginLogo">
+NARI FASHION
+</div>
 
-    <div class="loginSub">
-      Admin Dashboard
-    </div>
+<div class="loginSub">
+Admin Dashboard
+</div>
 
-    <input
-      id="email"
-      type="email"
-      class="input"
-      placeholder="Admin Email"
-      autocomplete="username"
-    >
+<input
+id="email"
+type="email"
+class="input"
+placeholder="Admin Email"
+autocomplete="username"
+>
 
-    <input
-      id="password"
-      type="password"
-      class="input"
-      placeholder="Password"
-      autocomplete="current-password"
-    >
+<input
+id="password"
+type="password"
+class="input"
+placeholder="Password"
+autocomplete="current-password"
+>
 
-    <button
-      type="button"
-      id="loginButton"
-      class="loginBtn"
-      onclick="login()"
-    >
-      Login
-    </button>
+<button
+type="button"
+id="loginButton"
+class="loginBtn"
+onclick="login()"
+>
+Login
+</button>
 
-    <div id="loginError"></div>
+<div id="loginError"></div>
 
-  </div>
+</div>
 
 </div>
 
 
-<!-- ADMIN PANEL -->
+<!-- ADMIN -->
+
 <div id="adminPanel">
 
 <div class="layout">
 
-<!-- SIDEBAR -->
 <aside class="sidebar">
 
-  <div class="brand">
-    <h1>NARI FASHION</h1>
-    <p>Admin Dashboard</p>
-  </div>
+<div class="brand">
 
-  <div class="nav">
+<h1>
+NARI FASHION
+</h1>
 
-    <button
-      class="active"
-      onclick="openSection('dashboard',this)"
-    >
-      📊 Dashboard
-    </button>
+<p>
+Admin Dashboard
+</p>
 
-    <button
-      onclick="openSection('products',this)"
-    >
-      🛍️ Products
-    </button>
+</div>
 
-    <button
-      onclick="openSection('orders',this)"
-    >
-      📦 Orders
-    </button>
+<div class="nav">
 
-    <button
-      onclick="openSection('complaints',this)"
-    >
-      💬 Complaints
-    </button>
+<button
+class="active"
+onclick="openSection('dashboard',this)"
+>
+📊 Dashboard
+</button>
 
-    <button
-      onclick="openSection('reviews',this)"
-    >
-      ⭐ Reviews
-    </button>
+<button
+onclick="openSection('products',this)"
+>
+🛍️ Products
+</button>
 
-  </div>
+<button
+onclick="openSection('orders',this)"
+>
+📦 Orders
+</button>
 
-  <button
-    class="logout"
-    onclick="logout()"
-  >
-    Logout
-  </button>
+<button
+onclick="openSection('complaints',this)"
+>
+💬 Complaints
+</button>
+
+<button
+onclick="openSection('reviews',this)"
+>
+⭐ Reviews
+</button>
+
+</div>
+
+<button
+class="logout"
+onclick="logout()"
+>
+Logout
+</button>
 
 </aside>
 
 
-<!-- MAIN -->
 <main class="main">
 
 <div class="mobileHeader">
 
-  <strong>
-    NARI FASHION
-  </strong>
+<strong>
+NARI FASHION
+</strong>
 
-  <button
-    onclick="logout()"
-    style="background:#222;color:#fff;padding:7px 10px;border-radius:7px"
-  >
-    Logout
-  </button>
+<button
+onclick="logout()"
+style="background:#222;color:#fff;padding:7px 10px;border-radius:7px"
+>
+Logout
+</button>
 
 </div>
 
 
 <!-- DASHBOARD -->
+
 <section
-  id="dashboard"
-  class="section active"
+id="dashboard"
+class="section active"
 >
 
-  <div class="topbar">
+<div class="topbar">
 
-    <div class="pageTitle">
+<div class="pageTitle">
 
-      <h2>
-        Dashboard
-      </h2>
+<h2>
+Dashboard
+</h2>
 
-      <p>
-        NARI FASHION ka overview
-      </p>
+<p>
+NARI FASHION ka overview
+</p>
 
-    </div>
+</div>
 
-    <button
-      class="refreshBtn"
-      onclick="loadAll()"
-    >
-      ↻ Refresh
-    </button>
+<button
+class="refreshBtn"
+onclick="loadAll()"
+>
+↻ Refresh
+</button>
 
-  </div>
-
-
-  <div class="stats">
-
-    <div class="statCard">
-
-      <div class="statTop">
-        <span>Products</span>
-
-        <div class="statIcon">
-          🛍️
-        </div>
-      </div>
-
-      <h3 id="statProducts">
-        0
-      </h3>
-
-      <p>
-        Total Products
-      </p>
-
-    </div>
+</div>
 
 
-    <div class="statCard">
+<div class="stats">
 
-      <div class="statTop">
-        <span>Orders</span>
+<div class="statCard">
 
-        <div class="statIcon">
-          📦
-        </div>
-      </div>
+<div class="statTop">
 
-      <h3 id="statOrders">
-        0
-      </h3>
+<span>
+Products
+</span>
 
-      <p>
-        Total Orders
-      </p>
+<div class="statIcon">
+🛍️
+</div>
 
-    </div>
+</div>
 
+<h3 id="statProducts">
+0
+</h3>
 
-    <div class="statCard">
+<p>
+Total Products
+</p>
 
-      <div class="statTop">
-        <span>Pending</span>
-
-        <div class="statIcon">
-          ⏳
-        </div>
-      </div>
-
-      <h3 id="statPending">
-        0
-      </h3>
-
-      <p>
-        Pending Orders
-      </p>
-
-    </div>
+</div>
 
 
-    <div class="statCard">
+<div class="statCard">
 
-      <div class="statTop">
-        <span>Sales</span>
+<div class="statTop">
 
-        <div class="statIcon">
-          ₹
-        </div>
-      </div>
+<span>
+Orders
+</span>
 
-      <h3 id="statSales">
-        ₹0
-      </h3>
+<div class="statIcon">
+📦
+</div>
 
-      <p>
-        Delivered Sales
-      </p>
+</div>
 
-    </div>
+<h3 id="statOrders">
+0
+</h3>
 
-  </div>
+<p>
+Total Orders
+</p>
+
+</div>
 
 
-  <div class="card">
+<div class="statCard">
 
-    <div class="cardHeader">
+<div class="statTop">
 
-      <h3>
-        Welcome 👋
-      </h3>
+<span>
+Pending
+</span>
 
-    </div>
+<div class="statIcon">
+⏳
+</div>
 
-    <p
-      style="color:#777;font-size:14px"
-    >
-      Yahan se tum NARI FASHION ke
-      products, orders, complaints aur
-      customer reviews manage kar sakte ho.
-    </p>
+</div>
 
-  </div>
+<h3 id="statPending">
+0
+</h3>
+
+<p>
+Pending Orders
+</p>
+
+</div>
+
+
+<div class="statCard">
+
+<div class="statTop">
+
+<span>
+Sales
+</span>
+
+<div class="statIcon">
+₹
+</div>
+
+</div>
+
+<h3 id="statSales">
+₹0
+</h3>
+
+<p>
+Delivered Sales
+</p>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+Welcome 👋
+</h3>
+
+<p
+style="color:#777;font-size:14px;margin-top:8px"
+>
+Yahan se tum products, stock, orders,
+complaints aur customer reviews manage
+kar sakte ho.
+</p>
+
+</div>
 
 </section>
 
 
 <!-- PRODUCTS -->
+
 <section
-  id="products"
-  class="section"
+id="products"
+class="section"
 >
 
-  <div class="topbar">
+<div class="topbar">
 
-    <div class="pageTitle">
+<div class="pageTitle">
 
-      <h2>
-        Products
-      </h2>
+<h2>
+Products
+</h2>
 
-      <p>
-        Products add aur manage karo
-      </p>
+<p>
+Product + Stock manage karo
+</p>
 
-    </div>
+</div>
 
-    <button
-      class="refreshBtn"
-      onclick="loadProducts()"
-    >
-      ↻ Refresh
-    </button>
+<button
+class="refreshBtn"
+onclick="loadProducts()"
+>
+↻ Refresh
+</button>
 
-  </div>
-
-
-  <div class="card">
-
-    <div class="cardHeader">
-
-      <h3 id="productFormTitle">
-        Add New Product
-      </h3>
-
-    </div>
+</div>
 
 
-    <input
-      type="hidden"
-      id="editProductId"
-    >
+<div class="card">
+
+<div class="cardHeader">
+
+<h3 id="productFormTitle">
+Add New Product
+</h3>
+
+</div>
 
 
-    <div class="formGrid">
-
-      <div class="formGroup">
-
-        <label>
-          Product Name
-        </label>
-
-        <input
-          id="productName"
-          class="input"
-          placeholder="Example: Designer Kurti"
-        >
-
-      </div>
+<input
+type="hidden"
+id="editProductId"
+>
 
 
-      <div class="formGroup">
-
-        <label>
-          Category
-        </label>
-
-        <input
-          id="productCategory"
-          class="input"
-          placeholder="Example: Kurti"
-        >
-
-      </div>
+<div class="formGrid">
 
 
-      <div class="formGroup">
+<div class="formGroup">
 
-        <label>
-          Price
-        </label>
+<label>
+Product Name
+</label>
 
-        <input
-          id="productPrice"
-          type="number"
-          class="input"
-          placeholder="999"
-        >
+<input
+id="productName"
+class="input"
+placeholder="Example: Designer Kurti"
+>
 
-      </div>
-
-
-      <div class="formGroup">
-
-        <label>
-          Sizes
-        </label>
-
-        <input
-          id="productSizes"
-          class="input"
-          placeholder="S,M,L,XL"
-        >
-
-      </div>
+</div>
 
 
-      <div class="formGroup full">
+<div class="formGroup">
 
-        <label>
-          Description
-        </label>
+<label>
+Category
+</label>
 
-        <textarea
-          id="productDescription"
-          class="input"
-          placeholder="Product description..."
-        ></textarea>
+<input
+id="productCategory"
+class="input"
+placeholder="Example: Kurti"
+>
 
-      </div>
-
-
-      <div class="formGroup full">
-
-        <label>
-          Product Image
-        </label>
-
-        <input
-          id="productImage"
-          type="file"
-          accept="image/*"
-          class="input"
-          onchange="previewImage(event)"
-        >
-
-        <img
-          id="imagePreview"
-          class="imagePreview"
-        >
-
-        <div
-          id="uploadStatus"
-          style="color:#777;font-size:13px"
-        ></div>
-
-      </div>
-
-    </div>
+</div>
 
 
-    <div
-      style="display:flex;gap:9px;flex-wrap:wrap"
-    >
+<div class="formGroup">
 
-      <button
-        class="primaryBtn"
-        onclick="saveProduct()"
-      >
-        Save Product
-      </button>
+<label>
+Price
+</label>
 
-      <button
-        class="lightBtn"
-        onclick="resetProductForm()"
-      >
-        Clear
-      </button>
+<input
+id="productPrice"
+type="number"
+min="0"
+class="input"
+placeholder="999"
+>
 
-    </div>
-
-  </div>
+</div>
 
 
-  <div class="card">
+<div class="formGroup">
 
-    <div class="cardHeader">
+<label>
+Stock Quantity
+</label>
 
-      <h3>
-        All Products
-      </h3>
+<input
+id="productStock"
+type="number"
+min="0"
+step="1"
+class="input"
+placeholder="10"
+>
 
-    </div>
+</div>
 
-    <div
-      id="productList"
-      class="productGrid"
-    >
 
-      <div class="loading">
-        Loading...
-      </div>
+<div class="formGroup">
 
-    </div>
+<label>
+Sizes
+</label>
 
-  </div>
+<input
+id="productSizes"
+class="input"
+placeholder="S,M,L,XL"
+>
+
+</div>
+
+
+<div class="formGroup">
+
+<label>
+Product Image
+</label>
+
+<input
+id="productImage"
+type="file"
+accept="image/*"
+class="input"
+onchange="previewImage(event)"
+>
+
+</div>
+
+
+<div class="formGroup full">
+
+<label>
+Description
+</label>
+
+<textarea
+id="productDescription"
+class="input"
+placeholder="Product description..."
+></textarea>
+
+</div>
+
+</div>
+
+
+<img
+id="imagePreview"
+class="imagePreview"
+>
+
+
+<div
+id="uploadStatus"
+style="color:#777;font-size:13px;margin-bottom:10px"
+></div>
+
+
+<div
+style="display:flex;gap:9px;flex-wrap:wrap"
+>
+
+<button
+class="primaryBtn"
+onclick="saveProduct()"
+>
+💾 Save Product
+</button>
+
+<button
+class="lightBtn"
+onclick="resetProductForm()"
+>
+Clear
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="cardHeader">
+
+<h3>
+All Products
+</h3>
+
+</div>
+
+<div
+id="productList"
+class="productGrid"
+>
+
+<div class="loading">
+Loading...
+</div>
+
+</div>
+
+</div>
 
 </section>
 
 
 <!-- ORDERS -->
+
 <section
-  id="orders"
-  class="section"
+id="orders"
+class="section"
 >
 
-  <div class="topbar">
+<div class="topbar">
 
-    <div class="pageTitle">
+<div class="pageTitle">
 
-      <h2>
-        Orders
-      </h2>
+<h2>
+Orders
+</h2>
 
-      <p>
-        Customer orders manage karo
-      </p>
+<p>
+Customer orders manage karo
+</p>
 
-    </div>
+</div>
 
-    <button
-      class="refreshBtn"
-      onclick="loadOrders()"
-    >
-      ↻ Refresh
-    </button>
+<button
+class="refreshBtn"
+onclick="loadOrders()"
+>
+↻ Refresh
+</button>
 
-  </div>
+</div>
 
 
-  <div class="card">
+<div class="card">
 
-    <div id="orderList">
+<div id="orderList">
 
-      <div class="loading">
-        Loading orders...
-      </div>
+<div class="loading">
+Loading orders...
+</div>
 
-    </div>
+</div>
 
-  </div>
+</div>
 
 </section>
 
 
 <!-- COMPLAINTS -->
+
 <section
-  id="complaints"
-  class="section"
+id="complaints"
+class="section"
 >
 
-  <div class="topbar">
+<div class="topbar">
 
-    <div class="pageTitle">
+<div class="pageTitle">
 
-      <h2>
-        Complaints
-      </h2>
+<h2>
+Complaints
+</h2>
 
-      <p>
-        Customer support requests
-      </p>
+<p>
+Customer support requests
+</p>
 
-    </div>
+</div>
 
-    <button
-      class="refreshBtn"
-      onclick="loadComplaints()"
-    >
-      ↻ Refresh
-    </button>
+<button
+class="refreshBtn"
+onclick="loadComplaints()"
+>
+↻ Refresh
+</button>
 
-  </div>
+</div>
 
 
-  <div class="card">
+<div class="card">
 
-    <div id="complaintList">
+<div id="complaintList">
 
-      <div class="loading">
-        Loading...
-      </div>
+<div class="loading">
+Loading...
+</div>
 
-    </div>
+</div>
 
-  </div>
+</div>
 
 </section>
 
 
 <!-- REVIEWS -->
+
 <section
-  id="reviews"
-  class="section"
+id="reviews"
+class="section"
 >
 
-  <div class="topbar">
+<div class="topbar">
 
-    <div class="pageTitle">
+<div class="pageTitle">
 
-      <h2>
-        Reviews
-      </h2>
+<h2>
+Reviews
+</h2>
 
-      <p>
-        Customer product reviews
-      </p>
+<p>
+Customer product reviews
+</p>
 
-    </div>
+</div>
 
-    <button
-      class="refreshBtn"
-      onclick="loadReviews()"
-    >
-      ↻ Refresh
-    </button>
+<button
+class="refreshBtn"
+onclick="loadReviews()"
+>
+↻ Refresh
+</button>
 
-  </div>
+</div>
 
 
-  <div class="card">
+<div class="card">
 
-    <div id="reviewList">
+<div id="reviewList">
 
-      <div class="loading">
-        Loading...
-      </div>
+<div class="loading">
+Loading...
+</div>
 
-    </div>
+</div>
 
-  </div>
+</div>
 
 </section>
 
@@ -1280,38 +1351,49 @@ textarea.input{
 
 
 <!-- MOBILE NAV -->
+
 <div class="mobileNav">
 
-  <button
-    class="active"
-    onclick="openMobile('dashboard',this)"
-  >
-    📊<br>Home
-  </button>
+<button
+class="active"
+onclick="openSection('dashboard',this)"
+>
+📊
+<br>
+Home
+</button>
 
-  <button
-    onclick="openMobile('products',this)"
-  >
-    🛍️<br>Products
-  </button>
+<button
+onclick="openSection('products',this)"
+>
+🛍️
+<br>
+Products
+</button>
 
-  <button
-    onclick="openMobile('orders',this)"
-  >
-    📦<br>Orders
-  </button>
+<button
+onclick="openSection('orders',this)"
+>
+📦
+<br>
+Orders
+</button>
 
-  <button
-    onclick="openMobile('complaints',this)"
-  >
-    💬<br>Support
-  </button>
+<button
+onclick="openSection('complaints',this)"
+>
+💬
+<br>
+Support
+</button>
 
-  <button
-    onclick="openMobile('reviews',this)"
-  >
-    ⭐<br>Reviews
-  </button>
+<button
+onclick="openSection('reviews',this)"
+>
+⭐
+<br>
+Reviews
+</button>
 
 </div>
 
@@ -1324,115 +1406,107 @@ textarea.input{
    FIREBASE
 ========================= */
 
-const firebaseConfig = {
+const firebaseConfig={
 
-  apiKey:
-  "AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
+apiKey:
+"AIzaSyAqyKD4uqDvEy7n_pnGrpY02C-NToqVRb8",
 
-  authDomain:
-  "nari-fashion-947a7.firebaseapp.com",
+authDomain:
+"nari-fashion-947a7.firebaseapp.com",
 
-  projectId:
-  "nari-fashion-947a7",
+projectId:
+"nari-fashion-947a7",
 
-  storageBucket:
-  "nari-fashion-947a7.firebasestorage.app",
+storageBucket:
+"nari-fashion-947a7.firebasestorage.app",
 
-  messagingSenderId:
-  "529668256601",
+messagingSenderId:
+"529668256601",
 
-  appId:
-  "1:529668256601:web:b3cc39c8ea7c783133d248",
+appId:
+"1:529668256601:web:b3cc39c8ea7c783133d248",
 
-  measurementId:
-  "G-6QLMB312CM"
+measurementId:
+"G-6QLMB312CM"
 
 };
 
 
 if(!firebase.apps.length){
 
-  firebase.initializeApp(
-    firebaseConfig
-  );
+firebase.initializeApp(firebaseConfig);
 
 }
 
 
-const auth =
-  firebase.auth();
+const auth=firebase.auth();
 
-const db =
-  firebase.firestore();
+const db=firebase.firestore();
 
 
-const ADMIN_UID =
-  "GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
+/* =========================
+   ADMIN UID
+========================= */
+
+const ADMIN_UID=
+"GJXt6XRE6hgPtAKeNyNjcnBbjsZ2";
 
 
 /* =========================
    CLOUDINARY
 ========================= */
 
-const CLOUDINARY_CLOUD_NAME =
-  "ctw8rkyn";
+const CLOUDINARY_CLOUD_NAME=
+"ctw8rkyn";
 
-const CLOUDINARY_UPLOAD_PRESET =
-  "nari_fashion";
+const CLOUDINARY_UPLOAD_PRESET=
+"nari_fashion";
 
-const CLOUDINARY_UPLOAD_URL =
-  "https://api.cloudinary.com/v1_1/"
-  +
-  CLOUDINARY_CLOUD_NAME
-  +
-  "/image/upload";
+const CLOUDINARY_UPLOAD_URL=
+"https://api.cloudinary.com/v1_1/"
++
+CLOUDINARY_CLOUD_NAME
++
+"/image/upload";
 
 
-let products = [];
-
-let selectedImageFile = null;
-
-let existingImageUrl = "";
+let products=[];
 
 
 /* =========================
-   AUTH
+   AUTH CHECK
 ========================= */
 
-auth.onAuthStateChanged(
-  function(user){
+auth.onAuthStateChanged(function(user){
 
-    if(
-      user &&
-      user.uid === ADMIN_UID
-    ){
+if(
+user &&
+user.uid===ADMIN_UID
+){
 
-      document.getElementById(
-        "loginScreen"
-      ).style.display="none";
+document.getElementById(
+"loginScreen"
+).style.display="none";
 
-      document.getElementById(
-        "adminPanel"
-      ).style.display="block";
+document.getElementById(
+"adminPanel"
+).style.display="block";
 
-      loadAll();
+loadAll();
 
-    }
+}else{
 
-    else{
+document.getElementById(
+"loginScreen"
+).style.display="flex";
 
-      document.getElementById(
-        "loginScreen"
-      ).style.display="flex";
+document.getElementById(
+"adminPanel"
+).style.display="none";
 
-      document.getElementById(
-        "adminPanel"
-      ).style.display="none";
+}
 
-    }
-
-  }
-);
+});
 
 
 /* =========================
@@ -1441,145 +1515,89 @@ auth.onAuthStateChanged(
 
 async function login(){
 
-  const emailElement =
-    document.getElementById("email");
+const email=
+document.getElementById("email")
+.value
+.trim();
 
-  const passwordElement =
-    document.getElementById("password");
+const password=
+document.getElementById("password")
+.value;
 
-  const errorElement =
-    document.getElementById("loginError");
+const error=
+document.getElementById("loginError");
 
-  const buttonElement =
-    document.getElementById("loginButton");
-
-
-  const email =
-    emailElement.value.trim();
-
-  const password =
-    passwordElement.value;
+const btn=
+document.getElementById("loginButton");
 
 
-  errorElement.textContent="";
+error.textContent="";
 
 
-  if(!email){
+if(!email){
 
-    errorElement.textContent =
-      "Email enter karo.";
+error.textContent=
+"Email enter karo.";
 
-    emailElement.focus();
+return;
 
-    return;
-
-  }
+}
 
 
-  if(!password){
+if(!password){
 
-    errorElement.textContent =
-      "Password enter karo.";
+error.textContent=
+"Password enter karo.";
 
-    passwordElement.focus();
+return;
 
-    return;
-
-  }
+}
 
 
-  try{
+try{
 
-    buttonElement.disabled=true;
+btn.disabled=true;
 
-    buttonElement.textContent =
-      "Logging in...";
-
-
-    const result =
-      await auth.signInWithEmailAndPassword(
-        email,
-        password
-      );
+btn.textContent=
+"Logging in...";
 
 
-    console.log(
-      "Login UID:",
-      result.user.uid
-    );
+const result=
+await auth.signInWithEmailAndPassword(
+email,
+password
+);
 
 
-    if(
-      result.user.uid !== ADMIN_UID
-    ){
+if(
+result.user.uid!==ADMIN_UID
+){
 
-      await auth.signOut();
+await auth.signOut();
 
-      errorElement.textContent =
-        "Ye account admin nahi hai.";
+throw new Error(
+"Ye admin account nahi hai."
+);
 
-      return;
-
-    }
-
-  }
-
-  catch(error){
-
-    console.error(
-      "Firebase Login Error:",
-      error
-    );
+}
 
 
-    if(
-      error.code ===
-      "auth/invalid-credential"
-    ){
+}catch(e){
 
-      errorElement.textContent =
-        "Email ya password galat hai.";
+console.error(e);
 
-    }
+error.textContent=
+e.message ||
+"Login failed.";
 
-    else if(
-      error.code ===
-      "auth/user-not-found"
-    ){
+}finally{
 
-      errorElement.textContent =
-        "Ye email Firebase Auth mein nahi hai.";
+btn.disabled=false;
 
-    }
+btn.textContent=
+"Login";
 
-    else if(
-      error.code ===
-      "auth/wrong-password"
-    ){
-
-      errorElement.textContent =
-        "Password galat hai.";
-
-    }
-
-    else{
-
-      errorElement.textContent =
-        error.message ||
-        "Login failed.";
-
-    }
-
-  }
-
-  finally{
-
-    buttonElement.disabled=false;
-
-    buttonElement.textContent =
-      "Login";
-
-  }
+}
 
 }
 
@@ -1588,19 +1606,9 @@ async function login(){
    LOGOUT
 ========================= */
 
-async function logout(){
+function logout(){
 
-  try{
-
-    await auth.signOut();
-
-  }
-
-  catch(error){
-
-    console.error(error);
-
-  }
+auth.signOut();
 
 }
 
@@ -1609,93 +1617,99 @@ async function logout(){
    NAVIGATION
 ========================= */
 
-function openSection(
-  id,
-  button
-){
+function openSection(id,btn){
 
-  document
-    .querySelectorAll(".section")
-    .forEach(
-      s =>
-      s.classList.remove("active")
-    );
+document
+.querySelectorAll(".section")
+.forEach(
+x=>x.classList.remove("active")
+);
 
 
-  document
-    .getElementById(id)
-    .classList.add("active");
+const target=
+document.getElementById(id);
 
+if(target){
 
-  document
-    .querySelectorAll(".nav button")
-    .forEach(
-      b =>
-      b.classList.remove("active")
-    );
-
-
-  if(button){
-
-    button.classList.add("active");
-
-  }
-
-
-  if(id==="products")
-    loadProducts();
-
-  if(id==="orders")
-    loadOrders();
-
-  if(id==="complaints")
-    loadComplaints();
-
-  if(id==="reviews")
-    loadReviews();
+target.classList.add("active");
 
 }
 
 
-function openMobile(
-  id,
-  button
-){
-
-  openSection(
-    id,
-    null
-  );
+document
+.querySelectorAll(
+".nav button,.mobileNav button"
+)
+.forEach(
+x=>x.classList.remove("active")
+);
 
 
-  document
-    .querySelectorAll(
-      ".mobileNav button"
-    )
-    .forEach(
-      b =>
-      b.classList.remove("active")
-    );
+if(btn){
+
+btn.classList.add("active");
+
+}
 
 
-  button.classList.add("active");
+if(id==="products")
+loadProducts();
+
+if(id==="orders")
+loadOrders();
+
+if(id==="complaints")
+loadComplaints();
+
+if(id==="reviews")
+loadReviews();
 
 }
 
 
 /* =========================
-   LOAD ALL
+   ESCAPE HTML
 ========================= */
 
-function loadAll(){
+function escapeHtml(value){
 
-  loadProducts();
+return String(value??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
-  loadOrders();
+}
 
-  loadComplaints();
 
-  loadReviews();
+/* =========================
+   DATE
+========================= */
+
+function formatDate(timestamp){
+
+if(
+!timestamp ||
+!timestamp.toDate
+){
+
+return "Date unavailable";
+
+}
+
+
+try{
+
+return timestamp
+.toDate()
+.toLocaleString("en-IN");
+
+}catch(e){
+
+return "Date unavailable";
+
+}
 
 }
 
@@ -1706,149 +1720,29 @@ function loadAll(){
 
 function previewImage(event){
 
-  const file =
-    event.target.files[0];
+const file=
+event.target.files[0];
 
-  if(!file)
-    return;
-
-
-  selectedImageFile =
-    file;
+const img=
+document.getElementById(
+"imagePreview"
+);
 
 
-  const preview =
-    document.getElementById(
-      "imagePreview"
-    );
+if(!file){
 
+img.style.display="none";
 
-  preview.src =
-    URL.createObjectURL(file);
-
-  preview.style.display =
-    "block";
+return;
 
 }
 
 
-/* =========================
-   IMAGE COMPRESS
-========================= */
+img.src=
+URL.createObjectURL(file);
 
-function compressImage(file){
-
-  return new Promise(
-    function(resolve,reject){
-
-      const reader =
-        new FileReader();
-
-      const img =
-        new Image();
-
-      const canvas =
-        document.createElement(
-          "canvas"
-        );
-
-
-      reader.onload =
-        function(e){
-
-          img.onload =
-            function(){
-
-              let width =
-                img.width;
-
-              let height =
-                img.height;
-
-              const max =
-                1200;
-
-
-              if(
-                width > max ||
-                height > max
-              ){
-
-                if(width > height){
-
-                  height =
-                    height * max / width;
-
-                  width =
-                    max;
-
-                }
-
-                else{
-
-                  width =
-                    width * max / height;
-
-                  height =
-                    max;
-
-                }
-
-              }
-
-
-              canvas.width =
-                width;
-
-              canvas.height =
-                height;
-
-
-              const ctx =
-                canvas.getContext(
-                  "2d"
-                );
-
-
-              ctx.drawImage(
-                img,
-                0,
-                0,
-                width,
-                height
-              );
-
-
-              canvas.toBlob(
-                blob =>
-                resolve(blob),
-                "image/jpeg",
-                .82
-              );
-
-            };
-
-
-          img.onerror =
-            reject;
-
-
-          img.src =
-            e.target.result;
-
-        };
-
-
-      reader.onerror =
-        reject;
-
-
-      reader.readAsDataURL(
-        file
-      );
-
-    }
-  );
+img.style.display=
+"block";
 
 }
 
@@ -1859,67 +1753,48 @@ function compressImage(file){
 
 async function uploadImage(file){
 
-  const status =
-    document.getElementById(
-      "uploadStatus"
-    );
+const formData=
+new FormData();
+
+formData.append(
+"file",
+file
+);
+
+formData.append(
+"upload_preset",
+CLOUDINARY_UPLOAD_PRESET
+);
 
 
-  status.textContent =
-    "Image upload ho rahi hai...";
+const response=
+await fetch(
+CLOUDINARY_UPLOAD_URL,
+{
+method:"POST",
+body:formData
+}
+);
 
 
-  const compressed =
-    await compressImage(
-      file
-    );
+const data=
+await response.json();
 
 
-  const formData =
-    new FormData();
+if(
+!response.ok ||
+!data.secure_url
+){
+
+throw new Error(
+data.error?.message ||
+"Image upload failed"
+);
+
+}
 
 
-  formData.append(
-    "file",
-    compressed
-  );
-
-
-  formData.append(
-    "upload_preset",
-    CLOUDINARY_UPLOAD_PRESET
-  );
-
-
-  const response =
-    await fetch(
-      CLOUDINARY_UPLOAD_URL,
-      {
-        method:"POST",
-        body:formData
-      }
-    );
-
-
-  const data =
-    await response.json();
-
-
-  if(!response.ok){
-
-    throw new Error(
-      data.error?.message ||
-      "Image upload failed"
-    );
-
-  }
-
-
-  status.textContent =
-    "Image uploaded ✓";
-
-
-  return data.secure_url;
+return data.secure_url;
 
 }
 
@@ -1930,350 +1805,457 @@ async function uploadImage(file){
 
 async function saveProduct(){
 
-  const name =
-    document
-      .getElementById("productName")
-      .value
-      .trim();
+const id=
+document.getElementById(
+"editProductId"
+).value.trim();
 
 
-  const category =
-    document
-      .getElementById("productCategory")
-      .value
-      .trim();
+const name=
+document.getElementById(
+"productName"
+).value.trim();
 
 
-  const price =
-    Number(
-      document
-        .getElementById("productPrice")
-        .value
-    );
+const category=
+document.getElementById(
+"productCategory"
+).value.trim();
 
 
-  const sizesText =
-    document
-      .getElementById("productSizes")
-      .value
-      .trim();
+const price=
+Number(
+document.getElementById(
+"productPrice"
+).value
+);
 
 
-  const description =
-    document
-      .getElementById("productDescription")
-      .value
-      .trim();
+const stock=
+Number(
+document.getElementById(
+"productStock"
+).value
+);
 
 
-  const editId =
-    document
-      .getElementById("editProductId")
-      .value
-      .trim();
+const sizesText=
+document.getElementById(
+"productSizes"
+).value.trim();
 
 
-  if(!name){
+const description=
+document.getElementById(
+"productDescription"
+).value.trim();
 
-    alert(
-      "Product name bharna hai."
-    );
 
-    return;
+const file=
+document.getElementById(
+"productImage"
+).files[0];
 
-  }
 
+const status=
+document.getElementById(
+"uploadStatus"
+);
 
-  if(!category){
 
-    alert(
-      "Category bharna hai."
-    );
+if(!name){
 
-    return;
+alert(
+"Product name enter karo."
+);
 
-  }
+return;
 
+}
 
-  if(!price || price<=0){
 
-    alert(
-      "Valid price bharna hai."
-    );
+if(
+!Number.isFinite(price) ||
+price<0
+){
 
-    return;
+alert(
+"Valid price enter karo."
+);
 
-  }
+return;
 
+}
 
-  try{
 
-    let imageUrl =
-      existingImageUrl;
+if(
+!Number.isInteger(stock) ||
+stock<0
+){
 
+alert(
+"Stock 0 ya usse bada whole number hona chahiye."
+);
 
-    if(selectedImageFile){
+return;
 
-      imageUrl =
-        await uploadImage(
-          selectedImageFile
-        );
+}
 
-    }
 
+try{
 
-    if(!imageUrl){
+status.textContent=
+file
+?
+"Image upload ho rahi hai..."
+:
+"Saving...";
 
-      alert(
-        "Product image select karo."
-      );
 
-      return;
+let imageUrl=null;
 
-    }
 
+if(file){
 
-    const sizes =
-      sizesText
-      ?
-      sizesText
-        .split(",")
-        .map(
-          x => x.trim()
-        )
-        .filter(Boolean)
-      :
-      [];
+imageUrl=
+await uploadImage(file);
 
+}
 
-    const data = {
 
-      name,
+const data={
 
-      category,
+name:name,
 
-      price,
+category:category,
 
-      sizes,
+price:price,
 
-      description,
+stock:stock,
 
-      image:imageUrl,
+sizes:
+sizesText
+.split(",")
+.map(x=>x.trim())
+.filter(Boolean),
 
-      imageUrl:imageUrl,
+description:description,
 
-      updatedAt:
-        firebase.firestore
-          .FieldValue
-          .serverTimestamp()
+updatedAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp()
 
-    };
+};
 
 
-    if(editId){
+if(imageUrl){
 
-      await db
-        .collection("products")
-        .doc(editId)
-        .update(data);
+data.image=
+imageUrl;
 
+}
 
-      alert(
-        "Product update ho gaya ✓"
-      );
 
-    }
+if(id){
 
-    else{
+await db
+.collection("products")
+.doc(id)
+.update(data);
 
-      data.createdAt =
-        firebase.firestore
-          .FieldValue
-          .serverTimestamp();
 
+alert(
+"✅ Product aur stock successfully update ho gaya."
+);
 
-      await db
-        .collection("products")
-        .add(data);
+}else{
 
+data.createdAt=
+firebase.firestore
+.FieldValue
+.serverTimestamp();
 
-      alert(
-        "Product add ho gaya ✓"
-      );
 
-    }
+if(!data.image){
 
+data.image="";
 
-    resetProductForm();
+}
 
-    loadProducts();
 
-  }
+await db
+.collection("products")
+.add(data);
 
-  catch(error){
 
-    console.error(error);
+alert(
+"✅ Product successfully add ho gaya."
+);
 
-    alert(
-      "Product save nahi hua:\n"
-      +
-      error.message
-    );
+}
 
-  }
+
+resetProductForm();
+
+await loadProducts();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"❌ Product save nahi hua.\n\n"
++
+error.message
+);
+
+}finally{
+
+status.textContent="";
+
+}
 
 }
 
 
 /* =========================
-   PRODUCTS
+   RESET PRODUCT
 ========================= */
 
-async function loadProducts(){
+function resetProductForm(){
 
-  const list =
-    document.getElementById(
-      "productList"
-    );
+document.getElementById(
+"editProductId"
+).value="";
 
+document.getElementById(
+"productName"
+).value="";
 
-  list.innerHTML =
-    '<div class="loading">Loading...</div>';
+document.getElementById(
+"productCategory"
+).value="";
 
+document.getElementById(
+"productPrice"
+).value="";
 
-  try{
+document.getElementById(
+"productStock"
+).value="";
 
-    const snapshot =
-      await db
-        .collection("products")
-        .get();
+document.getElementById(
+"productSizes"
+).value="";
 
+document.getElementById(
+"productDescription"
+).value="";
 
-    products=[];
+document.getElementById(
+"productImage"
+).value="";
 
+document.getElementById(
+"imagePreview"
+).style.display="none";
 
-    snapshot.forEach(
-      doc => {
+document.getElementById(
+"uploadStatus"
+).textContent="";
 
-        products.push({
-
-          id:doc.id,
-
-          ...doc.data()
-
-        });
-
-      }
-    );
-
-
-    renderProducts();
-
-
-    document.getElementById(
-      "statProducts"
-    ).textContent =
-      products.length;
-
-  }
-
-  catch(error){
-
-    console.error(error);
-
-    list.innerHTML =
-      '<div class="empty">Products load nahi ho paaye.</div>';
-
-  }
+document.getElementById(
+"productFormTitle"
+).textContent=
+"Add New Product";
 
 }
 
 
-function renderProducts(){
+/* =========================
+   LOAD PRODUCTS
+========================= */
 
-  const list =
-    document.getElementById(
-      "productList"
-    );
+async function loadProducts(){
 
-
-  if(!products.length){
-
-    list.innerHTML =
-      '<div class="empty">Abhi koi product nahi hai.</div>';
-
-    return;
-
-  }
+const list=
+document.getElementById(
+"productList"
+);
 
 
-  list.innerHTML =
-    products
-      .map(
-        function(product){
-
-          const image =
-            product.image ||
-            product.imageUrl ||
-            "https://via.placeholder.com/500";
+list.innerHTML=
+'<div class="loading">Loading products...</div>';
 
 
-          const sizes =
-            Array.isArray(
-              product.sizes
-            )
-            ?
-            product.sizes.join(", ")
-            :
-            (
-              product.sizes ||
-              "-"
-            );
+try{
+
+const snapshot=
+await db
+.collection("products")
+.get();
 
 
-          return `
+products=
+snapshot.docs.map(
+doc=>({
+id:doc.id,
+...doc.data()
+})
+);
+
+
+products.sort(
+(a,b)=>
+String(a.name||"")
+.localeCompare(
+String(b.name||"")
+)
+);
+
+
+document.getElementById(
+"statProducts"
+).textContent=
+products.length;
+
+
+if(!products.length){
+
+list.innerHTML=
+'<div class="empty">Abhi koi product nahi hai.</div>';
+
+return;
+
+}
+
+
+list.innerHTML=
+products
+.map(product=>{
+
+const stock=
+Number(product.stock||0);
+
+
+const sizes=
+Array.isArray(product.sizes)
+?
+product.sizes.join(", ")
+:
+String(
+product.sizes||""
+);
+
+
+return `
 
 <div class="productCard">
 
 <img
-  class="productImage"
-  src="${escapeHtml(image)}"
-  onerror="this.src='https://via.placeholder.com/500'"
+class="productImage"
+src="${escapeHtml(product.image||"")}"
+onerror="this.style.display='none'"
 >
+
 
 <div class="productBody">
 
 <h3>
-${escapeHtml(product.name || "Product")}
+${escapeHtml(
+product.name||
+"Unnamed Product"
+)}
 </h3>
 
+
 <div class="productPrice">
-₹${Number(product.price || 0)}
+
+₹${Number(
+product.price||0
+).toLocaleString("en-IN")}
+
 </div>
+
 
 <div class="productCategory">
-${escapeHtml(product.category || "")}
+
+${escapeHtml(
+product.category||
+"No category"
+)}
+
 </div>
 
-<div class="productSizes">
-<b>Sizes:</b>
-${escapeHtml(sizes)}
+
+<div
+class="stockLine ${
+stock>0
+?
+"stockOk"
+:
+"stockOut"
+}"
+>
+
+${
+stock>0
+?
+"📦 Stock: "+stock
+:
+"❌ Out of Stock"
+}
+
 </div>
+
+
+<div class="stockControls">
+
+<input
+id="stock_${product.id}"
+type="number"
+min="0"
+step="1"
+value="${stock}"
+>
+
+<button
+class="greenBtn"
+onclick="quickStockUpdate('${product.id}')"
+>
+💾 Stock
+</button>
+
+</div>
+
+
+<div class="productSizes">
+
+Sizes:
+${escapeHtml(
+sizes||"Not set"
+)}
+
+</div>
+
 
 <div class="productActions">
 
 <button
-  class="lightBtn"
-  onclick="editProduct('${product.id}')"
+class="orangeBtn"
+onclick="editProduct('${product.id}')"
 >
-Edit
+✏️ Edit
 </button>
 
+
 <button
-  class="redBtn"
-  onclick="deleteProduct('${product.id}')"
+class="redBtn"
+onclick="deleteProduct('${product.id}')"
 >
-Delete
+🗑️ Delete
 </button>
 
 </div>
@@ -2284,431 +2266,341 @@ Delete
 
 `;
 
-        }
-      )
-      .join("");
+})
+.join("");
+
+
+}catch(error){
+
+console.error(error);
+
+list.innerHTML=
+'<div class="empty">❌ '
++
+escapeHtml(error.message)
++
+'</div>';
 
 }
-
-
-function editProduct(id){
-
-  const product =
-    products.find(
-      item =>
-      item.id===id
-    );
-
-
-  if(!product)
-    return;
-
-
-  document.getElementById(
-    "editProductId"
-  ).value =
-    product.id;
-
-
-  document.getElementById(
-    "productName"
-  ).value =
-    product.name || "";
-
-
-  document.getElementById(
-    "productCategory"
-  ).value =
-    product.category || "";
-
-
-  document.getElementById(
-    "productPrice"
-  ).value =
-    product.price || "";
-
-
-  document.getElementById(
-    "productDescription"
-  ).value =
-    product.description || "";
-
-
-  document.getElementById(
-    "productSizes"
-  ).value =
-    Array.isArray(product.sizes)
-    ?
-    product.sizes.join(",")
-    :
-    (
-      product.sizes ||
-      ""
-    );
-
-
-  existingImageUrl =
-    product.image ||
-    product.imageUrl ||
-    "";
-
-
-  selectedImageFile =
-    null;
-
-
-  const preview =
-    document.getElementById(
-      "imagePreview"
-    );
-
-
-  if(existingImageUrl){
-
-    preview.src =
-      existingImageUrl;
-
-    preview.style.display =
-      "block";
-
-  }
-
-
-  document.getElementById(
-    "productFormTitle"
-  ).textContent =
-    "Edit Product";
-
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
-}
-
-
-async function deleteProduct(id){
-
-  if(
-    !confirm(
-      "Kya tum ye product delete karna chahte ho?"
-    )
-  )
-    return;
-
-
-  try{
-
-    await db
-      .collection("products")
-      .doc(id)
-      .delete();
-
-
-    alert(
-      "Product delete ho gaya."
-    );
-
-
-    loadProducts();
-
-  }
-
-  catch(error){
-
-    alert(
-      "Delete nahi hua:\n"
-      +
-      error.message
-    );
-
-  }
-
-}
-
-
-function resetProductForm(){
-
-  document.getElementById(
-    "editProductId"
-  ).value="";
-
-
-  document.getElementById(
-    "productName"
-  ).value="";
-
-
-  document.getElementById(
-    "productCategory"
-  ).value="";
-
-
-  document.getElementById(
-    "productPrice"
-  ).value="";
-
-
-  document.getElementById(
-    "productSizes"
-  ).value="";
-
-
-  document.getElementById(
-    "productDescription"
-  ).value="";
-
-
-  document.getElementById(
-    "productImage"
-  ).value="";
-
-
-  document.getElementById(
-    "uploadStatus"
-  ).textContent="";
-
-
-  document.getElementById(
-    "imagePreview"
-  ).style.display="none";
-
-
-  document.getElementById(
-    "imagePreview"
-  ).src="";
-
-
-  selectedImageFile =
-    null;
-
-
-  existingImageUrl =
-    "";
-
-
-  document.getElementById(
-    "productFormTitle"
-  ).textContent =
-    "Add New Product";
 
 }
 
 
 /* =========================
-   ORDERS
+   QUICK STOCK UPDATE
 ========================= */
 
-async function loadOrders(){
+async function quickStockUpdate(productId){
 
-  const list =
-    document.getElementById(
-      "orderList"
-    );
-
-
-  list.innerHTML =
-    '<div class="loading">Loading orders...</div>';
+const input=
+document.getElementById(
+"stock_"+productId
+);
 
 
-  try{
-
-    const snapshot =
-      await db
-        .collection("orders")
-        .get();
+if(!input)
+return;
 
 
-    const orders=[];
+const stock=
+Number(input.value);
 
 
-    snapshot.forEach(
-      doc => {
+if(
+!Number.isInteger(stock) ||
+stock<0
+){
 
-        orders.push({
+alert(
+"Stock 0 ya usse bada whole number hona chahiye."
+);
 
-          id:doc.id,
+return;
 
-          ...doc.data()
-
-        });
-
-      }
-    );
-
-
-    orders.sort(
-      function(a,b){
-
-        const aTime =
-          a.createdAt?.toMillis
-          ?
-          a.createdAt.toMillis()
-          :
-          0;
+}
 
 
-        const bTime =
-          b.createdAt?.toMillis
-          ?
-          b.createdAt.toMillis()
-          :
-          0;
+try{
+
+await db
+.collection("products")
+.doc(productId)
+.update({
+
+stock:stock,
+
+updatedAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp()
+
+});
 
 
-        return bTime-aTime;
-
-      }
-    );
-
-
-    renderOrders(
-      orders
-    );
+alert(
+"✅ Stock update ho gaya: "
++
+stock
+);
 
 
-    updateOrderStats(
-      orders
-    );
+await loadProducts();
 
-  }
 
-  catch(error){
+}catch(error){
 
-    console.error(error);
+console.error(error);
 
-    list.innerHTML =
-      '<div class="empty">Orders load nahi ho paaye.</div>';
+alert(
+"❌ Stock update nahi hua.\n\n"
++
+error.message
+);
 
-  }
+}
 
 }
 
 
 /* =========================
-   LOCATION
+   EDIT PRODUCT
+========================= */
+
+function editProduct(productId){
+
+const product=
+products.find(
+p=>p.id===productId
+);
+
+
+if(!product)
+return;
+
+
+document.getElementById(
+"editProductId"
+).value=
+productId;
+
+
+document.getElementById(
+"productName"
+).value=
+product.name||"";
+
+
+document.getElementById(
+"productCategory"
+).value=
+product.category||"";
+
+
+document.getElementById(
+"productPrice"
+).value=
+product.price??"";
+
+
+document.getElementById(
+"productStock"
+).value=
+Number(product.stock||0);
+
+
+document.getElementById(
+"productSizes"
+).value=
+Array.isArray(product.sizes)
+?
+product.sizes.join(", ")
+:
+product.sizes||"";
+
+
+document.getElementById(
+"productDescription"
+).value=
+product.description||"";
+
+
+document.getElementById(
+"productFormTitle"
+).textContent=
+"Edit Product + Stock";
+
+
+const preview=
+document.getElementById(
+"imagePreview"
+);
+
+
+if(product.image){
+
+preview.src=
+product.image;
+
+preview.style.display=
+"block";
+
+}else{
+
+preview.style.display=
+"none";
+
+}
+
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+/* =========================
+   DELETE PRODUCT
+========================= */
+
+async function deleteProduct(productId){
+
+if(
+!confirm(
+"Kya tum ye product delete karna chahte ho?"
+)
+)
+return;
+
+
+try{
+
+await db
+.collection("products")
+.doc(productId)
+.delete();
+
+
+alert(
+"✅ Product delete ho gaya."
+);
+
+
+await loadProducts();
+
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"❌ Delete nahi hua.\n\n"
++
+error.message
+);
+
+}
+
+}
+
+
+/* =========================
+   CUSTOMER LOCATION
 ========================= */
 
 function getCustomerLocation(order){
 
-  const loc =
-    order &&
-    order.location;
+const loc=
+order?.location;
 
 
-  if(!loc)
-    return null;
+if(!loc)
+return null;
 
 
-  let latitude =
-    null;
-
-  let longitude =
-    null;
+let latitude=null;
+let longitude=null;
 
 
-  /*
-    Format 1:
-    {
-      latitude: 25.5941,
-      longitude: 85.1376
-    }
-  */
+if(
+typeof loc.latitude==="number" &&
+typeof loc.longitude==="number"
+){
 
-  if(
-    typeof loc.latitude === "number" &&
-    typeof loc.longitude === "number"
-  ){
+latitude=
+loc.latitude;
 
-    latitude =
-      loc.latitude;
+longitude=
+loc.longitude;
 
-    longitude =
-      loc.longitude;
-
-  }
+}
 
 
-  /*
-    Format 2:
-    {
-      lat: 25.5941,
-      lng: 85.1376
-    }
-  */
+else if(
+typeof loc.lat==="number" &&
+typeof loc.lng==="number"
+){
 
-  else if(
-    typeof loc.lat === "number" &&
-    typeof loc.lng === "number"
-  ){
+latitude=
+loc.lat;
 
-    latitude =
-      loc.lat;
+longitude=
+loc.lng;
 
-    longitude =
-      loc.lng;
-
-  }
+}
 
 
-  /*
-    Format 3:
-    Firestore GeoPoint
-  */
+else if(
+typeof loc._lat==="number" &&
+typeof loc._long==="number"
+){
 
-  else if(
-    typeof loc._lat === "number" &&
-    typeof loc._long === "number"
-  ){
+latitude=
+loc._lat;
 
-    latitude =
-      loc._lat;
+longitude=
+loc._long;
 
-    longitude =
-      loc._long;
-
-  }
+}
 
 
-  if(
-    latitude === null ||
-    longitude === null
-  ){
+if(
+latitude===null ||
+longitude===null
+){
 
-    return null;
+return null;
 
-  }
-
-
-  if(
-    !Number.isFinite(latitude) ||
-    !Number.isFinite(longitude)
-  ){
-
-    return null;
-
-  }
+}
 
 
-  if(
-    latitude < -90 ||
-    latitude > 90 ||
-    longitude < -180 ||
-    longitude > 180
-  ){
+if(
+!Number.isFinite(latitude) ||
+!Number.isFinite(longitude)
+){
 
-    return null;
+return null;
 
-  }
+}
 
 
-  return {
+if(
+latitude<-90 ||
+latitude>90 ||
+longitude<-180 ||
+longitude>180
+){
 
-    latitude,
-    longitude
+return null;
 
-  };
+}
+
+
+return{
+latitude,
+longitude
+};
 
 }
 
@@ -2719,61 +2611,51 @@ function getCustomerLocation(order){
 
 function locationHtml(order){
 
-  const loc =
-    getCustomerLocation(
-      order
-    );
+const loc=
+getCustomerLocation(order);
 
 
-  if(!loc){
+if(!loc){
 
-    return `
-
-<br>
-
-<span
-  style="color:#999"
->
-  📍 Location not shared
+return `
+<span style="color:#999">
+📍 Location not shared
 </span>
-
 `;
 
-  }
+}
 
 
-  const query =
-    encodeURIComponent(
-      loc.latitude +
-      "," +
-      loc.longitude
-    );
+const query=
+encodeURIComponent(
+loc.latitude+
+","+
+loc.longitude
+);
 
 
-  const mapUrl =
-    "https://www.google.com/maps/search/?api=1&query="
-    +
-    query;
+const mapUrl=
+"https://www.google.com/maps/search/?api=1&query="
++
+query;
 
 
-  return `
-
-<br>
+return `
 
 <a
-  class="locationAdminBtn"
-  href="${mapUrl}"
-  target="_blank"
-  rel="noopener noreferrer"
+class="locationAdminBtn"
+href="${mapUrl}"
+target="_blank"
+rel="noopener noreferrer"
 >
-  📍 View Customer Location
+📍 View Customer Location
 </a>
 
-<span
-  class="locationCoords"
->
-  ${loc.latitude.toFixed(6)},
-  ${loc.longitude.toFixed(6)}
+<span class="locationCoords">
+
+${loc.latitude.toFixed(6)},
+${loc.longitude.toFixed(6)}
+
 </span>
 
 `;
@@ -2782,175 +2664,204 @@ function locationHtml(order){
 
 
 /* =========================
-   RENDER ORDERS
+   LOAD ORDERS
 ========================= */
 
-function renderOrders(
-  orders
-){
+async function loadOrders(){
 
-  const list =
-    document.getElementById(
-      "orderList"
-    );
+const list=
+document.getElementById(
+"orderList"
+);
 
 
-  if(!orders.length){
-
-    list.innerHTML =
-      '<div class="empty">Abhi koi order nahi hai.</div>';
-
-    return;
-
-  }
+list.innerHTML=
+'<div class="loading">Loading orders...</div>';
 
 
-  list.innerHTML =
-    orders
-      .map(
-        function(order){
+try{
 
-          const status =
-            order.status ||
-            "pending";
+const snapshot=
+await db
+.collection("orders")
+.get();
 
 
-          const items =
-            Array.isArray(
-              order.items
-            )
-            ?
-            order.items
-            :
-            [];
+const orders=
+snapshot.docs.map(
+doc=>({
+id:doc.id,
+...doc.data()
+})
+);
 
 
-          const itemsHtml =
-            items.length
-            ?
-
-            items
-              .map(
-                function(item){
-
-                  const name =
-                    item.name ||
-                    item.productName ||
-                    "Product";
+orders.sort(
+(a,b)=>
+(b.createdAt?.seconds||0)
+-
+(a.createdAt?.seconds||0)
+);
 
 
-                  const qty =
-                    Number(
-                      item.quantity ||
-                      item.qty ||
-                      1
-                    );
+document.getElementById(
+"statOrders"
+).textContent=
+orders.length;
 
 
-                  const price =
-                    Number(
-                      item.price ||
-                      0
-                    );
+document.getElementById(
+"statPending"
+).textContent=
+orders.filter(
+o=>o.status==="pending"
+).length;
 
 
-                  return `
+const deliveredSales=
+orders
+.filter(
+o=>o.status==="delivered"
+)
+.reduce(
+(sum,o)=>
+sum+
+Number(o.total||0),
+0
+);
+
+
+document.getElementById(
+"statSales"
+).textContent=
+"₹"+
+deliveredSales
+.toLocaleString("en-IN");
+
+
+if(!orders.length){
+
+list.innerHTML=
+'<div class="empty">No orders found.</div>';
+
+return;
+
+}
+
+
+list.innerHTML=
+orders
+.map(order=>{
+
+const status=
+order.status||
+"pending";
+
+
+const items=
+Array.isArray(order.items)
+?
+order.items
+:
+[];
+
+
+let itemHtml=
+items
+.map(item=>`
 
 <div class="itemRow">
 
 <span>
-${escapeHtml(name)}
-× ${qty}
+
+${escapeHtml(
+item.name||
+"Product"
+)}
+
+×
+
+${Number(
+item.quantity||1
+)}
+
 </span>
 
-<b>
-₹${price * qty}
-</b>
+
+<strong>
+
+₹${
+(
+Number(item.price||0)
+*
+Number(item.quantity||1)
+)
+.toLocaleString("en-IN")
+}
+
+</strong>
 
 </div>
 
-`;
-
-                }
-              )
-              .join("")
-
-            :
-
-            "<p>No item details</p>";
+`)
+.join("");
 
 
-          let actions="";
+let actions="";
 
 
-          if(
-            status === "pending"
-          ){
+if(status==="pending"){
 
-            actions += `
+actions+=`
 
 <button
-  class="orangeBtn"
-  onclick="acceptOrder('${order.id}')"
+class="greenBtn"
+onclick="acceptOrder('${order.id}')"
 >
-✓ Accept Order
+✅ Accept Order
 </button>
 
 `;
 
-          }
+}
 
 
-          if(
-            status === "processing"
-          ){
+if(status==="processing"){
 
-            actions += `
+actions+=`
 
 <button
-  class="greenBtn"
-  onclick="deliverOrder('${order.id}')"
+class="greenBtn"
+onclick="deliverOrder('${order.id}')"
 >
-✓ Mark Delivered
+🚚 Mark Delivered
 </button>
 
 `;
 
-          }
+}
 
 
-          if(
-            status !== "delivered" &&
-            status !== "cancelled"
-          ){
+if(
+status!=="delivered" &&
+status!=="cancelled"
+){
 
-            actions += `
+actions+=`
 
 <button
-  class="redBtn"
-  onclick="cancelOrderAdmin('${order.id}')"
+class="redBtn"
+onclick="adminCancelOrder('${order.id}')"
 >
-Cancel
+❌ Cancel
 </button>
 
 `;
 
-          }
+}
 
 
-          actions += `
-
-<button
-  class="lightBtn"
-  onclick="deleteOrder('${order.id}')"
->
-Delete
-</button>
-
-`;
-
-
-          return `
+return `
 
 <div class="orderCard">
 
@@ -2963,15 +2874,16 @@ Delete
 
 Order #
 ${escapeHtml(
-  order.id.slice(-8)
+order.id.slice(-8)
 )}
 
 </div>
 
+
 <div class="orderId">
 
 ${escapeHtml(
-  order.id
+order.id
 )}
 
 </div>
@@ -2980,11 +2892,11 @@ ${escapeHtml(
 
 
 <span
-  class="status ${escapeHtml(status)}"
+class="status ${escapeHtml(status)}"
 >
 
 ${escapeHtml(
-  status.toUpperCase()
+status.toUpperCase()
 )}
 
 </span>
@@ -2995,43 +2907,25 @@ ${escapeHtml(
 <div class="orderInfo">
 
 
-<!-- CUSTOMER -->
-
 <div class="infoBox">
 
 <h4>
-👤 Customer
+Customer
 </h4>
 
 <p>
 
-<b>Name:</b>
-
 ${escapeHtml(
-  order.customerName ||
-  "-"
+order.customerName||
+"N/A"
 )}
 
 <br>
 
-<b>Phone:</b>
-
+📞
 ${escapeHtml(
-  order.customerPhone ||
-  "-"
-)}
-
-<br>
-
-<b>Address:</b>
-
-${escapeHtml(
-  order.customerAddress ||
-  "-"
-)}
-
-${locationHtml(
-  order
+order.customerPhone||
+"N/A"
 )}
 
 </p>
@@ -3039,58 +2933,64 @@ ${locationHtml(
 </div>
 
 
-<!-- ORDER INFO -->
-
 <div class="infoBox">
 
 <h4>
-💳 Order Info
+Address
 </h4>
 
 <p>
 
-<b>Payment:</b>
-
 ${escapeHtml(
-  order.paymentMethod ||
-  "-"
-)}
-
-<br>
-
-<b>Date:</b>
-
-${escapeHtml(
-  formatDate(
-    order.createdAt
-  )
+order.customerAddress||
+"N/A"
 )}
 
 </p>
 
 </div>
 
+
+</div>
+
+
+<div
+style="margin-top:12px"
+>
+
+${locationHtml(order)}
 
 </div>
 
 
 <div class="items">
 
-<b>
-🛍️ Items
-</b>
-
-${itemsHtml}
+${
+itemHtml||
+'<div>No item information</div>'
+}
 
 
 <div class="total">
 
 Total:
 ₹${Number(
-  order.total || 0
-)}
+order.total||0
+).toLocaleString("en-IN")}
 
 </div>
+
+</div>
+
+
+<div
+style="margin-top:8px;color:#777;font-size:12px"
+>
+
+Ordered:
+${formatDate(
+order.createdAt
+)}
 
 </div>
 
@@ -3106,9 +3006,22 @@ ${actions}
 
 `;
 
-        }
-      )
-      .join("");
+})
+.join("");
+
+
+}catch(error){
+
+console.error(error);
+
+list.innerHTML=
+'<div class="empty">❌ '
++
+escapeHtml(error.message)
++
+'</div>';
+
+}
 
 }
 
@@ -3117,65 +3030,44 @@ ${actions}
    ACCEPT ORDER
 ========================= */
 
-async function acceptOrder(
-  orderId
-){
+async function acceptOrder(orderId){
 
-  if(
-    !confirm(
-      "Kya tum is order ko accept karna chahte ho?"
-    )
-  )
-    return;
+try{
 
+await db
+.collection("orders")
+.doc(orderId)
+.update({
 
-  try{
+status:"processing",
 
-    /*
-      IMPORTANT:
-      update() use kar rahe hain.
-      Isse customerUid,
-      location,
-      address,
-      items sab preserve rahenge.
-    */
+updatedAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp()
 
-    await db
-      .collection("orders")
-      .doc(orderId)
-      .update({
-
-        status:
-          "processing",
-
-        updatedAt:
-          firebase.firestore
-            .FieldValue
-            .serverTimestamp()
-
-      });
+});
 
 
-    alert(
-      "Order Processing mein chala gaya ✓"
-    );
+alert(
+"✅ Order accepted. Customer ka order My Orders me rahega."
+);
 
 
-    loadOrders();
+await loadOrders();
 
-  }
 
-  catch(error){
+}catch(error){
 
-    console.error(error);
+console.error(error);
 
-    alert(
-      "Order update nahi hua:\n"
-      +
-      error.message
-    );
+alert(
+"❌ Order accept nahi hua.\n\n"
++
+error.message
+);
 
-  }
+}
 
 }
 
@@ -3184,56 +3076,44 @@ async function acceptOrder(
    DELIVER ORDER
 ========================= */
 
-async function deliverOrder(
-  orderId
-){
+async function deliverOrder(orderId){
 
-  if(
-    !confirm(
-      "Kya ye order delivered ho gaya hai?"
-    )
-  )
-    return;
+try{
 
+await db
+.collection("orders")
+.doc(orderId)
+.update({
 
-  try{
+status:"delivered",
 
-    await db
-      .collection("orders")
-      .doc(orderId)
-      .update({
+updatedAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp()
 
-        status:
-          "delivered",
-
-        updatedAt:
-          firebase.firestore
-            .FieldValue
-            .serverTimestamp()
-
-      });
+});
 
 
-    alert(
-      "Order Delivered mark ho gaya ✓"
-    );
+alert(
+"✅ Order delivered mark ho gaya."
+);
 
 
-    loadOrders();
+await loadOrders();
 
-  }
 
-  catch(error){
+}catch(error){
 
-    console.error(error);
+console.error(error);
 
-    alert(
-      "Order update nahi hua:\n"
-      +
-      error.message
-    );
+alert(
+"❌ Update nahi hua.\n\n"
++
+error.message
+);
 
-  }
+}
 
 }
 
@@ -3242,161 +3122,60 @@ async function deliverOrder(
    ADMIN CANCEL
 ========================= */
 
-async function cancelOrderAdmin(
-  orderId
-){
+async function adminCancelOrder(orderId){
 
-  if(
-    !confirm(
-      "Kya tum ye order cancel karna chahte ho?"
-    )
-  )
-    return;
+if(
+!confirm(
+"Kya tum ye order cancel karna chahte ho?"
+)
+)
+return;
 
 
-  try{
+try{
 
-    await db
-      .collection("orders")
-      .doc(orderId)
-      .update({
+await db
+.collection("orders")
+.doc(orderId)
+.update({
 
-        status:
-          "cancelled",
+status:"cancelled",
 
-        cancelledBy:
-          "admin",
+cancelledAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp(),
 
-        cancelledAt:
-          firebase.firestore
-            .FieldValue
-            .serverTimestamp(),
+cancelledBy:
+"admin",
 
-        updatedAt:
-          firebase.firestore
-            .FieldValue
-            .serverTimestamp()
+updatedAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp()
 
-      });
-
-
-    alert(
-      "Order cancelled ✓"
-    );
+});
 
 
-    loadOrders();
+alert(
+"✅ Order cancelled."
+);
 
-  }
 
-  catch(error){
+await loadOrders();
 
-    console.error(error);
 
-    alert(
-      "Order cancel nahi hua:\n"
-      +
-      error.message
-    );
+}catch(error){
 
-  }
+console.error(error);
+
+alert(
+"❌ Cancel nahi hua.\n\n"
++
+error.message
+);
 
 }
-
-
-/* =========================
-   DELETE ORDER
-========================= */
-
-async function deleteOrder(
-  orderId
-){
-
-  if(
-    !confirm(
-      "Ye order permanently delete karna hai?"
-    )
-  )
-    return;
-
-
-  try{
-
-    await db
-      .collection("orders")
-      .doc(orderId)
-      .delete();
-
-
-    alert(
-      "Order delete ho gaya."
-    );
-
-
-    loadOrders();
-
-  }
-
-  catch(error){
-
-    alert(
-      "Order delete nahi hua:\n"
-      +
-      error.message
-    );
-
-  }
-
-}
-
-
-/* =========================
-   ORDER STATS
-========================= */
-
-function updateOrderStats(
-  orders
-){
-
-  document.getElementById(
-    "statOrders"
-  ).textContent =
-    orders.length;
-
-
-  document.getElementById(
-    "statPending"
-  ).textContent =
-    orders.filter(
-      o =>
-      o.status === "pending"
-    ).length;
-
-
-  const sales =
-    orders
-      .filter(
-        o =>
-        o.status ===
-        "delivered"
-      )
-      .reduce(
-        (
-          total,
-          o
-        ) =>
-          total +
-          Number(
-            o.total || 0
-          ),
-        0
-      );
-
-
-  document.getElementById(
-    "statSales"
-  ).textContent =
-    "₹" + sales;
 
 }
 
@@ -3407,58 +3186,62 @@ function updateOrderStats(
 
 async function loadComplaints(){
 
-  const list =
-    document.getElementById(
-      "complaintList"
-    );
+const list=
+document.getElementById(
+"complaintList"
+);
 
 
-  list.innerHTML =
-    '<div class="loading">Loading...</div>';
+list.innerHTML=
+'<div class="loading">Loading...</div>';
 
 
-  try{
+try{
 
-    const snapshot =
-      await db
-        .collection(
-          "supportTickets"
-        )
-        .get();
+const snapshot=
+await db
+.collection("supportTickets")
+.get();
 
 
-    if(
-      snapshot.empty
-    ){
-
-      list.innerHTML =
-        '<div class="empty">Abhi koi complaint nahi hai.</div>';
-
-      return;
-
-    }
+const tickets=
+snapshot.docs.map(
+doc=>({
+id:doc.id,
+...doc.data()
+})
+);
 
 
-    let html="";
+tickets.sort(
+(a,b)=>
+(b.createdAt?.seconds||0)
+-
+(a.createdAt?.seconds||0)
+);
 
 
-    snapshot.forEach(
-      function(doc){
+if(!tickets.length){
 
-        const data =
-          doc.data();
+list.innerHTML=
+'<div class="empty">No complaints found.</div>';
+
+return;
+
+}
 
 
-        html += `
+list.innerHTML=
+tickets
+.map(ticket=>`
 
 <div class="simpleCard">
 
 <h3>
 
 ${escapeHtml(
-  data.subject ||
-  data.title ||
-  "Customer Complaint"
+ticket.subject||
+"Complaint"
 )}
 
 </h3>
@@ -3466,53 +3249,127 @@ ${escapeHtml(
 
 <p>
 
-<b>Name:</b>
-
+Order:
 ${escapeHtml(
-  data.customerName ||
-  "-"
+ticket.orderId||
+"N/A"
 )}
 
 <br>
 
-<b>Phone:</b>
-
 ${escapeHtml(
-  data.customerPhone ||
-  "-"
+ticket.message||
+""
 )}
 
-<br><br>
+<br>
 
-${escapeHtml(
-  data.message ||
-  data.description ||
-  "No message"
+<span>
+
+${formatDate(
+ticket.createdAt
 )}
+
+</span>
 
 </p>
 
+
+<div style="margin-top:10px">
+
+<b>
+Status:
+</b>
+
+${escapeHtml(
+ticket.status||
+"open"
+)}
+
 </div>
 
-`;
 
-      }
-    );
+${
+ticket.status!=="resolved"
+?
+
+`
+
+<div style="margin-top:10px">
+
+<button
+class="greenBtn"
+onclick="resolveComplaint('${ticket.id}')"
+>
+✅ Mark Resolved
+</button>
+
+</div>
+
+`
+
+:
+""
+
+}
+
+</div>
+
+`)
+.join("");
 
 
-    list.innerHTML =
-      html;
+}catch(error){
 
-  }
+console.error(error);
 
-  catch(error){
+list.innerHTML=
+'<div class="empty">❌ '
++
+escapeHtml(error.message)
++
+'</div>';
 
-    console.error(error);
+}
 
-    list.innerHTML =
-      '<div class="empty">Complaints load nahi ho paaye.</div>';
+}
 
-  }
+
+/* =========================
+   RESOLVE COMPLAINT
+========================= */
+
+async function resolveComplaint(ticketId){
+
+try{
+
+await db
+.collection("supportTickets")
+.doc(ticketId)
+.update({
+
+status:"resolved",
+
+resolvedAt:
+firebase.firestore
+.FieldValue
+.serverTimestamp()
+
+});
+
+
+await loadComplaints();
+
+
+}catch(error){
+
+alert(
+"❌ Complaint update nahi hui.\n\n"
++
+error.message
+);
+
+}
 
 }
 
@@ -3523,76 +3380,55 @@ ${escapeHtml(
 
 async function loadReviews(){
 
-  const list =
-    document.getElementById(
-      "reviewList"
-    );
+const list=
+document.getElementById(
+"reviewList"
+);
 
 
-  list.innerHTML =
-    '<div class="loading">Loading...</div>';
+list.innerHTML=
+'<div class="loading">Loading...</div>';
 
 
-  try{
+try{
 
-    const snapshot =
-      await db
-        .collection(
-          "reviews"
-        )
-        .get();
+const snapshot=
+await db
+.collection("reviews")
+.get();
 
 
-    if(
-      snapshot.empty
-    ){
-
-      list.innerHTML =
-        '<div class="empty">Abhi koi review nahi hai.</div>';
-
-      return;
-
-    }
+const reviews=
+snapshot.docs.map(
+doc=>({
+id:doc.id,
+...doc.data()
+})
+);
 
 
-    let html="";
+if(!reviews.length){
+
+list.innerHTML=
+'<div class="empty">No reviews found.</div>';
+
+return;
+
+}
 
 
-    snapshot.forEach(
-      function(doc){
-
-        const data =
-          doc.data();
-
-
-        const rating =
-          Math.min(
-            5,
-            Math.max(
-              0,
-              Number(
-                data.rating ||
-                0
-              )
-            )
-          );
-
-
-        const stars =
-          "★".repeat(
-            rating
-          );
-
-
-        html += `
+list.innerHTML=
+reviews
+.map(review=>`
 
 <div class="simpleCard">
 
 <h3>
 
 ${escapeHtml(
-  data.productName ||
-  "Product Review"
+review.productName||
+review.productId||
+"Product"
 )}
 
 </h3>
@@ -3600,136 +3436,122 @@ ${escapeHtml(
 
 <div class="stars">
 
-${stars}
+⭐
+${escapeHtml(
+review.rating||
+""
+)}
 
 </div>
 
 
 <p>
 
-<b>
-
 ${escapeHtml(
-  data.customerName ||
-  "Customer"
-)}
-
-</b>
-
-<br><br>
-
-${escapeHtml(
-  data.comment ||
-  data.review ||
-  "No comment"
+review.comment||
+review.review||
+""
 )}
 
 </p>
 
+
+<div style="margin-top:10px">
+
+<button
+class="redBtn"
+onclick="deleteReview('${review.id}')"
+>
+🗑️ Delete
+</button>
+
 </div>
 
-`;
+</div>
 
-      }
-    );
+`)
+.join("");
 
 
-    list.innerHTML =
-      html;
+}catch(error){
 
-  }
+console.error(error);
 
-  catch(error){
+list.innerHTML=
+'<div class="empty">❌ '
++
+escapeHtml(error.message)
++
+'</div>';
 
-    console.error(error);
-
-    list.innerHTML =
-      '<div class="empty">Reviews load nahi ho paaye.</div>';
-
-  }
+}
 
 }
 
 
 /* =========================
-   DATE
+   DELETE REVIEW
 ========================= */
 
-function formatDate(
-  timestamp
-){
+async function deleteReview(reviewId){
 
-  if(!timestamp)
-    return "-";
-
-
-  try{
-
-    const date =
-      timestamp.toDate
-      ?
-      timestamp.toDate()
-      :
-      new Date(
-        timestamp
-      );
+if(
+!confirm(
+"Kya tum ye review delete karna chahte ho?"
+)
+)
+return;
 
 
-    return date.toLocaleString(
-      "en-IN",
-      {
-        dateStyle:"medium",
-        timeStyle:"short"
-      }
-    );
+try{
 
-  }
+await db
+.collection("reviews")
+.doc(reviewId)
+.delete();
 
-  catch(error){
 
-    return "-";
+await loadReviews();
 
-  }
+
+}catch(error){
+
+alert(
+"❌ Review delete nahi hua.\n\n"
++
+error.message
+);
+
+}
 
 }
 
 
 /* =========================
-   SECURITY
+   LOAD ALL
 ========================= */
 
-function escapeHtml(
-  value
-){
+async function loadAll(){
 
-  return String(
-    value ?? ""
-  )
+try{
 
-  .replace(
-    /&/g,
-    "&amp;"
-  )
+await Promise.all([
 
-  .replace(
-    /</g,
-    "&lt;"
-  )
+loadProducts(),
 
-  .replace(
-    />/g,
-    "&gt;"
-  )
+loadOrders(),
 
-  .replace(
-    /"/g,
-    "&quot;"
-  )
+loadComplaints(),
 
-  .replace(
-    /'/g,
-    "&#039;"
-  );
+loadReviews()
+
+]);
+
+}catch(error){
+
+console.error(error);
+
+}
 
 }
 
